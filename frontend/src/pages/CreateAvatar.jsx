@@ -96,23 +96,16 @@ export default function CreateAvatar({ user }) {
 
     const userMessage = { role: 'user', content: chatInput };
     setChatMessages([...chatMessages, userMessage]);
+    const editText = chatInput;
     setChatInput('');
     setGenerating(true);
 
     try {
-      // Use Claude to understand the edit request and create a new prompt
-      const editPrompt = `${formData.relationship_status} woman, ${chatInput}. Artistic, friendly avatar style.`;
+      // Call the edit endpoint with the description
+      const response = await axios.post(
+        `${API}/avatar/edit/${user.id}?edit_description=${encodeURIComponent(editText)}`
+      );
       
-      const imageGen = await axios.post(`${API}/avatar/create`, {
-        user_id: user.id,
-        relationship_status: formData.relationship_status,
-        relationship_with: formData.relationship_with,
-        relationship_feel: formData.relationship_feel,
-        edit_prompt: editPrompt
-      });
-
-      // For now, just refresh with the edit request in mind
-      const response = await axios.get(`${API}/avatar/refresh/${user.id}`);
       setAvatarUrl(response.data.avatar_url);
       
       // Update user in localStorage
@@ -124,10 +117,7 @@ export default function CreateAvatar({ user }) {
         content: 'I\'ve updated your avatar based on your feedback! Does this look better?'
       }]);
     } catch (error) {
-      setChatMessages([...chatMessages, userMessage, {
-        role: 'assistant',
-        content: 'Let me try a different approach and refresh your avatar!'
-      }]);
+      toast.error('Failed to update avatar. Let me try refreshing it!');
       
       // Fallback to refresh
       try {
@@ -136,6 +126,11 @@ export default function CreateAvatar({ user }) {
         
         const updatedUser = { ...user, avatar_url: response.data.avatar_url };
         localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+        
+        setChatMessages([...chatMessages, userMessage, {
+          role: 'assistant',
+          content: 'I\'ve created a fresh version for you! How about this one?'
+        }]);
       } catch (err) {
         toast.error('Failed to update avatar');
       }
