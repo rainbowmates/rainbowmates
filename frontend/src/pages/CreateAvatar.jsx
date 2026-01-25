@@ -187,27 +187,13 @@ export default function CreateAvatar({ user }) {
     setSelectedFilterPreset(preset.id);
     setFilterStyle(preset.style);
     setShowFilterOptions(false);
-    setShowChat(true);
     
-    // Save to backend
-    try {
-      await axios.put(`${API}/user/update/${user.id}`, {
-        avatar_url: avatarUrl
-      });
-
-      setChatMessages([
-        {
-          role: 'assistant',
-          content: `Hi ${user.first_name}! You chose "${preset.name}" - looks great! Want to fine-tune it? Try "warmer", "brighter", "more vibrant", or "add glow".`
-        }
-      ]);
-      
-      // Update user in localStorage
-      const updatedUser = { ...user, avatar_url: avatarUrl };
-      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-    } catch (error) {
-      toast.error('Failed to save photo');
-    }
+    // Store original photo before outfit selection
+    setOriginalPhoto(avatarUrl);
+    
+    // Move to outfit selection
+    setShowOutfitSelection(true);
+    toast.success(`${preset.name} filter selected! Now choose your outfit.`);
   };
 
   const handleRefresh = async () => {
