@@ -263,18 +263,75 @@ export default function CreateAvatar({ user }) {
           {/* Generated Avatar */}
           {avatarUrl && (
             <div className="space-y-4">
-              <div className="relative w-full h-64 rounded-2xl overflow-hidden">
+              <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-neon-pink">
                 <img src={avatarUrl} alt="Generated Avatar" className="w-full h-full object-cover" />
               </div>
-              <button
-                data-testid="refresh-avatar-button"
-                onClick={handleRefresh}
-                disabled={generating}
-                className="w-full py-3 px-6 rounded-full bg-white border-2 border-neon-pink text-dark-purple font-semibold hover:bg-muted transition-all flex items-center justify-center gap-2"
-              >
-                <RefreshCw className={`w-5 h-5 ${generating ? 'animate-spin' : ''}`} />
-                Refresh Avatar
-              </button>
+              
+              {showChat && (
+                <>
+                  {/* Chat Messages */}
+                  <div className="bg-gradient-to-br from-soft-yellow/20 to-neon-pink/20 rounded-2xl p-4 space-y-3 max-h-48 overflow-y-auto" data-testid="avatar-chat">
+                    {chatMessages.map((msg, idx) => (
+                      <div
+                        key={idx}
+                        className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                      >
+                        <div
+                          className={`max-w-[85%] rounded-2xl px-4 py-2 text-sm ${
+                            msg.role === 'user'
+                              ? 'bg-neon-pink text-white rounded-br-sm'
+                              : 'bg-white text-dark-purple rounded-bl-sm'
+                          }`}
+                        >
+                          {msg.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* Chat Input */}
+                  <div className="flex gap-2">
+                    <input
+                      data-testid="avatar-edit-input"
+                      type="text"
+                      value={chatInput}
+                      onChange={(e) => setChatInput(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && handleEditRequest()}
+                      placeholder="Describe any changes you'd like..."
+                      className="flex-1 px-4 py-3 rounded-full bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                      disabled={generating}
+                    />
+                    <button
+                      data-testid="send-edit-button"
+                      onClick={handleEditRequest}
+                      disabled={generating || !chatInput.trim()}
+                      className="px-6 py-3 rounded-full bg-neon-pink text-white font-semibold hover:bg-[#D670D7] transition-all disabled:opacity-50"
+                    >
+                      Send
+                    </button>
+                  </div>
+                </>
+              )}
+
+              <div className="flex gap-3">
+                <button
+                  data-testid="refresh-avatar-button"
+                  onClick={handleRefresh}
+                  disabled={generating}
+                  className="flex-1 py-3 px-6 rounded-full bg-white border-2 border-neon-pink text-dark-purple font-semibold hover:bg-muted transition-all flex items-center justify-center gap-2"
+                >
+                  <RefreshCw className={`w-5 h-5 ${generating ? 'animate-spin' : ''}`} />
+                  Try Another
+                </button>
+                <button
+                  data-testid="continue-button"
+                  onClick={handleContinue}
+                  disabled={generating}
+                  className="flex-1 neon-button disabled:opacity-50"
+                >
+                  Looks Great! Continue
+                </button>
+              </div>
             </div>
           )}
 
