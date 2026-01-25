@@ -440,8 +440,7 @@ export default function CreateAvatar({ user }) {
                 <button
                   data-testid="continue-button"
                   onClick={handleContinue}
-                  disabled={generating}
-                  className="flex-1 neon-button disabled:opacity-50"
+                  className="flex-1 neon-button"
                 >
                   {isEditMode ? 'Save & Exit' : 'Next: About You'}
                 </button>
