@@ -34,6 +34,8 @@ export default function CreateAvatar({ user }) {
   const [showOutfitSelection, setShowOutfitSelection] = useState(false);
   const [selectedOutfitCategory, setSelectedOutfitCategory] = useState(null);
   const [originalPhoto, setOriginalPhoto] = useState(null); // Store original for outfit generation
+  const [showOutfitReview, setShowOutfitReview] = useState(false);
+  const [currentOutfitDescription, setCurrentOutfitDescription] = useState('');
 
   // Outfit categories
   const outfitCategories = [
