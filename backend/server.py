@@ -261,10 +261,10 @@ async def create_user_avatar(
         
         if edit_prompt:
             # Use custom edit prompt if provided
-            prompt = edit_prompt
+            prompt = f"Photo portrait with subtle artistic enhancement: {edit_prompt}. Keep it photorealistic, maintain facial features and likeness, just add slight artistic glow or soft effects. Natural lighting, realistic skin tones."
         else:
-            # Default prompt
-            prompt = f"Create a stylized avatar for a woman who is {relationship_status}, in a relationship with {relationship_with}, feeling {relationship_feel}. Artistic, friendly, colorful style."
+            # Default prompt - photorealistic with subtle enhancements
+            prompt = f"Photo portrait of a woman with subtle artistic enhancement. Keep it photorealistic and natural, maintain original facial features and likeness. Add only slight soft glow, gentle lighting effects, or subtle color grading. Natural skin tones, realistic details. Relationship status: {relationship_status}."
         
         images = await image_gen.generate_images(
             prompt=prompt,
