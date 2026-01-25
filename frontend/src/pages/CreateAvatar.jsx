@@ -212,32 +212,46 @@ export default function CreateAvatar({ user }) {
       });
 
       setAvatarUrl(response.data.avatar_url);
-      setShowChat(true);
+      setCurrentOutfitDescription(outfitOption);
+      setShowOutfitReview(true);
       
-      // Save to backend
-      await axios.put(`${API}/user/update/${user.id}`, {
-        avatar_url: response.data.avatar_url
-      });
-
-      setChatMessages([
-        {
-          role: 'assistant',
-          content: `Hi ${user.first_name}! Here you are in ${outfitOption}! Looking fabulous! Want to fine-tune the look? Try "warmer", "brighter", or "more vibrant".`
-        }
-      ]);
-      
-      // Update user in localStorage
-      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
-      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-      
-      toast.success('Avatar created with your outfit!');
+      toast.success('Avatar created! How do you like it?');
     } catch (error) {
       toast.error('Failed to generate avatar with outfit');
       // Fallback - just use the filtered photo
       setAvatarUrl(originalPhoto);
-      setShowChat(true);
+      setShowOutfitReview(true);
     } finally {
       setGenerating(false);
+    }
+  };
+
+  const handleChangeOutfit = () => {
+    setShowOutfitReview(false);
+    setShowOutfitSelection(true);
+    setSelectedOutfitCategory(null);
+    toast.info('Choose a different outfit');
+  };
+
+  const handleConfirmOutfit = async () => {
+    setShowOutfitReview(false);
+    
+    // Save to backend
+    try {
+      await axios.put(`${API}/user/update/${user.id}`, {
+        avatar_url: avatarUrl
+      });
+
+      // Update user in localStorage
+      const updatedUser = { ...user, avatar_url: avatarUrl };
+      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+      
+      toast.success('Avatar saved! Moving to next step.');
+      
+      // Move to step 2 (About You)
+      setStep(2);
+    } catch (error) {
+      toast.error('Failed to save avatar');
     }
   };
 
