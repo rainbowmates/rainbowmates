@@ -265,11 +265,16 @@ export default function CreateAvatar({ user }) {
             <ArrowLeft className="w-6 h-6 text-dark-purple" />
           </button>
           <h1 className="text-3xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            {isEditMode ? 'Edit Your Avatar' : 'Create Your Avatar'}
+            {isEditMode ? 'Edit Your Avatar' : step === 1 ? 'Create Your Avatar' : 'About You'}
           </h1>
+          {!isEditMode && step === 2 && (
+            <p className="text-sm text-dark-purple/70 mt-1">Step 2 of 2</p>
+          )}
         </div>
 
-        <div className="card-soft p-6 space-y-6">
+        {step === 1 ? (
+          // STEP 1: Image Upload & Avatar Creation
+          <div className="card-soft p-6 space-y-6">
           {/* Only show form if not in edit mode or if creating new */}
           {!isEditMode && (
             <>
