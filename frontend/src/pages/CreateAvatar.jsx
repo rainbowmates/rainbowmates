@@ -504,6 +504,9 @@ export default function CreateAvatar({ user }) {
                   setImage(null);
                   setImagePreview(null);
                   setShowFilterOptions(false);
+                  setShowOutfitSelection(false);
+                  setShowOutfitReview(false);
+                  setSelectedOutfitCategory(null);
                   toast.info('Choose a different photo');
                 }}
                 className="w-full py-3 px-6 rounded-full bg-white border-2 border-neon-pink text-dark-purple font-semibold hover:bg-muted transition-all"
