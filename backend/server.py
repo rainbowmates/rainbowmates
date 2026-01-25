@@ -336,9 +336,8 @@ async def edit_user_avatar(user_id: str, edit_description: str):
     
     try:
         image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
-        # Create a prompt that incorporates the edit request but keeps it realistic
-        base_prompt = f"Photo portrait of a woman who is {user_doc.get('relationship_status')}"
-        prompt = f"{base_prompt}, {edit_description}. Keep photorealistic and natural, maintain facial features and likeness. Only apply subtle artistic enhancements as requested."
+        # Keep changes extremely minimal - just apply the user's requested adjustment
+        prompt = f"Apply only this subtle adjustment to the portrait photo: {edit_description}. CRITICAL: Preserve the exact same person, all facial features, and complete likeness. Only apply the minimal adjustment requested. Should look almost identical to original."
         
         images = await image_gen.generate_images(
             prompt=prompt,
