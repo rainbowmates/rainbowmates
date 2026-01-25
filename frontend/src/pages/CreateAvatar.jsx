@@ -29,6 +29,32 @@ export default function CreateAvatar({ user }) {
     saturate: 100,
     warmth: 0
   });
+  const [showFilterOptions, setShowFilterOptions] = useState(false);
+  const [selectedFilterPreset, setSelectedFilterPreset] = useState(null);
+
+  // Preset filter options
+  const filterPresets = [
+    {
+      id: 'natural',
+      name: 'Natural',
+      style: { brightness: 105, contrast: 100, saturate: 100, warmth: 0 }
+    },
+    {
+      id: 'warm',
+      name: 'Warm Glow',
+      style: { brightness: 110, contrast: 105, saturate: 110, warmth: 10 }
+    },
+    {
+      id: 'cool',
+      name: 'Cool Vibes',
+      style: { brightness: 105, contrast: 110, saturate: 115, warmth: -10 }
+    },
+    {
+      id: 'soft',
+      name: 'Soft & Dreamy',
+      style: { brightness: 115, contrast: 95, saturate: 95, warmth: 5 }
+    }
+  ];
 
   useEffect(() => {
     // Check if user already has an avatar (edit mode)
