@@ -56,8 +56,14 @@ export default function CreateAvatar({ user }) {
   };
 
   const handleCreate = async () => {
-    if (!image) {
+    if (!isEditMode && !image) {
       toast.error('Please upload an image');
+      return;
+    }
+
+    // If in edit mode and no new image, skip image upload
+    if (isEditMode && !image) {
+      toast.info('Use the chat below to describe changes you want!');
       return;
     }
 
@@ -79,7 +85,7 @@ export default function CreateAvatar({ user }) {
       setChatMessages([
         {
           role: 'assistant',
-          content: `Hi Susie! I've created your avatar based on your profile. What do you think? Would you like me to make any changes? You can ask me to adjust colors, style, mood, or anything else!`
+          content: `Hi ${user.first_name}! I've created your avatar based on your profile. What do you think? Would you like me to make any changes? You can ask me to adjust colors, style, mood, or anything else!`
         }
       ]);
       toast.success('Avatar created successfully!');
