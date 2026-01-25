@@ -221,8 +221,14 @@ export default function CreateAvatar({ user }) {
   };
 
   const handleContinue = () => {
-    // Move to step 2 (relationship details)
-    setStep(2);
+    if (isEditMode) {
+      // In edit mode, just save and exit
+      toast.success('Avatar saved!');
+      setTimeout(() => navigate('/dashboard'), 1000);
+    } else {
+      // Move to step 2 (relationship details)
+      setStep(2);
+    }
   };
 
   const handleSaveProfile = async () => {
