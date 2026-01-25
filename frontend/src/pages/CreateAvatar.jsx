@@ -250,14 +250,18 @@ export default function CreateAvatar({ user }) {
                 </label>
                 <div className="relative">
                   {imagePreview ? (
-                    <div className="relative w-full h-48 rounded-2xl overflow-hidden">
-                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                    <div className="relative w-full h-48 rounded-2xl overflow-hidden bg-muted">
+                      <img 
+                        src={imagePreview} 
+                        alt="Preview" 
+                        className="w-full h-full object-contain"
+                      />
                       <button
                         onClick={() => {
                           setImage(null);
                           setImagePreview(null);
                         }}
-                        className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white"
+                        className="absolute top-2 right-2 p-2 rounded-full bg-white/90 hover:bg-white text-dark-purple font-bold text-xl leading-none transition-all shadow-lg"
                       >
                         ×
                       </button>
