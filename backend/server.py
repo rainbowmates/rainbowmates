@@ -304,7 +304,7 @@ async def refresh_user_avatar(user_id: str):
     
     try:
         image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
-        prompt = f"Photo portrait with subtle artistic enhancement. Keep photorealistic, maintain facial features. Add gentle soft glow or lighting. Natural look for a woman who is {user_doc.get('relationship_status')}."
+        prompt = f"Apply very subtle artistic filter to this portrait photo. IMPORTANT: Keep the exact same person, preserve all facial features and likeness completely. Only add gentle soft glow or very light color warmth. Should look almost identical to original."
         
         images = await image_gen.generate_images(
             prompt=prompt,
