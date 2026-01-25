@@ -119,33 +119,39 @@ export default function CreateAvatar({ user }) {
 
     setGenerating(true);
     try {
-      const formDataObj = new FormData();
-      formDataObj.append('user_id', user.id);
-      formDataObj.append('relationship_status', formData.relationship_status);
-      formDataObj.append('relationship_with', formData.relationship_with);
-      formDataObj.append('relationship_feel', formData.relationship_feel);
-      formDataObj.append('image', image);
+      // Convert image to base64 to store directly - NO AI GENERATION
+      const reader = new FileReader();
+      reader.onload = async (e) => {
+        const imageBase64 = e.target.result; // This is the actual uploaded photo
+        
+        // Save the EXACT photo (not AI generated) to user profile
+        try {
+          await axios.put(`${API}/user/update/${user.id}`, {
+            avatar_url: imageBase64
+          });
 
-      const response = await axios.post(`${API}/avatar/create`, formDataObj, {
-        headers: { 'Content-Type': 'multipart/form-data' }
-      });
-
-      setAvatarUrl(response.data.avatar_url);
-      setShowChat(true);
-      setChatMessages([
-        {
-          role: 'assistant',
-          content: `Hi ${user.first_name}! I've applied a very light artistic filter to your photo - it should look almost exactly like you with just a subtle touch. Would you like me to adjust the filter? You can ask for things like "add a bit more warmth" or "make it slightly softer".`
+          setAvatarUrl(imageBase64);
+          setShowChat(true);
+          setChatMessages([
+            {
+              role: 'assistant',
+              content: `Hi ${user.first_name}! Here's your photo! You can apply different filter effects using the chat. Try asking for "warmer filter", "brighter", "softer glow", or "cooler tones".`
+            }
+          ]);
+          toast.success('Photo uploaded successfully!');
+          
+          // Update user in localStorage
+          const updatedUser = { ...user, avatar_url: imageBase64 };
+          localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+          setGenerating(false);
+        } catch (error) {
+          toast.error(error.response?.data?.detail || 'Failed to save photo');
+          setGenerating(false);
         }
-      ]);
-      toast.success('Avatar created successfully!');
-      
-      // Update user in localStorage
-      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
-      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+      };
+      reader.readAsDataURL(image);
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to create avatar');
-    } finally {
+      toast.error('Failed to process image');
       setGenerating(false);
     }
   };
