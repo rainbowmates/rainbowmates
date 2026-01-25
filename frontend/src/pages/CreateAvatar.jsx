@@ -18,6 +18,9 @@ export default function CreateAvatar({ user }) {
   const [imagePreview, setImagePreview] = useState(null);
   const [generating, setGenerating] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState(null);
+  const [showChat, setShowChat] = useState(false);
+  const [chatInput, setChatInput] = useState('');
+  const [chatMessages, setChatMessages] = useState([]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
