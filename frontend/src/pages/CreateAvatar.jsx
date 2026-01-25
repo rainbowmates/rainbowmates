@@ -351,7 +351,8 @@ export default function CreateAvatar({ user }) {
       toast.success('Avatar saved!');
       setTimeout(() => navigate('/dashboard'), 1000);
     } else {
-      // Move to step 2 (relationship details)
+      // This shouldn't be called in new creation flow anymore
+      // as we handle it in handleConfirmOutfit
       setStep(2);
     }
   };
