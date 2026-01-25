@@ -112,7 +112,7 @@ export default function CreateAvatar({ user }) {
       
       setChatMessages([...chatMessages, {
         role: 'assistant',
-        content: 'I\'ve refreshed your avatar! How does this one look?'
+        content: 'I\'ve refreshed your avatar with new subtle enhancements! How does this one look?'
       }]);
       toast.success('Avatar refreshed!');
     } catch (error) {
