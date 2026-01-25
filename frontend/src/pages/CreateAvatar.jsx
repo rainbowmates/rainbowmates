@@ -30,6 +30,7 @@ export default function CreateAvatar({ user }) {
       setIsEditMode(true);
       setAvatarUrl(user.avatar_url);
       setShowChat(true);
+      setStep(1); // Start at step 1 even in edit mode
       setChatMessages([
         {
           role: 'assistant',
