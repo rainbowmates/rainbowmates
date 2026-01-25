@@ -419,7 +419,7 @@ export default function CreateAvatar({ user }) {
                     <button
                       data-testid="send-edit-button"
                       onClick={handleEditRequest}
-                      disabled={generating || !chatInput.trim()}
+                      disabled={!chatInput.trim()}
                       className="px-6 py-3 rounded-full bg-neon-pink text-white font-semibold hover:bg-[#D670D7] transition-all disabled:opacity-50"
                     >
                       Send
