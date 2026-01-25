@@ -196,6 +196,49 @@ export default function CreateAvatar({ user }) {
     toast.success(`${preset.name} filter selected! Now choose your outfit.`);
   };
 
+  const handleSelectOutfit = async (category, outfitOption) => {
+    setGenerating(true);
+    setShowOutfitSelection(false);
+    
+    try {
+      // Generate avatar with outfit using AI
+      const response = await axios.post(`${API}/avatar/generate-with-outfit`, {
+        user_id: user.id,
+        base_image: originalPhoto,
+        outfit_description: outfitOption,
+        filter_style: filterStyle
+      });
+
+      setAvatarUrl(response.data.avatar_url);
+      setShowChat(true);
+      
+      // Save to backend
+      await axios.put(`${API}/user/update/${user.id}`, {
+        avatar_url: response.data.avatar_url
+      });
+
+      setChatMessages([
+        {
+          role: 'assistant',
+          content: `Hi ${user.first_name}! Here you are in ${outfitOption}! Looking fabulous! Want to fine-tune the look? Try "warmer", "brighter", or "more vibrant".`
+        }
+      ]);
+      
+      // Update user in localStorage
+      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
+      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+      
+      toast.success('Avatar created with your outfit!');
+    } catch (error) {
+      toast.error('Failed to generate avatar with outfit');
+      // Fallback - just use the filtered photo
+      setAvatarUrl(originalPhoto);
+      setShowChat(true);
+    } finally {
+      setGenerating(false);
+    }
+  };
+
   const handleRefresh = async () => {
     // Reset filters to default
     setFilterStyle({
