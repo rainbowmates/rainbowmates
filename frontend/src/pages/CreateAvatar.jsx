@@ -62,8 +62,6 @@ export default function CreateAvatar({ user }) {
       // Update user in localStorage
       const updatedUser = { ...user, avatar_url: response.data.avatar_url };
       localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-      
-      setTimeout(() => navigate('/dashboard'), 2000);
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create avatar');
     } finally {
