@@ -192,101 +192,114 @@ export default function CreateAvatar({ user }) {
         </div>
 
         <div className="card-soft p-6 space-y-6">
-          {/* Image Upload */}
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-2">
-              Upload Your Photo
-            </label>
-            <div className="relative">
-              {imagePreview ? (
-                <div className="relative w-full h-48 rounded-2xl overflow-hidden">
-                  <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
-                  <button
-                    onClick={() => {
-                      setImage(null);
-                      setImagePreview(null);
-                    }}
-                    className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white"
-                  >
-                    ×
-                  </button>
-                </div>
-              ) : (
-                <label
-                  data-testid="image-upload"
-                  className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-2xl cursor-pointer hover:bg-muted transition-all"
-                >
-                  <Upload className="w-12 h-12 text-dark-purple/40 mb-2" />
-                  <p className="text-sm text-dark-purple/60">Click to upload</p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={handleImageChange}
-                    className="hidden"
-                  />
+          {/* Only show form if not in edit mode or if creating new */}
+          {!isEditMode && (
+            <>
+              {/* Image Upload */}
+              <div>
+                <label className="block text-sm font-medium text-dark-purple mb-2">
+                  Upload Your Photo
                 </label>
-              )}
-            </div>
-          </div>
+                <div className="relative">
+                  {imagePreview ? (
+                    <div className="relative w-full h-48 rounded-2xl overflow-hidden">
+                      <img src={imagePreview} alt="Preview" className="w-full h-full object-cover" />
+                      <button
+                        onClick={() => {
+                          setImage(null);
+                          setImagePreview(null);
+                        }}
+                        className="absolute top-2 right-2 p-2 rounded-full bg-white/80 hover:bg-white"
+                      >
+                        ×
+                      </button>
+                    </div>
+                  ) : (
+                    <label
+                      data-testid="image-upload"
+                      className="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed border-border rounded-2xl cursor-pointer hover:bg-muted transition-all"
+                    >
+                      <Upload className="w-12 h-12 text-dark-purple/40 mb-2" />
+                      <p className="text-sm text-dark-purple/60">Click to upload</p>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageChange}
+                        className="hidden"
+                      />
+                    </label>
+                  )}
+                </div>
+              </div>
 
-          {/* Relationship Status */}
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-2">
-              Relationship Status
-            </label>
-            <select
-              data-testid="relationship-status"
-              value={formData.relationship_status}
-              onChange={(e) => setFormData({ ...formData, relationship_status: e.target.value })}
-              className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
-            >
-              <option>Single</option>
-              <option>Partner</option>
-              <option>Married</option>
-              <option>Open relationship</option>
-              <option>Rather not say</option>
-            </select>
-          </div>
+              {/* Relationship Status */}
+              <div>
+                <label className="block text-sm font-medium text-dark-purple mb-2">
+                  Relationship Status
+                </label>
+                <select
+                  data-testid="relationship-status"
+                  value={formData.relationship_status}
+                  onChange={(e) => setFormData({ ...formData, relationship_status: e.target.value })}
+                  className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                >
+                  <option>Single</option>
+                  <option>Partner</option>
+                  <option>Married</option>
+                  <option>Open relationship</option>
+                  <option>Rather not say</option>
+                </select>
+              </div>
 
-          {/* Relationship With */}
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-2">
-              Relationship With
-            </label>
-            <select
-              data-testid="relationship-with"
-              value={formData.relationship_with}
-              onChange={(e) => setFormData({ ...formData, relationship_with: e.target.value })}
-              className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
-            >
-              <option>Men</option>
-              <option>A woman</option>
-              <option>Multiple women</option>
-              <option>Bi</option>
-              <option>Transgender person</option>
-              <option>Rather not say</option>
-            </select>
-          </div>
+              {/* Relationship With */}
+              <div>
+                <label className="block text-sm font-medium text-dark-purple mb-2">
+                  Relationship With
+                </label>
+                <select
+                  data-testid="relationship-with"
+                  value={formData.relationship_with}
+                  onChange={(e) => setFormData({ ...formData, relationship_with: e.target.value })}
+                  className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                >
+                  <option>Men</option>
+                  <option>A woman</option>
+                  <option>Multiple women</option>
+                  <option>Bi</option>
+                  <option>Transgender person</option>
+                  <option>Rather not say</option>
+                </select>
+              </div>
 
-          {/* Relationship Feel */}
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-2">
-              How does it feel?
-            </label>
-            <select
-              data-testid="relationship-feel"
-              value={formData.relationship_feel}
-              onChange={(e) => setFormData({ ...formData, relationship_feel: e.target.value })}
-              className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
-            >
-              <option>Fun</option>
-              <option>Boring</option>
-              <option>Coming to an end</option>
-              <option>Rather not say</option>
-            </select>
-          </div>
+              {/* Relationship Feel */}
+              <div>
+                <label className="block text-sm font-medium text-dark-purple mb-2">
+                  How does it feel?
+                </label>
+                <select
+                  data-testid="relationship-feel"
+                  value={formData.relationship_feel}
+                  onChange={(e) => setFormData({ ...formData, relationship_feel: e.target.value })}
+                  className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                >
+                  <option>Fun</option>
+                  <option>Boring</option>
+                  <option>Coming to an end</option>
+                  <option>Rather not say</option>
+                </select>
+              </div>
 
-          {/* Generated Avatar */}
+              {/* Create Button */}
+              <button
+                data-testid="create-avatar-button"
+                onClick={handleCreate}
+                disabled={generating}
+                className="w-full neon-button disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {generating ? 'Creating...' : 'Create Avatar'}
+              </button>
+            </>
+          )}
           {avatarUrl && (
             <div className="space-y-4">
               <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-neon-pink">
