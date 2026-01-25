@@ -156,35 +156,42 @@ export default function CreateAvatar({ user }) {
       reader.onload = async (e) => {
         const imageBase64 = e.target.result; // This is the actual uploaded photo
         
-        // Save the EXACT photo (not AI generated) to user profile
-        try {
-          await axios.put(`${API}/user/update/${user.id}`, {
-            avatar_url: imageBase64
-          });
-
-          setAvatarUrl(imageBase64);
-          setShowChat(true);
-          setChatMessages([
-            {
-              role: 'assistant',
-              content: `Hi ${user.first_name}! Here's your photo! You can apply different filter effects using the chat. Try asking for "warmer filter", "brighter", "softer glow", or "cooler tones".`
-            }
-          ]);
-          toast.success('Photo uploaded successfully!');
-          
-          // Update user in localStorage
-          const updatedUser = { ...user, avatar_url: imageBase64 };
-          localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-          setGenerating(false);
-        } catch (error) {
-          toast.error(error.response?.data?.detail || 'Failed to save photo');
-          setGenerating(false);
-        }
+        setAvatarUrl(imageBase64);
+        setShowFilterOptions(true); // Show 4 filter options
+        setGenerating(false);
+        toast.success('Photo uploaded! Choose your favorite filter below.');
       };
       reader.readAsDataURL(image);
     } catch (error) {
       toast.error('Failed to process image');
       setGenerating(false);
+    }
+  };
+
+  const handleSelectFilter = async (preset) => {
+    setSelectedFilterPreset(preset.id);
+    setFilterStyle(preset.style);
+    setShowFilterOptions(false);
+    setShowChat(true);
+    
+    // Save to backend
+    try {
+      await axios.put(`${API}/user/update/${user.id}`, {
+        avatar_url: avatarUrl
+      });
+
+      setChatMessages([
+        {
+          role: 'assistant',
+          content: `Hi ${user.first_name}! You chose "${preset.name}" - looks great! Want to fine-tune it? Try "warmer", "brighter", "more vibrant", or "add glow".`
+        }
+      ]);
+      
+      // Update user in localStorage
+      const updatedUser = { ...user, avatar_url: avatarUrl };
+      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+    } catch (error) {
+      toast.error('Failed to save photo');
     }
   };
 
