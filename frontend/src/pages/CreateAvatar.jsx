@@ -31,6 +31,21 @@ export default function CreateAvatar({ user }) {
   });
   const [showFilterOptions, setShowFilterOptions] = useState(false);
   const [selectedFilterPreset, setSelectedFilterPreset] = useState(null);
+  const [showOutfitSelection, setShowOutfitSelection] = useState(false);
+  const [selectedOutfitCategory, setSelectedOutfitCategory] = useState(null);
+  const [originalPhoto, setOriginalPhoto] = useState(null); // Store original for outfit generation
+
+  // Outfit categories
+  const outfitCategories = [
+    { id: 'casual-jeans', name: 'Jeans & T-Shirt', icon: '👖', options: ['Classic denim & white tee', 'Blue jeans & graphic tee', 'Black jeans & crop top'] },
+    { id: 'casual-shorts', name: 'Shorts & T-Shirt', icon: '🩳', options: ['Denim shorts & tank top', 'Athletic shorts & tee', 'Casual shorts & polo'] },
+    { id: 'summer-dress', name: 'Summer Dress', icon: '👗', options: ['Floral sundress', 'Maxi dress', 'Cotton mini dress'] },
+    { id: 'winter', name: 'Winter Clothes', icon: '🧥', options: ['Sweater & jeans', 'Coat & scarf', 'Hoodie & leggings'] },
+    { id: 'party-dress', name: 'Party Dress', icon: '🎉', options: ['Cocktail dress', 'Sequin dress', 'Little black dress'] },
+    { id: 'evening-gown', name: 'Evening Gown', icon: '✨', options: ['Long satin gown', 'Ball gown', 'Elegant maxi dress'] },
+    { id: 'professional', name: 'Professional', icon: '💼', options: ['Blazer & pants', 'Business dress', 'Suit'] },
+    { id: 'skater-dress', name: 'Skater Dress', icon: '💃', options: ['Classic skater dress', 'Floral skater dress', 'A-line dress'] }
+  ];
 
   // Preset filter options
   const filterPresets = [
