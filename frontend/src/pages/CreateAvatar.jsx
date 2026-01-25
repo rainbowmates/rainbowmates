@@ -21,6 +21,31 @@ export default function CreateAvatar({ user }) {
   const [showChat, setShowChat] = useState(false);
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
+  const [isEditMode, setIsEditMode] = useState(false);
+
+  useEffect(() => {
+    // Check if user already has an avatar (edit mode)
+    if (user.avatar_url) {
+      setIsEditMode(true);
+      setAvatarUrl(user.avatar_url);
+      setShowChat(true);
+      setChatMessages([
+        {
+          role: 'assistant',
+          content: `Hi ${user.first_name}! Here's your current avatar. Would you like me to make any changes? You can describe edits like "make it more vibrant", "add warmer tones", or "try a different style".`
+        }
+      ]);
+      
+      // Load saved relationship data
+      if (user.relationship_status) {
+        setFormData({
+          relationship_status: user.relationship_status || 'Single',
+          relationship_with: user.relationship_with || 'Men',
+          relationship_feel: user.relationship_feel || 'Fun'
+        });
+      }
+    }
+  }, [user]);
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
