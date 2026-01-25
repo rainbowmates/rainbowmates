@@ -260,11 +260,11 @@ async def create_user_avatar(
         image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
         
         if edit_prompt:
-            # Use custom edit prompt if provided
-            prompt = f"Photo portrait with subtle artistic enhancement: {edit_prompt}. Keep it photorealistic, maintain facial features and likeness, just add slight artistic glow or soft effects. Natural lighting, realistic skin tones."
+            # Use custom edit prompt if provided - but keep changes minimal
+            prompt = f"Apply only subtle adjustments to this portrait photo: {edit_prompt}. IMPORTANT: Preserve exact facial features, skin texture, and likeness. Only apply very light filter effects, gentle color adjustments, or subtle lighting changes. Keep it looking like the original person."
         else:
-            # Default prompt - photorealistic with subtle enhancements
-            prompt = f"Photo portrait of a woman with subtle artistic enhancement. Keep it photorealistic and natural, maintain original facial features and likeness. Add only slight soft glow, gentle lighting effects, or subtle color grading. Natural skin tones, realistic details. Relationship status: {relationship_status}."
+            # Default prompt - preserve the exact photo with minimal touches
+            prompt = f"Apply a very subtle artistic filter to this portrait photo. IMPORTANT: Keep the exact same person, facial features, and likeness. Only add slight soft glow, gentle color warmth, or light enhancement. The result should look almost identical to the original with just a hint of artistic touch. Natural and realistic."
         
         images = await image_gen.generate_images(
             prompt=prompt,
