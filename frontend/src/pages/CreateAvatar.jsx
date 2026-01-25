@@ -401,6 +401,41 @@ export default function CreateAvatar({ user }) {
               </button>
             </>
           )}
+
+          {/* Filter Options - Show 4 variations */}
+          {showFilterOptions && avatarUrl && (
+            <div className="space-y-4">
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-dark-purple mb-2">Choose Your Filter</h3>
+                <p className="text-sm text-dark-purple/70">Select the look you like best</p>
+              </div>
+              
+              <div className="grid grid-cols-2 gap-4">
+                {filterPresets.map((preset) => (
+                  <button
+                    key={preset.id}
+                    data-testid={`filter-${preset.id}`}
+                    onClick={() => handleSelectFilter(preset)}
+                    className="relative group cursor-pointer rounded-2xl overflow-hidden border-2 border-transparent hover:border-neon-pink transition-all"
+                  >
+                    <div className="aspect-square overflow-hidden bg-muted">
+                      <img
+                        src={avatarUrl}
+                        alt={preset.name}
+                        className="w-full h-full object-cover"
+                        style={{
+                          filter: `brightness(${preset.style.brightness}%) contrast(${preset.style.contrast}%) saturate(${preset.style.saturate}%) hue-rotate(${preset.style.warmth}deg)`
+                        }}
+                      />
+                    </div>
+                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-dark-purple/90 to-transparent p-3">
+                      <p className="text-white font-semibold text-sm">{preset.name}</p>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
           {/* Generated Avatar */}
           {avatarUrl && (
             <div className="space-y-4">
