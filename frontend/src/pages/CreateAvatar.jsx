@@ -389,7 +389,7 @@ export default function CreateAvatar({ user }) {
                       value={chatInput}
                       onChange={(e) => setChatInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleEditRequest()}
-                      placeholder="e.g., 'add warmer lighting', 'softer look', 'brighter smile'..."
+                      placeholder="e.g., 'a bit warmer', 'slightly softer', 'less glow'..."
                       className="flex-1 px-4 py-3 rounded-full bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
                       disabled={generating}
                     />
