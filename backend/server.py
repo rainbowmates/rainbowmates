@@ -360,6 +360,42 @@ async def edit_user_avatar(user_id: str, edit_description: str):
         logger.error(f"Error editing avatar: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+class OutfitGenerationRequest(BaseModel):
+    user_id: str
+    base_image: str
+    outfit_description: str
+    filter_style: Dict[str, int]
+
+@api_router.post("/avatar/generate-with-outfit")
+async def generate_avatar_with_outfit(request: OutfitGenerationRequest):
+    """Generate avatar wearing specified outfit while keeping face identical"""
+    try:
+        # Decode base64 image
+        image_data = request.base_image.split(',')[1] if ',' in request.base_image else request.base_image
+        
+        image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
+        
+        # Prompt to keep face but change outfit
+        prompt = f"Full body portrait of the EXACT same person from the reference photo, wearing {request.outfit_description}. CRITICAL: Keep the person's face, skin tone, hair, and all features IDENTICAL to the original. Only change the clothing to: {request.outfit_description}. Photorealistic, professional portrait, full body shot showing the outfit clearly."
+        
+        images = await image_gen.generate_images(
+            prompt=prompt,
+            model="gpt-image-1",
+            number_of_images=1
+        )
+        
+        if images and len(images) > 0:
+            avatar_base64 = base64.b64encode(images[0]).decode('utf-8')
+            avatar_url = f"data:image/png;base64,{avatar_base64}"
+            
+            return {"avatar_url": avatar_url}
+        else:
+            raise HTTPException(status_code=500, detail="Failed to generate avatar")
+            
+    except Exception as e:
+        logger.error(f"Error generating outfit avatar: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============= BESTIE ROUTES =============
 
 @api_router.post("/bestie/create")
