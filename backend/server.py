@@ -327,6 +327,40 @@ async def refresh_user_avatar(user_id: str):
         logger.error(f"Error refreshing avatar: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+@api_router.post("/avatar/edit/{user_id}")
+async def edit_user_avatar(user_id: str, edit_description: str):
+    """Edit user avatar based on description"""
+    user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    try:
+        image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
+        # Create a prompt that incorporates the edit request
+        base_prompt = f"Create a stylized avatar for a woman who is {user_doc.get('relationship_status')}"
+        prompt = f"{base_prompt}, {edit_description}. Artistic, friendly, colorful avatar style."
+        
+        images = await image_gen.generate_images(
+            prompt=prompt,
+            model="gpt-image-1",
+            number_of_images=1
+        )
+        
+        if images and len(images) > 0:
+            avatar_base64 = base64.b64encode(images[0]).decode('utf-8')
+            avatar_url = f"data:image/png;base64,{avatar_base64}"
+            
+            await db.users.update_one(
+                {"id": user_id},
+                {"$set": {"avatar_url": avatar_url}}
+            )
+            
+            return {"avatar_url": avatar_url}
+            
+    except Exception as e:
+        logger.error(f"Error editing avatar: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============= BESTIE ROUTES =============
 
 @api_router.post("/bestie/create")
