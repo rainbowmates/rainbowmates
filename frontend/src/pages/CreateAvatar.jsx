@@ -374,16 +374,6 @@ export default function CreateAvatar({ user }) {
               </div>
             </div>
           )}
-
-          {/* Create Button */}
-          <button
-            data-testid="create-avatar-button"
-            onClick={handleCreate}
-            disabled={generating}
-            className="w-full neon-button disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {generating ? 'Creating...' : 'Create Avatar'}
-          </button>
         </div>
       </div>
     </div>
