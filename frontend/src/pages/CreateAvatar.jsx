@@ -50,6 +50,13 @@ export default function CreateAvatar({ user }) {
       });
 
       setAvatarUrl(response.data.avatar_url);
+      setShowChat(true);
+      setChatMessages([
+        {
+          role: 'assistant',
+          content: `Hi Susie! I've created your avatar based on your profile. What do you think? Would you like me to make any changes? You can ask me to adjust colors, style, mood, or anything else!`
+        }
+      ]);
       toast.success('Avatar created successfully!');
       
       // Update user in localStorage
