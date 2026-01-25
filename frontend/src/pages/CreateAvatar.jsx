@@ -22,6 +22,7 @@ export default function CreateAvatar({ user }) {
   const [chatInput, setChatInput] = useState('');
   const [chatMessages, setChatMessages] = useState([]);
   const [isEditMode, setIsEditMode] = useState(false);
+  const [step, setStep] = useState(1); // 1: image upload, 2: relationship details
 
   useEffect(() => {
     // Check if user already has an avatar (edit mode)
