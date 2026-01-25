@@ -372,7 +372,14 @@ export default function CreateAvatar({ user }) {
           {avatarUrl && (
             <div className="space-y-4">
               <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-neon-pink">
-                <img src={avatarUrl} alt="Generated Avatar" className="w-full h-full object-cover" />
+                <img 
+                  src={avatarUrl} 
+                  alt="Generated Avatar" 
+                  className="w-full h-full object-cover"
+                  style={{
+                    filter: `brightness(${filterStyle.brightness}%) contrast(${filterStyle.contrast}%) saturate(${filterStyle.saturate}%) hue-rotate(${filterStyle.warmth}deg)`
+                  }}
+                />
               </div>
               
               {showChat && (
