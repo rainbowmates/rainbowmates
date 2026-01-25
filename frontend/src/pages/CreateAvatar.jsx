@@ -208,7 +208,7 @@ export default function CreateAvatar({ user }) {
         
         setChatMessages([...chatMessages, userMessage, {
           role: 'assistant',
-          content: 'I\'ve created a fresh version with natural enhancements! How about this one?'
+          content: 'I\'ve tried a different light filter - still looks like you! Better?'
         }]);
       } catch (err) {
         toast.error('Failed to update avatar');
