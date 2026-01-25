@@ -62,7 +62,11 @@ export default function Dashboard({ user, onLogout }) {
         </div>
 
         {/* User Avatar Card */}
-        <div className="card-soft p-6" data-testid="user-avatar-card">
+        <div 
+          className={`card-soft p-6 ${user.avatar_url ? 'cursor-pointer' : ''}`}
+          data-testid="user-avatar-card"
+          onClick={() => user.avatar_url && navigate('/create-avatar')}
+        >
           <div className="flex items-center gap-4">
             <div className="w-20 h-20 rounded-full bg-gradient-to-br from-neon-pink to-soft-blue flex items-center justify-center overflow-hidden">
               {user.avatar_url ? (
@@ -74,10 +78,10 @@ export default function Dashboard({ user, onLogout }) {
             <div className="flex-1">
               <h3 className="text-xl font-bold text-dark-purple">Your Avatar</h3>
               <p className="text-sm text-dark-purple/70">
-                {user.avatar_url ? 'Looking fabulous!' : 'Create your avatar'}
+                {user.avatar_url ? 'Click to edit' : 'Create your avatar'}
               </p>
             </div>
-            {!user.avatar_url && (
+            {!user.avatar_url ? (
               <button
                 data-testid="create-avatar-button"
                 onClick={() => navigate('/create-avatar')}
@@ -85,6 +89,12 @@ export default function Dashboard({ user, onLogout }) {
               >
                 Create
               </button>
+            ) : (
+              <div className="text-neon-pink">
+                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </div>
             )}
           </div>
         </div>
