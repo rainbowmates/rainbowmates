@@ -163,25 +163,76 @@ export default function CreateAvatar({ user }) {
   };
 
   const handleRefresh = async () => {
-    setGenerating(true);
-    try {
-      const response = await axios.get(`${API}/avatar/refresh/${user.id}`);
-      setAvatarUrl(response.data.avatar_url);
-      
-      // Update user in localStorage
-      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
-      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-      
-      setChatMessages([...chatMessages, {
-        role: 'assistant',
-        content: 'I\'ve applied a new subtle filter - looks just like you! How about this version?'
-      }]);
-      toast.success('Avatar refreshed!');
-    } catch (error) {
-      toast.error('Failed to refresh avatar');
-    } finally {
-      setGenerating(false);
+    // Reset filters to default
+    setFilterStyle({
+      brightness: 100,
+      contrast: 100,
+      saturate: 100,
+      warmth: 0
+    });
+    
+    setChatMessages([...chatMessages, {
+      role: 'assistant',
+      content: 'Filters reset to original! Your photo looks fresh again.'
+    }]);
+    toast.success('Filters reset!');
+  };
+
+  const applyFilter = (request) => {
+    const lower = request.toLowerCase();
+    let newFilters = { ...filterStyle };
+    let applied = [];
+
+    // Brightness adjustments
+    if (lower.includes('brighter') || lower.includes('lighter')) {
+      newFilters.brightness = Math.min(150, filterStyle.brightness + 15);
+      applied.push('brighter');
     }
+    if (lower.includes('darker') || lower.includes('dimmer')) {
+      newFilters.brightness = Math.max(70, filterStyle.brightness - 15);
+      applied.push('darker');
+    }
+
+    // Warmth adjustments
+    if (lower.includes('warm') || lower.includes('warmer')) {
+      newFilters.warmth = Math.min(30, filterStyle.warmth + 10);
+      applied.push('warmer tones');
+    }
+    if (lower.includes('cool') || lower.includes('cooler')) {
+      newFilters.warmth = Math.max(-30, filterStyle.warmth - 10);
+      applied.push('cooler tones');
+    }
+
+    // Saturation/Vibrance
+    if (lower.includes('vibrant') || lower.includes('colorful') || lower.includes('saturate')) {
+      newFilters.saturate = Math.min(150, filterStyle.saturate + 20);
+      applied.push('more vibrant');
+    }
+    if (lower.includes('muted') || lower.includes('desaturate') || lower.includes('less color')) {
+      newFilters.saturate = Math.max(70, filterStyle.saturate - 20);
+      applied.push('less saturated');
+    }
+
+    // Contrast
+    if (lower.includes('contrast')) {
+      if (lower.includes('more') || lower.includes('higher')) {
+        newFilters.contrast = Math.min(130, filterStyle.contrast + 15);
+        applied.push('more contrast');
+      } else if (lower.includes('less') || lower.includes('lower') || lower.includes('softer')) {
+        newFilters.contrast = Math.max(80, filterStyle.contrast - 15);
+        applied.push('softer look');
+      }
+    }
+
+    // Glow effect (brightness + slight desaturation)
+    if (lower.includes('glow')) {
+      newFilters.brightness = Math.min(130, filterStyle.brightness + 10);
+      newFilters.saturate = Math.max(90, filterStyle.saturate - 5);
+      applied.push('soft glow');
+    }
+
+    setFilterStyle(newFilters);
+    return applied.length > 0 ? applied.join(', ') : 'subtle adjustments';
   };
 
   const handleEditRequest = async () => {
@@ -191,45 +242,14 @@ export default function CreateAvatar({ user }) {
     setChatMessages([...chatMessages, userMessage]);
     const editText = chatInput;
     setChatInput('');
-    setGenerating(true);
 
-    try {
-      // Call the edit endpoint with the description
-      const response = await axios.post(
-        `${API}/avatar/edit/${user.id}?edit_description=${encodeURIComponent(editText)}`
-      );
-      
-      setAvatarUrl(response.data.avatar_url);
-      
-      // Update user in localStorage
-      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
-      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-
-      setChatMessages([...chatMessages, userMessage, {
-        role: 'assistant',
-        content: 'I\'ve applied that adjustment - the photo should still look exactly like you! How\'s this?'
-      }]);
-    } catch (error) {
-      toast.error('Failed to update avatar. Let me try refreshing it!');
-      
-      // Fallback to refresh
-      try {
-        const response = await axios.get(`${API}/avatar/refresh/${user.id}`);
-        setAvatarUrl(response.data.avatar_url);
-        
-        const updatedUser = { ...user, avatar_url: response.data.avatar_url };
-        localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-        
-        setChatMessages([...chatMessages, userMessage, {
-          role: 'assistant',
-          content: 'I\'ve tried a different light filter - still looks like you! Better?'
-        }]);
-      } catch (err) {
-        toast.error('Failed to update avatar');
-      }
-    } finally {
-      setGenerating(false);
-    }
+    // Apply CSS filters based on the request
+    const appliedFilters = applyFilter(editText);
+    
+    setChatMessages([...chatMessages, userMessage, {
+      role: 'assistant',
+      content: `Applied ${appliedFilters}! Your photo still looks like you, just with enhanced effects. How's this?`
+    }]);
   };
 
   const handleContinue = () => {
