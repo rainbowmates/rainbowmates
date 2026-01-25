@@ -85,7 +85,7 @@ export default function CreateAvatar({ user }) {
       setChatMessages([
         {
           role: 'assistant',
-          content: `Hi ${user.first_name}! I've created your avatar based on your profile. What do you think? Would you like me to make any changes? You can ask me to adjust colors, style, mood, or anything else!`
+          content: `Hi ${user.first_name}! I've created your avatar based on your photo. It's a natural-looking portrait with subtle artistic touches. Would you like me to adjust the lighting, add a soft glow, change the mood, or make any other subtle enhancements?`
         }
       ]);
       toast.success('Avatar created successfully!');
