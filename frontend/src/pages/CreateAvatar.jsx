@@ -495,8 +495,73 @@ export default function CreateAvatar({ user }) {
               </button>
             </div>
           )}
+
+          {/* Outfit Selection */}
+          {showOutfitSelection && (
+            <div className="space-y-6">
+              <div className="text-center">
+                <h3 className="text-lg font-bold text-dark-purple mb-2">Choose Your Outfit</h3>
+                <p className="text-sm text-dark-purple/70">Select a style to create your avatar</p>
+              </div>
+
+              {selectedOutfitCategory === null ? (
+                // Show outfit categories
+                <div className="grid grid-cols-2 gap-4">
+                  {outfitCategories.map((category) => (
+                    <button
+                      key={category.id}
+                      data-testid={`outfit-category-${category.id}`}
+                      onClick={() => setSelectedOutfitCategory(category)}
+                      className="card-soft p-6 hover:scale-[1.02] transition-all text-center"
+                    >
+                      <div className="text-4xl mb-2">{category.icon}</div>
+                      <h4 className="font-bold text-dark-purple">{category.name}</h4>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                // Show options within selected category
+                <div className="space-y-4">
+                  <button
+                    onClick={() => setSelectedOutfitCategory(null)}
+                    className="flex items-center gap-2 text-dark-purple hover:text-neon-pink transition-all"
+                  >
+                    <ArrowLeft className="w-4 h-4" />
+                    <span className="text-sm font-medium">Back to categories</span>
+                  </button>
+
+                  <div className="text-center mb-4">
+                    <div className="text-3xl mb-2">{selectedOutfitCategory.icon}</div>
+                    <h3 className="text-xl font-bold text-dark-purple">{selectedOutfitCategory.name}</h3>
+                  </div>
+
+                  <div className="space-y-3">
+                    {selectedOutfitCategory.options.map((option, idx) => (
+                      <button
+                        key={idx}
+                        data-testid={`outfit-option-${idx}`}
+                        onClick={() => handleSelectOutfit(selectedOutfitCategory, option)}
+                        disabled={generating}
+                        className="w-full p-4 rounded-2xl bg-gradient-to-r from-muted to-soft-blue/20 hover:from-neon-pink/10 hover:to-soft-blue/30 text-left transition-all disabled:opacity-50"
+                      >
+                        <p className="font-semibold text-dark-purple">{option}</p>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {generating && (
+                <div className="text-center py-8">
+                  <div className="inline-block w-12 h-12 border-4 border-neon-pink border-t-transparent rounded-full animate-spin mb-4"></div>
+                  <p className="text-dark-purple font-medium">Creating your avatar...</p>
+                </div>
+              )}
+            </div>
+          )}
+          
           {/* Generated Avatar */}
-          {avatarUrl && !showFilterOptions && (
+          {avatarUrl && !showFilterOptions && !showOutfitSelection && (
             <div className="space-y-4">
               <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-neon-pink">
                 <img 
