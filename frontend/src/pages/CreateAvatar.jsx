@@ -405,6 +405,89 @@ export default function CreateAvatar({ user }) {
             </div>
           )}
         </div>
+        ) : (
+          // STEP 2: Relationship Details
+          <div className="card-soft p-6 space-y-6">
+            <div className="text-center mb-4">
+              <p className="text-dark-purple/70">Tell us a bit about yourself to personalize your experience</p>
+            </div>
+
+            {/* Relationship Status */}
+            <div>
+              <label className="block text-sm font-medium text-dark-purple mb-2">
+                Relationship Status
+              </label>
+              <select
+                data-testid="relationship-status"
+                value={formData.relationship_status}
+                onChange={(e) => setFormData({ ...formData, relationship_status: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+              >
+                <option>Single</option>
+                <option>Partner</option>
+                <option>Married</option>
+                <option>Open relationship</option>
+                <option>Rather not say</option>
+              </select>
+            </div>
+
+            {/* Relationship With */}
+            <div>
+              <label className="block text-sm font-medium text-dark-purple mb-2">
+                Relationship With
+              </label>
+              <select
+                data-testid="relationship-with"
+                value={formData.relationship_with}
+                onChange={(e) => setFormData({ ...formData, relationship_with: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+              >
+                <option>Men</option>
+                <option>A woman</option>
+                <option>Multiple women</option>
+                <option>Bi</option>
+                <option>Transgender person</option>
+                <option>Rather not say</option>
+              </select>
+            </div>
+
+            {/* Relationship Feel */}
+            <div>
+              <label className="block text-sm font-medium text-dark-purple mb-2">
+                How does it feel?
+              </label>
+              <select
+                data-testid="relationship-feel"
+                value={formData.relationship_feel}
+                onChange={(e) => setFormData({ ...formData, relationship_feel: e.target.value })}
+                className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+              >
+                <option>Fun</option>
+                <option>Boring</option>
+                <option>Coming to an end</option>
+                <option>Rather not say</option>
+              </select>
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                data-testid="back-to-avatar-button"
+                onClick={() => setStep(1)}
+                className="flex-1 py-3 px-6 rounded-full bg-white border-2 border-neon-pink text-dark-purple font-semibold hover:bg-muted transition-all"
+              >
+                Back
+              </button>
+              <button
+                data-testid="save-profile-button"
+                onClick={handleSaveProfile}
+                disabled={generating}
+                className="flex-1 neon-button disabled:opacity-50"
+              >
+                {generating ? 'Saving...' : 'Complete Profile'}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
