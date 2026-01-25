@@ -111,9 +111,9 @@ export default function CreateAvatar({ user }) {
       return;
     }
 
-    // If in edit mode and no new image, skip image upload
+    // If in edit mode and no new image, skip to step 2
     if (isEditMode && !image) {
-      toast.info('Use the chat below to describe changes you want!');
+      setStep(2);
       return;
     }
 
