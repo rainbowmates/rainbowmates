@@ -452,7 +452,7 @@ export default function CreateAvatar({ user }) {
             </div>
           )}
           {/* Generated Avatar */}
-          {avatarUrl && (
+          {avatarUrl && !showFilterOptions && (
             <div className="space-y-4">
               <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-neon-pink">
                 <img 
@@ -464,6 +464,25 @@ export default function CreateAvatar({ user }) {
                   }}
                 />
               </div>
+
+              {/* Re-upload option when avatar is shown */}
+              {!isEditMode && (
+                <button
+                  data-testid="change-photo-button"
+                  onClick={() => {
+                    setAvatarUrl(null);
+                    setImage(null);
+                    setImagePreview(null);
+                    setShowChat(false);
+                    setChatMessages([]);
+                    setFilterStyle({ brightness: 100, contrast: 100, saturate: 100, warmth: 0 });
+                    toast.info('Upload a new photo');
+                  }}
+                  className="w-full py-2 px-4 rounded-full bg-muted text-dark-purple text-sm font-medium hover:bg-border transition-all"
+                >
+                  Upload Different Photo
+                </button>
+              )}
               
               {showChat && (
                 <>
