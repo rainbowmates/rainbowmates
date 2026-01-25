@@ -247,7 +247,8 @@ async def create_user_avatar(
     relationship_status: str = Form(...),
     relationship_with: str = Form(...),
     relationship_feel: str = Form(...),
-    image: UploadFile = File(...)
+    image: UploadFile = File(...),
+    edit_prompt: Optional[str] = Form(None)
 ):
     """Create user avatar with AI"""
     try:
@@ -257,7 +258,13 @@ async def create_user_avatar(
         
         # Generate avatar using OpenAI
         image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
-        prompt = f"Create a stylized avatar for a woman who is {relationship_status}, in a relationship with {relationship_with}, feeling {relationship_feel}. Artistic, friendly, colorful style."
+        
+        if edit_prompt:
+            # Use custom edit prompt if provided
+            prompt = edit_prompt
+        else:
+            # Default prompt
+            prompt = f"Create a stylized avatar for a woman who is {relationship_status}, in a relationship with {relationship_with}, feeling {relationship_feel}. Artistic, friendly, colorful style."
         
         images = await image_gen.generate_images(
             prompt=prompt,
