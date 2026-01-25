@@ -187,7 +187,7 @@ export default function CreateAvatar({ user }) {
             <ArrowLeft className="w-6 h-6 text-dark-purple" />
           </button>
           <h1 className="text-3xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            Create Your Avatar
+            {isEditMode ? 'Edit Your Avatar' : 'Create Your Avatar'}
           </h1>
         </div>
 
