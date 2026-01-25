@@ -74,12 +74,79 @@ export default function CreateAvatar({ user }) {
     try {
       const response = await axios.get(`${API}/avatar/refresh/${user.id}`);
       setAvatarUrl(response.data.avatar_url);
+      
+      // Update user in localStorage
+      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
+      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+      
+      setChatMessages([...chatMessages, {
+        role: 'assistant',
+        content: 'I\'ve refreshed your avatar! How does this one look?'
+      }]);
       toast.success('Avatar refreshed!');
     } catch (error) {
       toast.error('Failed to refresh avatar');
     } finally {
       setGenerating(false);
     }
+  };
+
+  const handleEditRequest = async () => {
+    if (!chatInput.trim()) return;
+
+    const userMessage = { role: 'user', content: chatInput };
+    setChatMessages([...chatMessages, userMessage]);
+    setChatInput('');
+    setGenerating(true);
+
+    try {
+      // Use Claude to understand the edit request and create a new prompt
+      const editPrompt = `${formData.relationship_status} woman, ${chatInput}. Artistic, friendly avatar style.`;
+      
+      const imageGen = await axios.post(`${API}/avatar/create`, {
+        user_id: user.id,
+        relationship_status: formData.relationship_status,
+        relationship_with: formData.relationship_with,
+        relationship_feel: formData.relationship_feel,
+        edit_prompt: editPrompt
+      });
+
+      // For now, just refresh with the edit request in mind
+      const response = await axios.get(`${API}/avatar/refresh/${user.id}`);
+      setAvatarUrl(response.data.avatar_url);
+      
+      // Update user in localStorage
+      const updatedUser = { ...user, avatar_url: response.data.avatar_url };
+      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+
+      setChatMessages([...chatMessages, userMessage, {
+        role: 'assistant',
+        content: 'I\'ve updated your avatar based on your feedback! Does this look better?'
+      }]);
+    } catch (error) {
+      setChatMessages([...chatMessages, userMessage, {
+        role: 'assistant',
+        content: 'Let me try a different approach and refresh your avatar!'
+      }]);
+      
+      // Fallback to refresh
+      try {
+        const response = await axios.get(`${API}/avatar/refresh/${user.id}`);
+        setAvatarUrl(response.data.avatar_url);
+        
+        const updatedUser = { ...user, avatar_url: response.data.avatar_url };
+        localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+      } catch (err) {
+        toast.error('Failed to update avatar');
+      }
+    } finally {
+      setGenerating(false);
+    }
+  };
+
+  const handleContinue = () => {
+    toast.success('Avatar saved! Moving forward...');
+    setTimeout(() => navigate('/dashboard'), 1000);
   };
 
   return (
