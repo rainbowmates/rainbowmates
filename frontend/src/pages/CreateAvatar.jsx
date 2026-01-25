@@ -221,8 +221,36 @@ export default function CreateAvatar({ user }) {
   };
 
   const handleContinue = () => {
-    toast.success('Avatar saved! Moving forward...');
-    setTimeout(() => navigate('/dashboard'), 1000);
+    // Move to step 2 (relationship details)
+    setStep(2);
+  };
+
+  const handleSaveProfile = async () => {
+    setGenerating(true);
+    try {
+      // Update user profile with relationship details
+      await axios.put(`${API}/user/update/${user.id}`, {
+        relationship_status: formData.relationship_status,
+        relationship_with: formData.relationship_with,
+        relationship_feel: formData.relationship_feel
+      });
+
+      // Update localStorage
+      const updatedUser = {
+        ...user,
+        relationship_status: formData.relationship_status,
+        relationship_with: formData.relationship_with,
+        relationship_feel: formData.relationship_feel
+      };
+      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+
+      toast.success('Profile saved successfully!');
+      setTimeout(() => navigate('/dashboard'), 1000);
+    } catch (error) {
+      toast.error('Failed to save profile');
+    } finally {
+      setGenerating(false);
+    }
   };
 
   return (
