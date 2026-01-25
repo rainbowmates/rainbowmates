@@ -32,7 +32,7 @@ export default function CreateAvatar({ user }) {
       setChatMessages([
         {
           role: 'assistant',
-          content: `Hi ${user.first_name}! Here's your current avatar - it's based on your real photo with subtle artistic touches. Would you like me to adjust the lighting, add warmth, change the mood, or make other gentle enhancements? I'll keep it looking natural and like you!`
+          content: `Hi ${user.first_name}! Here's your avatar - it looks exactly like you with just a light artistic touch. Want to adjust the filter? Just ask for small changes like "warmer tones" or "softer glow".`
         }
       ]);
       
