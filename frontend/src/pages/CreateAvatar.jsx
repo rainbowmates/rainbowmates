@@ -414,7 +414,7 @@ export default function CreateAvatar({ user }) {
                       onKeyPress={(e) => e.key === 'Enter' && handleEditRequest()}
                       placeholder="e.g., 'warmer', 'brighter', 'more vibrant', 'add glow'..."
                       className="flex-1 px-4 py-3 rounded-full bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
-                      disabled={generating}
+                      disabled={false}
                     />
                     <button
                       data-testid="send-edit-button"
