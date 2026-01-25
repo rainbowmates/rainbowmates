@@ -432,11 +432,10 @@ export default function CreateAvatar({ user }) {
                 <button
                   data-testid="refresh-avatar-button"
                   onClick={handleRefresh}
-                  disabled={generating}
                   className="flex-1 py-3 px-6 rounded-full bg-white border-2 border-neon-pink text-dark-purple font-semibold hover:bg-muted transition-all flex items-center justify-center gap-2"
                 >
-                  <RefreshCw className={`w-5 h-5 ${generating ? 'animate-spin' : ''}`} />
-                  Try Another
+                  <RefreshCw className="w-5 h-5" />
+                  Reset Filters
                 </button>
                 <button
                   data-testid="continue-button"
