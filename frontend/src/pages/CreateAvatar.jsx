@@ -399,7 +399,7 @@ export default function CreateAvatar({ user }) {
                   disabled={generating}
                   className="flex-1 neon-button disabled:opacity-50"
                 >
-                  Looks Great! Continue
+                  {isEditMode ? 'Save & Exit' : 'Next: About You'}
                 </button>
               </div>
             </div>
