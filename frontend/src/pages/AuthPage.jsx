@@ -343,10 +343,16 @@ export default function AuthPage({ onLogin }) {
                       type="date"
                       value={registerData.dob}
                       onChange={(e) => setRegisterData({ ...registerData, dob: e.target.value })}
-                      className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                      max={new Date().toISOString().split('T')[0]}
+                      className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
+                        errors.dob ? 'border-red-500' : 'border-transparent'
+                      } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                       required
                       autoComplete="bday"
                     />
+                    {errors.dob && (
+                      <p className="text-red-500 text-xs mt-1">{errors.dob}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
@@ -358,12 +364,18 @@ export default function AuthPage({ onLogin }) {
                         data-testid="register-mobile"
                         type="tel"
                         value={registerData.mobile}
-                        onChange={(e) => setRegisterData({ ...registerData, mobile: e.target.value })}
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        onChange={(e) => setRegisterData({ ...registerData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
+                        placeholder="10-digit number"
+                        className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.mobile ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="tel"
                       />
                     </div>
+                    {errors.mobile && (
+                      <p className="text-red-500 text-xs mt-1">{errors.mobile}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
@@ -376,11 +388,16 @@ export default function AuthPage({ onLogin }) {
                         type="email"
                         value={registerData.email}
                         onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.email ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="email"
                       />
                     </div>
+                    {errors.email && (
+                      <p className="text-red-500 text-xs mt-1">{errors.email}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
@@ -393,11 +410,16 @@ export default function AuthPage({ onLogin }) {
                         type="password"
                         value={registerData.password}
                         onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.password ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="new-password"
                       />
                     </div>
+                    {errors.password && (
+                      <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                    )}
                   </div>
                   <button
                     data-testid="register-button"
