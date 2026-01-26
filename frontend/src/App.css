@@ -1,18 +1,21 @@
 .App {
   min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
   background: #FFFFFF;
-  /* Prevent scroll when keyboard opens on mobile */
-  position: fixed;
   width: 100%;
-  overflow: auto;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
 .app-container {
   max-width: 28rem;
   margin: 0 auto;
   min-height: 100vh;
+  min-height: 100dvh;
   position: relative;
   background: #FFFFFF;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 .gradient-mesh {
