@@ -1,6 +1,10 @@
 .App {
   min-height: 100vh;
   background: #FFFFFF;
+  /* Prevent scroll when keyboard opens on mobile */
+  position: fixed;
+  width: 100%;
+  overflow: auto;
 }
 
 .app-container {
@@ -8,8 +12,6 @@
   margin: 0 auto;
   min-height: 100vh;
   position: relative;
-  overflow: hidden;
-  box-shadow: 0 0 50px rgba(0, 0, 0, 0.1);
   background: #FFFFFF;
 }
 
