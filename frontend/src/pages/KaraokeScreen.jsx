@@ -27,7 +27,7 @@ export default function KaraokeScreen({ user }) {
   };
 
   return (
-    <div className="app-container gradient-mesh min-h-screen">
+    <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
       <div className="p-6 space-y-6">
         <div className="flex items-center gap-4">
           <button
