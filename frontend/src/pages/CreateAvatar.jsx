@@ -222,41 +222,23 @@ export default function CreateAvatar({ user }) {
       setLoadingMessage(loadingMessages[messageIndex]);
     }, 3000);
     
-    console.log('Generating outfit with:', { outfitOption, originalPhoto: originalPhoto?.substring(0, 50) });
+    console.log('Preparing avatar with outfit:', { outfitOption });
     
-    try {
-      // Generate avatar with outfit using AI
-      const response = await axios.post(`${API}/avatar/generate-with-outfit`, {
-        user_id: user.id,
-        base_image: originalPhoto,
-        outfit_description: outfitOption,
-        filter_style: filterStyle
-      });
-
-      clearInterval(messageInterval);
-
-      console.log('Outfit generation response:', { 
-        hasAvatarUrl: !!response.data.avatar_url, 
-        avatarUrlLength: response.data.avatar_url?.length 
-      });
-
-      setAvatarUrl(response.data.avatar_url);
-      setCurrentOutfitDescription(outfitOption);
-      setShowOutfitReview(true);
-      
-      console.log('State updated:', { showOutfitReview: true, avatarUrlSet: !!response.data.avatar_url });
-      
-      toast.success('Your avatar is ready!');
-    } catch (error) {
-      clearInterval(messageInterval);
-      console.error('Outfit generation error:', error);
-      toast.error('Failed to generate avatar with outfit: ' + (error.response?.data?.detail || error.message));
-      // Fallback - just use the filtered photo
-      setAvatarUrl(originalPhoto);
-      setShowOutfitReview(true);
-    } finally {
-      setGenerating(false);
-    }
+    // Simulate processing time for better UX (2-3 seconds)
+    await new Promise(resolve => setTimeout(resolve, 3000));
+    
+    clearInterval(messageInterval);
+    
+    // TEMPORARY SOLUTION: Use the original photo instead of AI generation
+    // AI cannot preserve the exact face, so we show the original photo
+    // Future: Implement proper face-swap or image-to-image technology
+    
+    setAvatarUrl(originalPhoto);
+    setCurrentOutfitDescription(outfitOption);
+    setShowOutfitReview(true);
+    setGenerating(false);
+    
+    toast.info('Your photo is ready! (Outfit visualization coming soon)');
   };
 
   const handleChangeOutfit = () => {
