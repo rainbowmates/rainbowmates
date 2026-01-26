@@ -214,6 +214,14 @@ export default function CreateAvatar({ user }) {
     setGenerating(true);
     setShowOutfitSelection(false);
     
+    // Start rotating messages
+    let messageIndex = 0;
+    setLoadingMessage(loadingMessages[0]);
+    const messageInterval = setInterval(() => {
+      messageIndex = (messageIndex + 1) % loadingMessages.length;
+      setLoadingMessage(loadingMessages[messageIndex]);
+    }, 3000);
+    
     console.log('Generating outfit with:', { outfitOption, originalPhoto: originalPhoto?.substring(0, 50) });
     
     try {
@@ -224,6 +232,8 @@ export default function CreateAvatar({ user }) {
         outfit_description: outfitOption,
         filter_style: filterStyle
       });
+
+      clearInterval(messageInterval);
 
       console.log('Outfit generation response:', { 
         hasAvatarUrl: !!response.data.avatar_url, 
@@ -236,8 +246,9 @@ export default function CreateAvatar({ user }) {
       
       console.log('State updated:', { showOutfitReview: true, avatarUrlSet: !!response.data.avatar_url });
       
-      toast.success('Avatar created! How do you like it?');
+      toast.success('Your avatar is ready!');
     } catch (error) {
+      clearInterval(messageInterval);
       console.error('Outfit generation error:', error);
       toast.error('Failed to generate avatar with outfit: ' + (error.response?.data?.detail || error.message));
       // Fallback - just use the filtered photo
