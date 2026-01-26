@@ -721,11 +721,14 @@ async def speech_to_text(audio_file: UploadFile = File(...)):
         
         try:
             stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
-            response = await stt.transcribe(
-                file=tmp_path,
-                model="whisper-1",
-                response_format="json"
-            )
+            
+            # Open the file and pass the file handle (not the path string)
+            with open(tmp_path, 'rb') as audio_file_handle:
+                response = await stt.transcribe(
+                    file=audio_file_handle,
+                    model="whisper-1",
+                    response_format="json"
+                )
             
             return {"text": response.text}
         finally:
