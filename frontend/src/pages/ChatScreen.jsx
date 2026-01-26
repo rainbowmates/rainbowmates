@@ -13,15 +13,22 @@ export default function ChatScreen({ user }) {
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
+  const [showTyping, setShowTyping] = useState(false);
   const messagesEndRef = useRef(null);
+  const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
     fetchBestieAndMessages();
+    return () => {
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+    };
   }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messages, showTyping]);
 
   const fetchBestieAndMessages = async () => {
     try {
@@ -45,15 +52,24 @@ export default function ChatScreen({ user }) {
     // Clear input first, then update messages
     setInput('');
     setMessages(prev => [...prev, userMessage]);
-    
-    // Only show typing indicator AFTER user message is sent
     setLoading(true);
+    
+    // Show typing indicator after a small delay (bestie is "reading" the message first)
+    typingTimeoutRef.current = setTimeout(() => {
+      setShowTyping(true);
+    }, 500);
 
     try {
       const response = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
         bestie_id: bestie.id,
         content: messageContent
       });
+
+      // Clear typing indicator
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      setShowTyping(false);
 
       const bestieMessage = {
         role: 'bestie',
@@ -63,6 +79,10 @@ export default function ChatScreen({ user }) {
       setMessages(prev => [...prev, bestieMessage]);
     } catch (error) {
       toast.error('Failed to send message');
+      if (typingTimeoutRef.current) {
+        clearTimeout(typingTimeoutRef.current);
+      }
+      setShowTyping(false);
     } finally {
       setLoading(false);
     }
