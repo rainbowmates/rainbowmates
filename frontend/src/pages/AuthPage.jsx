@@ -9,6 +9,7 @@ const API = `${BACKEND_URL}/api`;
 export default function AuthPage({ onLogin }) {
   const [mode, setMode] = useState('login');
   const [step, setStep] = useState('auth');
+  const [errors, setErrors] = useState({});
   
   // Separate state for each form to avoid mixing
   const [loginData, setLoginData] = useState({
@@ -29,6 +30,104 @@ export default function AuthPage({ onLogin }) {
     identifier: '',
     otp: ''
   });
+
+  // Validation functions
+  const validateEmail = (email) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const validateMobile = (mobile) => {
+    const mobileRegex = /^[0-9]{10}$/;
+    return mobileRegex.test(mobile.replace(/[\s\-\(\)]/g, ''));
+  };
+
+  const validatePassword = (password) => {
+    return password.length >= 6;
+  };
+
+  const validateAge = (dob) => {
+    const birthDate = new Date(dob);
+    const today = new Date();
+    const age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      return age - 1 >= 18;
+    }
+    return age >= 18;
+  };
+
+  const validateOTP = (otp) => {
+    return /^[0-9]{6}$/.test(otp);
+  };
+
+  const validateRegisterForm = () => {
+    const newErrors = {};
+
+    if (!registerData.first_name.trim()) {
+      newErrors.first_name = 'First name is required';
+    }
+
+    if (!registerData.surname.trim()) {
+      newErrors.surname = 'Surname is required';
+    }
+
+    if (!registerData.dob) {
+      newErrors.dob = 'Date of birth is required';
+    } else if (!validateAge(registerData.dob)) {
+      newErrors.dob = 'You must be 18 or older';
+    }
+
+    if (!registerData.mobile) {
+      newErrors.mobile = 'Mobile number is required';
+    } else if (!validateMobile(registerData.mobile)) {
+      newErrors.mobile = 'Enter valid 10-digit mobile number';
+    }
+
+    if (!registerData.email) {
+      newErrors.email = 'Email is required';
+    } else if (!validateEmail(registerData.email)) {
+      newErrors.email = 'Enter a valid email address';
+    }
+
+    if (!registerData.password) {
+      newErrors.password = 'Password is required';
+    } else if (!validatePassword(registerData.password)) {
+      newErrors.password = 'Password must be at least 6 characters';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateLoginForm = () => {
+    const newErrors = {};
+
+    if (!loginData.identifier.trim()) {
+      newErrors.identifier = 'Email or mobile is required';
+    }
+
+    if (!loginData.password) {
+      newErrors.password = 'Password is required';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const validateOTPForm = () => {
+    const newErrors = {};
+
+    if (!otpData.otp) {
+      newErrors.otp = 'OTP is required';
+    } else if (!validateOTP(otpData.otp)) {
+      newErrors.otp = 'OTP must be 6 digits';
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleRegister = async (e) => {
     e.preventDefault();
