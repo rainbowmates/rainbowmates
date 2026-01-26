@@ -155,10 +155,14 @@ export default function ChatScreen({ user }) {
             </div>
           </div>
         ))}
-        {loading && (
-          <div className="flex justify-start">
+        {showTyping && (
+          <div className="flex justify-start" data-testid="typing-indicator">
             <div className="bg-muted text-dark-purple rounded-2xl rounded-bl-sm px-4 py-3">
-              <p className="text-sm">Typing...</p>
+              <div className="flex items-center gap-1">
+                <span className="w-2 h-2 bg-dark-purple/40 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+                <span className="w-2 h-2 bg-dark-purple/40 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+                <span className="w-2 h-2 bg-dark-purple/40 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              </div>
             </div>
           </div>
         )}
