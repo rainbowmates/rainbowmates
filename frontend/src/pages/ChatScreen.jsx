@@ -39,15 +39,20 @@ export default function ChatScreen({ user }) {
   const sendMessage = async () => {
     if (!input.trim() || loading) return;
 
-    const userMessage = { role: 'user', content: input, timestamp: new Date().toISOString() };
-    setMessages([...messages, userMessage]);
+    const messageContent = input.trim();
+    const userMessage = { role: 'user', content: messageContent, timestamp: new Date().toISOString() };
+    
+    // Clear input first, then update messages
     setInput('');
+    setMessages(prev => [...prev, userMessage]);
+    
+    // Only show typing indicator AFTER user message is sent
     setLoading(true);
 
     try {
       const response = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
         bestie_id: bestie.id,
-        content: input
+        content: messageContent
       });
 
       const bestieMessage = {
