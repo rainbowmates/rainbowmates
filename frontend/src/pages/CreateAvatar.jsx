@@ -202,6 +202,8 @@ export default function CreateAvatar({ user }) {
     setGenerating(true);
     setShowOutfitSelection(false);
     
+    console.log('Generating outfit with:', { outfitOption, originalPhoto: originalPhoto?.substring(0, 50) });
+    
     try {
       // Generate avatar with outfit using AI
       const response = await axios.post(`${API}/avatar/generate-with-outfit`, {
@@ -211,13 +213,21 @@ export default function CreateAvatar({ user }) {
         filter_style: filterStyle
       });
 
+      console.log('Outfit generation response:', { 
+        hasAvatarUrl: !!response.data.avatar_url, 
+        avatarUrlLength: response.data.avatar_url?.length 
+      });
+
       setAvatarUrl(response.data.avatar_url);
       setCurrentOutfitDescription(outfitOption);
       setShowOutfitReview(true);
       
+      console.log('State updated:', { showOutfitReview: true, avatarUrlSet: !!response.data.avatar_url });
+      
       toast.success('Avatar created! How do you like it?');
     } catch (error) {
-      toast.error('Failed to generate avatar with outfit');
+      console.error('Outfit generation error:', error);
+      toast.error('Failed to generate avatar with outfit: ' + (error.response?.data?.detail || error.message));
       // Fallback - just use the filtered photo
       setAvatarUrl(originalPhoto);
       setShowOutfitReview(true);
