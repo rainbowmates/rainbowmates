@@ -702,12 +702,20 @@ async def speech_to_text(audio_file: UploadFile = File(...)):
         
         # Get file extension from filename or default to webm
         filename = audio_file.filename or "recording.webm"
-        if not filename.endswith(('.webm', '.wav', '.mp3', '.m4a', '.ogg', '.flac', '.mp4', '.mpeg', '.mpga', '.oga')):
+        
+        # Ensure proper extension
+        if not any(filename.endswith(ext) for ext in ['.webm', '.wav', '.mp3', '.m4a', '.ogg', '.flac', '.mp4', '.mpeg', '.mpga', '.oga']):
             filename = "recording.webm"
         
-        # Create a file-like object with the proper name
-        audio_buffer = io.BytesIO(audio_content)
-        audio_buffer.name = filename  # Set the name attribute for format detection
+        logger.info(f"Processing audio file: {filename}, size: {len(audio_content)} bytes")
+        
+        # Create a named file-like object
+        class NamedBytesIO(io.BytesIO):
+            def __init__(self, content, name):
+                super().__init__(content)
+                self.name = name
+        
+        audio_buffer = NamedBytesIO(audio_content, filename)
         
         stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
         response = await stt.transcribe(
