@@ -592,21 +592,24 @@ export default function CreateAvatar({ user }) {
 
           {/* Outfit Review - Show generated avatar for approval */}
           {showOutfitReview && avatarUrl && (
-            <div className="space-y-4">
+            <div className="space-y-4" data-testid="outfit-review-screen">
               <div className="text-center">
                 <h3 className="text-lg font-bold text-dark-purple mb-2">How Do You Like It?</h3>
                 <p className="text-sm text-dark-purple/70">Your avatar in {currentOutfitDescription}</p>
               </div>
 
               {/* Show the generated avatar */}
-              <div className="relative w-full rounded-2xl overflow-hidden border-4 border-neon-pink">
+              <div className="relative w-full rounded-2xl overflow-hidden border-4 border-neon-pink bg-white">
                 <img 
                   src={avatarUrl} 
                   alt="Avatar with outfit" 
-                  className="w-full h-auto object-cover"
+                  className="w-full h-auto object-contain"
                   style={{
-                    filter: `brightness(${filterStyle.brightness}%) contrast(${filterStyle.contrast}%) saturate(${filterStyle.saturate}%) hue-rotate(${filterStyle.warmth}deg)`
+                    filter: `brightness(${filterStyle.brightness}%) contrast(${filterStyle.contrast}%) saturate(${filterStyle.saturate}%) hue-rotate(${filterStyle.warmth}deg)`,
+                    maxHeight: '400px'
                   }}
+                  onLoad={() => console.log('Avatar image loaded successfully')}
+                  onError={(e) => console.error('Avatar image failed to load:', e)}
                 />
               </div>
 
