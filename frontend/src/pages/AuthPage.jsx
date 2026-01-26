@@ -65,9 +65,11 @@ export default function AuthPage({ onLogin }) {
     return emailRegex.test(email);
   };
 
-  const validateMobile = (mobile) => {
-    const mobileRegex = /^[0-9]{10}$/;
-    return mobileRegex.test(mobile.replace(/[\s\-\(\)]/g, ''));
+  const validateMobile = (mobile, countryCode) => {
+    // Find the country to get expected digit count
+    const country = COUNTRY_CODES.find(c => c.isd === countryCode) || COUNTRY_CODES[0];
+    const digitsOnly = mobile.replace(/\D/g, '');
+    return digitsOnly.length === country.digits;
   };
 
   const validatePassword = (password) => {
