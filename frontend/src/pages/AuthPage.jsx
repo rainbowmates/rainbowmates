@@ -48,6 +48,7 @@ export default function AuthPage({ onLogin }) {
     first_name: '',
     surname: '',
     dob: '',
+    country_code: '+44', // UK default
     mobile: '',
     email: '',
     password: ''
