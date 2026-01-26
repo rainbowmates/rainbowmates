@@ -304,10 +304,15 @@ export default function AuthPage({ onLogin }) {
                         type="text"
                         value={registerData.first_name}
                         onChange={(e) => setRegisterData({ ...registerData, first_name: e.target.value })}
-                        className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.first_name ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="given-name"
                       />
+                      {errors.first_name && (
+                        <p className="text-red-500 text-xs mt-1">{errors.first_name}</p>
+                      )}
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-dark-purple mb-2">
@@ -318,10 +323,15 @@ export default function AuthPage({ onLogin }) {
                         type="text"
                         value={registerData.surname}
                         onChange={(e) => setRegisterData({ ...registerData, surname: e.target.value })}
-                        className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.surname ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="family-name"
                       />
+                      {errors.surname && (
+                        <p className="text-red-500 text-xs mt-1">{errors.surname}</p>
+                      )}
                     </div>
                   </div>
                   <div>
