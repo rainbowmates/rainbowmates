@@ -700,9 +700,18 @@ async def speech_to_text(audio_file: UploadFile = File(...)):
     try:
         audio_content = await audio_file.read()
         
+        # Get file extension from filename or default to webm
+        filename = audio_file.filename or "recording.webm"
+        if not filename.endswith(('.webm', '.wav', '.mp3', '.m4a', '.ogg', '.flac', '.mp4', '.mpeg', '.mpga', '.oga')):
+            filename = "recording.webm"
+        
+        # Create a file-like object with the proper name
+        audio_buffer = io.BytesIO(audio_content)
+        audio_buffer.name = filename  # Set the name attribute for format detection
+        
         stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
         response = await stt.transcribe(
-            file=io.BytesIO(audio_content),
+            file=audio_buffer,
             model="whisper-1",
             response_format="json"
         )
