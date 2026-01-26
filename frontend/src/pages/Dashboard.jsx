@@ -42,8 +42,8 @@ export default function Dashboard({ user, onLogout }) {
   };
 
   return (
-    <div className="app-container gradient-mesh min-h-screen">
-      <div className="p-6 space-y-6">
+    <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
+      <div className="p-4 pb-8 space-y-4">
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
