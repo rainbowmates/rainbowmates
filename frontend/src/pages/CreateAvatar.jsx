@@ -629,8 +629,9 @@ export default function CreateAvatar({ user }) {
           {showOutfitReview && avatarUrl && !generating && (
             <div className="space-y-4" data-testid="outfit-review-screen">
               <div className="text-center">
-                <h3 className="text-lg font-bold text-dark-purple mb-2">How Do You Like It?</h3>
-                <p className="text-sm text-dark-purple/70">Your avatar in {currentOutfitDescription}</p>
+                <h3 className="text-lg font-bold text-dark-purple mb-2">Here's Your Photo!</h3>
+                <p className="text-sm text-dark-purple/70">Selected style: {currentOutfitDescription}</p>
+                <p className="text-xs text-dark-purple/50 mt-1">* Outfit visualization feature coming soon</p>
               </div>
 
               {/* Show the generated avatar */}
