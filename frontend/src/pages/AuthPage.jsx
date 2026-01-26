@@ -6,6 +6,33 @@ import { toast } from 'sonner';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Country codes with ISD
+const COUNTRY_CODES = [
+  { code: 'GB', name: 'United Kingdom', isd: '+44', flag: '🇬🇧', digits: 10 },
+  { code: 'US', name: 'United States', isd: '+1', flag: '🇺🇸', digits: 10 },
+  { code: 'FR', name: 'France', isd: '+33', flag: '🇫🇷', digits: 9 },
+  { code: 'IT', name: 'Italy', isd: '+39', flag: '🇮🇹', digits: 10 },
+  // Alphabetical order
+  { code: 'AU', name: 'Australia', isd: '+61', flag: '🇦🇺', digits: 9 },
+  { code: 'BR', name: 'Brazil', isd: '+55', flag: '🇧🇷', digits: 11 },
+  { code: 'CA', name: 'Canada', isd: '+1', flag: '🇨🇦', digits: 10 },
+  { code: 'CN', name: 'China', isd: '+86', flag: '🇨🇳', digits: 11 },
+  { code: 'DE', name: 'Germany', isd: '+49', flag: '🇩🇪', digits: 10 },
+  { code: 'ES', name: 'Spain', isd: '+34', flag: '🇪🇸', digits: 9 },
+  { code: 'IN', name: 'India', isd: '+91', flag: '🇮🇳', digits: 10 },
+  { code: 'JP', name: 'Japan', isd: '+81', flag: '🇯🇵', digits: 10 },
+  { code: 'MX', name: 'Mexico', isd: '+52', flag: '🇲🇽', digits: 10 },
+  { code: 'NL', name: 'Netherlands', isd: '+31', flag: '🇳🇱', digits: 9 },
+  { code: 'PL', name: 'Poland', isd: '+48', flag: '🇵🇱', digits: 9 },
+  { code: 'PT', name: 'Portugal', isd: '+351', flag: '🇵🇹', digits: 9 },
+  { code: 'RU', name: 'Russia', isd: '+7', flag: '🇷🇺', digits: 10 },
+  { code: 'ZA', name: 'South Africa', isd: '+27', flag: '🇿🇦', digits: 9 },
+  { code: 'KR', name: 'South Korea', isd: '+82', flag: '🇰🇷', digits: 10 },
+  { code: 'SE', name: 'Sweden', isd: '+46', flag: '🇸🇪', digits: 9 },
+  { code: 'CH', name: 'Switzerland', isd: '+41', flag: '🇨🇭', digits: 9 },
+  { code: 'TR', name: 'Turkey', isd: '+90', flag: '🇹🇷', digits: 10 },
+];
+
 export default function AuthPage({ onLogin }) {
   const [mode, setMode] = useState('login');
   const [step, setStep] = useState('auth');
