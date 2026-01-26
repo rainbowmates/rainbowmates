@@ -251,11 +251,16 @@ export default function AuthPage({ onLogin }) {
                         type="text"
                         value={loginData.identifier}
                         onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.identifier ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="username"
                       />
                     </div>
+                    {errors.identifier && (
+                      <p className="text-red-500 text-xs mt-1">{errors.identifier}</p>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
@@ -268,11 +273,16 @@ export default function AuthPage({ onLogin }) {
                         type="password"
                         value={loginData.password}
                         onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                        className="w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
+                          errors.password ? 'border-red-500' : 'border-transparent'
+                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
                         required
                         autoComplete="current-password"
                       />
                     </div>
+                    {errors.password && (
+                      <p className="text-red-500 text-xs mt-1">{errors.password}</p>
+                    )}
                   </div>
                   <button
                     data-testid="login-button"
