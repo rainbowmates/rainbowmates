@@ -613,8 +613,38 @@ export default function CreateAvatar({ user }) {
             </div>
           )}
 
+          {/* Loading Screen with Fun Messages */}
+          {generating && (
+            <div className="space-y-6 py-12" data-testid="outfit-loading">
+              <div className="flex justify-center">
+                <div className="relative">
+                  {/* Spinning dress icon */}
+                  <div className="w-24 h-24 rounded-full bg-gradient-to-br from-neon-pink to-soft-blue flex items-center justify-center animate-spin">
+                    <div className="text-5xl">👗</div>
+                  </div>
+                  {/* Pulsing ring */}
+                  <div className="absolute inset-0 rounded-full border-4 border-neon-pink animate-pulse"></div>
+                </div>
+              </div>
+              
+              <div className="text-center space-y-3">
+                <h3 className="text-xl font-bold text-dark-purple animate-pulse">
+                  Creating Your Avatar...
+                </h3>
+                <p className="text-lg text-neon-pink font-medium animate-bounce">
+                  {loadingMessage}
+                </p>
+                <div className="flex justify-center gap-2 mt-4">
+                  <div className="w-3 h-3 bg-neon-pink rounded-full animate-bounce" style={{animationDelay: '0s'}}></div>
+                  <div className="w-3 h-3 bg-neon-pink rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div className="w-3 h-3 bg-neon-pink rounded-full animate-bounce" style={{animationDelay: '0.4s'}}></div>
+                </div>
+              </div>
+            </div>
+          )}
+
           {/* Outfit Review - Show generated avatar for approval */}
-          {showOutfitReview && avatarUrl && (
+          {showOutfitReview && avatarUrl && !generating && (
             <div className="space-y-4" data-testid="outfit-review-screen">
               <div className="text-center">
                 <h3 className="text-lg font-bold text-dark-purple mb-2">How Do You Like It?</h3>
