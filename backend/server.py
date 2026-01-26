@@ -642,6 +642,18 @@ async def delete_chat_history(user_id: str, bestie_id: str, timeframe: str = "al
 
 # ============= VOICE ROUTES =============
 
+# ElevenLabs voice mapping based on accent/personality
+VOICE_MAP = {
+    "British": "21m00Tcm4TlvDq8ikWAM",  # Rachel - warm British female
+    "American": "EXAVITQu4vr4xnSDxMaL",  # Bella - American female
+    "Australian": "pNInz6obpgDQGcFmaJgB",  # Adam - can work for Australian
+    "Irish": "Xb7hH8MSUJpSbSDYk0k2",  # Alice - soft tone
+    "Southern US": "nPczCjzI2devNBz1zQrb",  # Brian - friendly US
+    "French": "z9fAnlkpzviPz146aGWa",  # Glinda - elegant
+    "Spanish": "XrExE9yKIg1WjnnlVkGX",  # Matilda - warm
+    "default": "21m00Tcm4TlvDq8ikWAM"  # Rachel as default
+}
+
 @api_router.post("/voice/tts")
 async def text_to_speech(bestie_id: str, text: str):
     """Convert text to speech using ElevenLabs"""
@@ -649,12 +661,19 @@ async def text_to_speech(bestie_id: str, text: str):
         raise HTTPException(status_code=500, detail="ElevenLabs API key not configured")
     
     try:
+        # Get bestie to determine voice based on accent
+        bestie_doc = await db.besties.find_one({"id": bestie_id}, {"_id": 0})
+        voice_id = VOICE_MAP.get("default")
+        
+        if bestie_doc:
+            accent = bestie_doc.get("accent", "British")
+            voice_id = VOICE_MAP.get(accent, VOICE_MAP["default"])
+        
         client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
         
-        # Use a default voice (users can customize this)
         audio_generator = client.text_to_speech.convert(
             text=text,
-            voice_id="21m00Tcm4TlvDq8ikWAM",  # Default voice
+            voice_id=voice_id,
             model_id="eleven_multilingual_v2",
             voice_settings=VoiceSettings(
                 stability=0.7,
