@@ -393,22 +393,42 @@ export default function AuthPage({ onLogin }) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
-                      Mobile
+                      Mobile Number
                     </label>
-                    <div className="relative">
-                      <Phone className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
-                      <input
-                        data-testid="register-mobile"
-                        type="tel"
-                        value={registerData.mobile}
-                        onChange={(e) => setRegisterData({ ...registerData, mobile: e.target.value.replace(/\D/g, '').slice(0, 10) })}
-                        placeholder="10-digit number"
-                        className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
-                          errors.mobile ? 'border-red-500' : 'border-transparent'
-                        } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
-                        required
-                        autoComplete="tel"
-                      />
+                    <div className="flex gap-2">
+                      <select
+                        value={registerData.country_code}
+                        onChange={(e) => {
+                          setRegisterData({ ...registerData, country_code: e.target.value, mobile: '' });
+                          setErrors({ ...errors, mobile: '' });
+                        }}
+                        className="px-3 py-3 rounded-2xl bg-muted border-2 border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+                        style={{ minWidth: '110px' }}
+                      >
+                        {COUNTRY_CODES.map((country) => (
+                          <option key={country.code} value={country.isd}>
+                            {country.flag} {country.isd}
+                          </option>
+                        ))}
+                      </select>
+                      <div className="relative flex-1">
+                        <Phone className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
+                        <input
+                          data-testid="register-mobile"
+                          type="tel"
+                          value={registerData.mobile}
+                          onChange={(e) => {
+                            const country = COUNTRY_CODES.find(c => c.isd === registerData.country_code) || COUNTRY_CODES[0];
+                            setRegisterData({ ...registerData, mobile: e.target.value.replace(/\D/g, '').slice(0, country.digits) });
+                          }}
+                          placeholder={`${COUNTRY_CODES.find(c => c.isd === registerData.country_code)?.digits || 10} digits`}
+                          className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
+                            errors.mobile ? 'border-red-500' : 'border-transparent'
+                          } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
+                          required
+                          autoComplete="tel"
+                        />
+                      </div>
                     </div>
                     {errors.mobile && (
                       <p className="text-red-500 text-xs mt-1">{errors.mobile}</p>
