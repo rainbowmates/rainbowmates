@@ -131,12 +131,19 @@ export default function AuthPage({ onLogin }) {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    
+    if (!validateRegisterForm()) {
+      toast.error('Please fix the errors in the form');
+      return;
+    }
+
     try {
       const response = await axios.post(`${API}/auth/register`, registerData);
       
       toast.success('Registration successful! Please verify OTP (use 123456)');
       setOtpData({ ...otpData, identifier: registerData.email });
       setStep('otp');
+      setErrors({});
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Registration failed');
     }
@@ -144,11 +151,18 @@ export default function AuthPage({ onLogin }) {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    
+    if (!validateLoginForm()) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
     try {
       const response = await axios.post(`${API}/auth/login`, loginData);
       
       toast.success('Login successful!');
       onLogin(response.data.user);
+      setErrors({});
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Login failed');
     }
@@ -156,6 +170,12 @@ export default function AuthPage({ onLogin }) {
 
   const handleVerifyOTP = async (e) => {
     e.preventDefault();
+    
+    if (!validateOTPForm()) {
+      toast.error('Please enter a valid OTP');
+      return;
+    }
+
     try {
       await axios.post(`${API}/auth/verify-otp`, otpData);
       
@@ -164,6 +184,7 @@ export default function AuthPage({ onLogin }) {
       setStep('auth');
       // Pre-fill login identifier
       setLoginData({ ...loginData, identifier: otpData.identifier });
+      setErrors({});
     } catch (error) {
       toast.error(error.response?.data?.detail || 'OTP verification failed');
     }
@@ -171,6 +192,7 @@ export default function AuthPage({ onLogin }) {
 
   const handleModeSwitch = (newMode) => {
     setMode(newMode);
+    setErrors({});
     // Reset step when switching modes
     if (step === 'otp') {
       setStep('auth');
