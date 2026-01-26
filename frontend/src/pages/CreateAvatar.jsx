@@ -401,22 +401,24 @@ export default function CreateAvatar({ user }) {
   };
 
   return (
-    <div className="app-container gradient-mesh min-h-screen">
-      <div className="p-6 space-y-6">
-        <div className="flex items-center gap-4">
+    <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
+      <div className="p-4 pb-8 space-y-4">
+        <div className="flex items-center gap-3">
           <button
             data-testid="back-button"
             onClick={() => navigate('/dashboard')}
-            className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all"
+            className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all flex-shrink-0"
           >
-            <ArrowLeft className="w-6 h-6 text-dark-purple" />
+            <ArrowLeft className="w-5 h-5 text-dark-purple" />
           </button>
-          <h1 className="text-3xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            {isEditMode ? 'Edit Your Avatar' : step === 1 ? 'Create Your Avatar' : 'About You'}
-          </h1>
-          {!isEditMode && step === 2 && (
-            <p className="text-sm text-dark-purple/70 mt-1">Step 2 of 2</p>
-          )}
+          <div>
+            <h1 className="text-xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
+              {isEditMode ? 'Edit Your Avatar' : step === 1 ? 'Create Your Avatar' : 'About You'}
+            </h1>
+            {!isEditMode && step === 2 && (
+              <p className="text-xs text-dark-purple/70">Step 2 of 2</p>
+            )}
+          </div>
         </div>
 
         {step === 1 ? (
