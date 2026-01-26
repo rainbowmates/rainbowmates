@@ -20,6 +20,10 @@
     font-family: 'Nunito', sans-serif;
     font-weight: 700;
   }
+  /* Prevent mobile zoom on inputs - minimum 16px font size */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
 }
 
 @layer utilities {
