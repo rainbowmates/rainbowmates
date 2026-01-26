@@ -697,6 +697,7 @@ async def text_to_speech(bestie_id: str, text: str):
 @api_router.post("/voice/stt")
 async def speech_to_text(audio_file: UploadFile = File(...)):
     """Convert speech to text using OpenAI Whisper"""
+    import tempfile
     try:
         audio_content = await audio_file.read()
         
@@ -704,27 +705,34 @@ async def speech_to_text(audio_file: UploadFile = File(...)):
         filename = audio_file.filename or "recording.webm"
         
         # Ensure proper extension
-        if not any(filename.endswith(ext) for ext in ['.webm', '.wav', '.mp3', '.m4a', '.ogg', '.flac', '.mp4', '.mpeg', '.mpga', '.oga']):
-            filename = "recording.webm"
+        ext = ".webm"
+        if filename:
+            for valid_ext in ['.webm', '.wav', '.mp3', '.m4a', '.ogg', '.flac', '.mp4', '.mpeg', '.mpga', '.oga']:
+                if filename.lower().endswith(valid_ext):
+                    ext = valid_ext
+                    break
         
-        logger.info(f"Processing audio file: {filename}, size: {len(audio_content)} bytes")
+        logger.info(f"Processing audio file: {filename}, size: {len(audio_content)} bytes, ext: {ext}")
         
-        # Create a named file-like object
-        class NamedBytesIO(io.BytesIO):
-            def __init__(self, content, name):
-                super().__init__(content)
-                self.name = name
+        # Save to temporary file with proper extension
+        with tempfile.NamedTemporaryFile(suffix=ext, delete=False) as tmp_file:
+            tmp_file.write(audio_content)
+            tmp_path = tmp_file.name
         
-        audio_buffer = NamedBytesIO(audio_content, filename)
-        
-        stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
-        response = await stt.transcribe(
-            file=audio_buffer,
-            model="whisper-1",
-            response_format="json"
-        )
-        
-        return {"text": response.text}
+        try:
+            stt = OpenAISpeechToText(api_key=EMERGENT_LLM_KEY)
+            response = await stt.transcribe(
+                file=tmp_path,
+                model="whisper-1",
+                response_format="json"
+            )
+            
+            return {"text": response.text}
+        finally:
+            # Clean up temp file
+            import os
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
         
     except Exception as e:
         logger.error(f"Error transcribing audio: {str(e)}")
