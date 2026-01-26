@@ -375,8 +375,18 @@ async def generate_avatar_with_outfit(request: OutfitGenerationRequest):
         
         image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
         
-        # Prompt to keep face but change outfit
-        prompt = f"Full body portrait of the EXACT same person from the reference photo, wearing {request.outfit_description}. CRITICAL: Keep the person's face, skin tone, hair, and all features IDENTICAL to the original. Only change the clothing to: {request.outfit_description}. Photorealistic, professional portrait, full body shot showing the outfit clearly."
+        # Enhanced prompt to preserve face better
+        prompt = f"""Create a full body portrait photograph. CRITICAL INSTRUCTIONS:
+        
+1. The person's FACE, skin tone, hair style, hair color, facial features, and head must be EXACTLY IDENTICAL to the reference photo - do not change anything about the face or head
+2. Keep the same person - same ethnicity, same age, same facial structure
+3. Only change what they are wearing to: {request.outfit_description}
+4. Show full body from head to toe
+5. Photorealistic style, professional portrait photography
+6. Natural lighting, clean background
+7. The person should be clearly visible wearing the {request.outfit_description}
+
+REMEMBER: Keep the EXACT same face, just change the clothes to {request.outfit_description}"""
         
         images = await image_gen.generate_images(
             prompt=prompt,
