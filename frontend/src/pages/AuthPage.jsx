@@ -447,12 +447,19 @@ export default function AuthPage({ onLogin }) {
                   data-testid="otp-input"
                   type="text"
                   value={otpData.otp}
-                  onChange={(e) => setOtpData({ ...otpData, otp: e.target.value })}
-                  className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none text-center text-2xl tracking-widest"
+                  onChange={(e) => setOtpData({ ...otpData, otp: e.target.value.replace(/\D/g, '').slice(0, 6) })}
+                  className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
+                    errors.otp ? 'border-red-500' : 'border-transparent'
+                  } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none text-center text-2xl tracking-widest`}
                   maxLength="6"
+                  pattern="[0-9]{6}"
+                  placeholder="000000"
                   required
                   autoComplete="one-time-code"
                 />
+                {errors.otp && (
+                  <p className="text-red-500 text-xs mt-1 text-center">{errors.otp}</p>
+                )}
               </div>
               <button
                 data-testid="verify-otp-button"
