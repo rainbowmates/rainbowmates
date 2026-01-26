@@ -36,6 +36,18 @@ export default function CreateAvatar({ user }) {
   const [originalPhoto, setOriginalPhoto] = useState(null); // Store original for outfit generation
   const [showOutfitReview, setShowOutfitReview] = useState(false);
   const [currentOutfitDescription, setCurrentOutfitDescription] = useState('');
+  const [loadingMessage, setLoadingMessage] = useState('');
+  
+  const loadingMessages = [
+    "Finding the perfect outfit for you...",
+    "Selecting the right fabric...",
+    "Cutting the cloth...",
+    "Adding some style...",
+    "Stitching it all together...",
+    "Adding final touches...",
+    "Almost ready...",
+    "Just a moment more..."
+  ];
 
   // Outfit categories
   const outfitCategories = [
