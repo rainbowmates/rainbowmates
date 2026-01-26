@@ -111,8 +111,9 @@ export default function AuthPage({ onLogin }) {
 
     if (!registerData.mobile) {
       newErrors.mobile = 'Mobile number is required';
-    } else if (!validateMobile(registerData.mobile)) {
-      newErrors.mobile = 'Enter valid 10-digit mobile number';
+    } else if (!validateMobile(registerData.mobile, registerData.country_code)) {
+      const country = COUNTRY_CODES.find(c => c.isd === registerData.country_code) || COUNTRY_CODES[0];
+      newErrors.mobile = `Enter valid ${country.digits}-digit mobile number`;
     }
 
     if (!registerData.email) {
