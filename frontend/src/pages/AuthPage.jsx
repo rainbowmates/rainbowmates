@@ -169,7 +169,13 @@ export default function AuthPage({ onLogin }) {
     }
 
     try {
-      const response = await axios.post(`${API}/auth/register`, registerData);
+      // Combine country code with mobile for submission
+      const submitData = {
+        ...registerData,
+        mobile: `${registerData.country_code}${registerData.mobile}`
+      };
+      
+      const response = await axios.post(`${API}/auth/register`, submitData);
       
       toast.success('Registration successful! Please verify OTP (use 123456)');
       setOtpData({ ...otpData, identifier: registerData.email });
