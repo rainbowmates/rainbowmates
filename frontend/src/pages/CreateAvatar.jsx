@@ -687,7 +687,7 @@ export default function CreateAvatar({ user }) {
           )}
           
           {/* Generated Avatar */}
-          {avatarUrl && !showFilterOptions && !showOutfitSelection && !showOutfitReview && (
+          {avatarUrl && !showFilterOptions && !showOutfitSelection && !showOutfitReview && !generating && (
             <div className="space-y-4">
               <div className="relative w-full h-64 rounded-2xl overflow-hidden border-4 border-neon-pink">
                 <img 
