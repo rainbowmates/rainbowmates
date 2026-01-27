@@ -101,19 +101,19 @@ export default function CreateBestie({ user }) {
             <label className="block text-sm font-medium text-dark-purple mb-2">
               Choose Look
             </label>
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
               {BESTIE_IMAGES.map((img, idx) => (
                 <div
                   key={idx}
                   data-testid={`bestie-image-${idx}`}
                   onClick={() => setFormData({ ...formData, image_url: img.url })}
                   className={`relative cursor-pointer rounded-2xl overflow-hidden border-4 transition-all ${
-                    formData.image_url === img.url ? 'border-neon-pink' : 'border-transparent'
+                    formData.image_url === img.url ? 'border-neon-pink ring-2 ring-neon-pink/50' : 'border-transparent'
                   }`}
                 >
-                  <img src={img.url} alt={img.description} className="w-full h-32 object-cover" />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/60 to-transparent p-2">
-                    <p className="text-xs text-white font-medium">{img.description}</p>
+                  <img src={img.url} alt={img.description} className="w-full h-28 object-cover object-top" />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                    <p className="text-xs text-white font-medium text-center">{img.description}</p>
                   </div>
                 </div>
               ))}
