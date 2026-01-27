@@ -8,9 +8,11 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const BESTIE_IMAGES = [
-  { url: 'https://images.unsplash.com/photo-1625502664816-4938b1d0d685?w=400', description: 'Classy & Romantic' },
-  { url: 'https://images.unsplash.com/photo-1643269552626-5e2874c5309b?w=400', description: 'Hipster & Cool' },
-  { url: 'https://images.unsplash.com/photo-1695266391814-a276948f1775?w=400', description: 'Party & Formal' }
+  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/32yvckp4_gay%2017.png', description: 'Pink Chic' },
+  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/2jwu7p2q_gay%206.png', description: 'Cool & Casual' },
+  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/fsnv5n4y_gay%202.png', description: 'Golden Style' },
+  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/huvllvzn_gay%208.png', description: 'Glamorous' },
+  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/fmgwn4zi_gay%2040.png', description: 'Classic & Warm' }
 ];
 
 const PERSONALITIES = ['Funny', 'Chatty', 'Serious', 'Gossipy', 'Sympathetic', 'Attentive', 'Intellectual', 'Bitchy'];
