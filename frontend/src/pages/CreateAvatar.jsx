@@ -37,6 +37,8 @@ export default function CreateAvatar({ user }) {
   const [showOutfitReview, setShowOutfitReview] = useState(false);
   const [currentOutfitDescription, setCurrentOutfitDescription] = useState('');
   const [loadingMessage, setLoadingMessage] = useState('');
+  const [quotaError, setQuotaError] = useState(false);
+  const [lastSelectedOutfit, setLastSelectedOutfit] = useState(null);
   
   const loadingMessages = [
     "Finding the perfect outfit for you...",
