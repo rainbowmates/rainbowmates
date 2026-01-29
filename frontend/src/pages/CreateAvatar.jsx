@@ -113,14 +113,8 @@ export default function CreateAvatar({ user }) {
     if (user.avatar_url) {
       setIsEditMode(true);
       setAvatarUrl(user.avatar_url);
-      setShowChat(true);
-      setStep(1); // Start at step 1 even in edit mode
-      setChatMessages([
-        {
-          role: 'assistant',
-          content: `Hi ${user.first_name}! Here's your photo! Want to enhance it with filter effects? Try asking for "warmer", "brighter", "add glow", "cooler tones", or "more vibrant".`
-        }
-      ]);
+      setOriginalPhoto(user.avatar_url);
+      setStep(1);
       
       // Load saved relationship data
       if (user.relationship_status) {
