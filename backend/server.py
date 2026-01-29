@@ -530,19 +530,6 @@ async def virtual_try_on(request: VirtualTryOnRequest):
     except Exception as e:
         logger.error(f"Error in virtual try-on: {str(e)}")
         raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
-        
-        if result.generated_images and len(result.generated_images) > 0:
-            generated_image = result.generated_images[0]
-            image_bytes = generated_image.image.image_bytes
-            avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
-            avatar_url = f"data:image/png;base64,{avatar_base64}"
-            return {"avatar_url": avatar_url, "success": True}
-        else:
-            raise HTTPException(status_code=500, detail="No image generated")
-            
-    except Exception as e:
-        logger.error(f"Error in virtual try-on: {str(e)}")
-        raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
 
 @api_router.post("/avatar/generate-with-outfit")
 async def generate_avatar_with_outfit(request: OutfitGenerationRequest):
