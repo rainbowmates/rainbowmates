@@ -21,6 +21,10 @@ from elevenlabs import ElevenLabs, VoiceSettings
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
+# Set Google credentials environment variable
+os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(ROOT_DIR / 'google_credentials.json')
+GOOGLE_CLOUD_PROJECT = os.getenv('GOOGLE_CLOUD_PROJECT', 'pro-flux-485514-j7')
+
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
 client = AsyncIOMotorClient(mongo_url)
