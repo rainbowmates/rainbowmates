@@ -40,6 +40,7 @@ export default function CreateAvatar({ user }) {
   const [quotaError, setQuotaError] = useState(false);
   const [lastSelectedOutfit, setLastSelectedOutfit] = useState(null);
   const [showRelationshipPopup, setShowRelationshipPopup] = useState(false);
+  const [showStatusPopup, setShowStatusPopup] = useState(false);
   
   // Relationship options with images
   const relationshipOptions = [
@@ -47,6 +48,15 @@ export default function CreateAvatar({ user }) {
     { id: 'Women', label: 'Women', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/9hj7p885_women.svg' },
     { id: 'Myself', label: 'Myself', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0fxiv5lh_single.svg' },
     { id: 'Bisexual', label: 'Bisexual', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0y5dym4o_bisexual.svg' }
+  ];
+  
+  // Relationship status options with images
+  const statusOptions = [
+    { id: 'Single', label: 'Single', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/97wsk969_single.png' },
+    { id: 'Married', label: 'Married', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/bmsha55i_married.png' },
+    { id: 'Separated or Divorced', label: 'Separated or Divorced', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/26x3fll1_separated%20or%20divorced.png' },
+    { id: 'Open Relationship with Men', label: 'Open Relationship with Men', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/ojopnmvx_open%20relationship%20with%20men.png' },
+    { id: 'Open Relationship with Men & Women', label: 'Open Relationship with Men & Women', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/zlinwd8t_open%20relationship%20with%20men%20%26%20women.png' }
   ];
   
   const loadingMessages = [
