@@ -465,7 +465,7 @@ class VirtualTryOnRequest(BaseModel):
 
 @api_router.post("/avatar/virtual-try-on")
 async def virtual_try_on(request: VirtualTryOnRequest):
-    """Virtual try-on using Google Vertex AI - puts actual garment on person"""
+    """Virtual try-on using Google Vertex AI - puts actual garment on person while preserving face"""
     try:
         from google import genai
         from google.genai import types
@@ -473,13 +473,11 @@ async def virtual_try_on(request: VirtualTryOnRequest):
         # Find the garment image from catalog
         garment_file = None
         garment_name = ""
-        garment_category = ""
         for category, outfits in OUTFIT_CATALOG.items():
             for outfit in outfits:
                 if outfit["id"] == request.outfit_id:
                     garment_file = OUTFITS_DIR / outfit["file"]
                     garment_name = outfit["name"]
-                    garment_category = category
                     break
             if garment_file:
                 break
@@ -506,78 +504,46 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             location="us-central1"
         )
         
-        # Try Virtual Try-On API first
-        try:
-            # Create person image object
-            person_image = types.Image(image_bytes=person_bytes)
-            
-            # Create product image object
-            product_image = types.ProductImage(
-                product_image=types.Image(image_bytes=garment_bytes)
-            )
-            
-            # Create source for recontext_image
-            source = types.RecontextImageSource(
-                person_image=person_image,
-                product_images=[product_image]
-            )
-            
-            # Create config
-            config = types.RecontextImageConfig(
-                number_of_images=1
-            )
-            
-            # Call Virtual Try-On API
-            response = client.models.recontext_image(
-                model="virtual-try-on-001",
-                source=source,
-                config=config
-            )
-            
-            if response.generated_images and len(response.generated_images) > 0:
-                generated_image = response.generated_images[0]
-                image_bytes = generated_image.image.image_bytes
-                avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
-                avatar_url = f"data:image/png;base64,{avatar_base64}"
-                return {"avatar_url": avatar_url, "success": True, "outfit_name": garment_name}
-                
-        except Exception as vto_error:
-            logger.warning(f"Virtual Try-On API failed, trying Imagen fallback: {str(vto_error)}")
-            
-            # Fallback: Use Imagen 3 for image editing
-            # Create outfit description based on category
-            outfit_descriptions = {
-                "casual-jeans": "casual jeans with a stylish t-shirt",
-                "casual-shorts": "casual shorts with a comfortable t-shirt",
-                "summer-dress": "a beautiful floral summer dress",
-                "winter": "a cozy winter outfit with warm layers",
-                "party-dress": "an elegant party cocktail dress",
-                "evening-gown": "a stunning formal evening gown"
-            }
-            outfit_desc = outfit_descriptions.get(garment_category, garment_name)
-            
-            # Use Imagen to generate an image based on prompt
-            result = client.models.generate_images(
-                model="imagen-3.0-generate-002",
-                prompt=f"A photorealistic fashion photo of a woman wearing {outfit_desc}. Professional fashion photography, studio lighting, high quality, stylish pose. The outfit should look exactly like: {garment_name}.",
-                config=types.GenerateImagesConfig(
-                    number_of_images=1,
-                    aspect_ratio="3:4",
-                    person_generation="allow_adult"
-                )
-            )
-            
-            if result.generated_images and len(result.generated_images) > 0:
-                generated_image = result.generated_images[0]
-                image_bytes = generated_image.image.image_bytes
-                avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
-                avatar_url = f"data:image/png;base64,{avatar_base64}"
-                return {"avatar_url": avatar_url, "success": True, "outfit_name": garment_name, "method": "imagen_fallback"}
+        # Create person image object
+        person_image = types.Image(image_bytes=person_bytes)
         
-        raise HTTPException(status_code=500, detail="No image generated")
+        # Create product image object
+        product_image = types.ProductImage(
+            product_image=types.Image(image_bytes=garment_bytes)
+        )
+        
+        # Create source for recontext_image
+        source = types.RecontextImageSource(
+            person_image=person_image,
+            product_images=[product_image]
+        )
+        
+        # Create config
+        config = types.RecontextImageConfig(
+            number_of_images=1
+        )
+        
+        # Call Virtual Try-On API
+        response = client.models.recontext_image(
+            model="virtual-try-on-001",
+            source=source,
+            config=config
+        )
+        
+        if response.generated_images and len(response.generated_images) > 0:
+            generated_image = response.generated_images[0]
+            image_bytes = generated_image.image.image_bytes
+            avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            avatar_url = f"data:image/png;base64,{avatar_base64}"
+            return {"avatar_url": avatar_url, "success": True, "outfit_name": garment_name}
+        else:
+            raise HTTPException(status_code=500, detail="No image generated")
             
     except Exception as e:
         logger.error(f"Error in virtual try-on: {str(e)}")
+        error_msg = str(e)
+        if "RESOURCE_EXHAUSTED" in error_msg or "429" in error_msg:
+            raise HTTPException(status_code=429, detail="Virtual Try-On quota exceeded. Please try again later or request a quota increase in Google Cloud Console.")
         raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
 
 @api_router.post("/avatar/generate-with-outfit")
