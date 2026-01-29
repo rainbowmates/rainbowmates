@@ -222,7 +222,7 @@ export default function CreateAvatar({ user }) {
     toast.success(`${preset.name} filter selected! Now choose your outfit.`);
   };
 
-  const handleSelectOutfit = async (category, outfitOption) => {
+  const handleSelectOutfit = async (outfit) => {
     setGenerating(true);
     setShowOutfitSelection(false);
     
@@ -234,21 +234,21 @@ export default function CreateAvatar({ user }) {
       setLoadingMessage(loadingMessages[messageIndex]);
     }, 3000);
     
-    console.log('Preparing avatar with outfit:', { outfitOption });
+    console.log('Preparing avatar with outfit:', outfit);
     
     try {
-      // Call the Virtual Try-On API
+      // Call the Virtual Try-On API with outfit_id
       const response = await axios.post(`${API}/avatar/virtual-try-on`, {
         user_id: user.id,
         person_image: originalPhoto,
-        garment_image: outfitOption // Send the outfit description
+        outfit_id: outfit.id
       });
       
       clearInterval(messageInterval);
       
       if (response.data.avatar_url) {
         setAvatarUrl(response.data.avatar_url);
-        setCurrentOutfitDescription(outfitOption);
+        setCurrentOutfitDescription(response.data.outfit_name || outfit.name);
         setShowOutfitReview(true);
         toast.success('Your avatar is ready! Check it out!');
       } else {
