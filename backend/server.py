@@ -461,21 +461,33 @@ class OutfitGenerationRequest(BaseModel):
 class VirtualTryOnRequest(BaseModel):
     user_id: str
     person_image: str  # Base64 encoded person image
-    garment_image: str  # URL or base64 of the garment to try on
+    outfit_id: str  # ID of the outfit from catalog (e.g., "jeans_tshirt_01")
 
 @api_router.post("/avatar/virtual-try-on")
 async def virtual_try_on(request: VirtualTryOnRequest):
-    """Virtual try-on using Google Vertex AI Imagen - generates person with new outfit"""
+    """Virtual try-on using Google Vertex AI - puts actual garment on person"""
     try:
         from google import genai
         from google.genai import types
         
-        # Initialize client with Vertex AI
-        client = genai.Client(
-            vertexai=True,
-            project=GOOGLE_CLOUD_PROJECT,
-            location="us-central1"
-        )
+        # Find the garment image from catalog
+        garment_file = None
+        garment_name = ""
+        for category, outfits in OUTFIT_CATALOG.items():
+            for outfit in outfits:
+                if outfit["id"] == request.outfit_id:
+                    garment_file = OUTFITS_DIR / outfit["file"]
+                    garment_name = outfit["name"]
+                    break
+            if garment_file:
+                break
+        
+        if not garment_file or not garment_file.exists():
+            raise HTTPException(status_code=404, detail=f"Outfit {request.outfit_id} not found")
+        
+        # Read garment image
+        with open(garment_file, "rb") as f:
+            garment_bytes = f.read()
         
         # Prepare person image
         person_image_data = request.person_image
@@ -483,40 +495,41 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             person_image_data = person_image_data.split(',')[1]
         person_bytes = base64.b64decode(person_image_data)
         
-        # Get garment description
-        garment_desc = request.garment_image
+        logger.info(f"Virtual try-on: person {len(person_bytes)} bytes, garment {garment_name} ({len(garment_bytes)} bytes)")
         
-        logger.info(f"Virtual try-on: person image {len(person_bytes)} bytes, outfit: {garment_desc[:50]}...")
-        
-        # Create reference image
-        raw_ref = types.RawReferenceImage(
-            reference_id=1,
-            reference_image=types.Image(image_bytes=person_bytes)
+        # Initialize Vertex AI client
+        client = genai.Client(
+            vertexai=True,
+            project=GOOGLE_CLOUD_PROJECT,
+            location="us-central1"
         )
         
-        # Create mask for clothing area (foreground subject)
-        mask_ref = types.MaskReferenceImage(
-            reference_id=2,
-            config=types.MaskReferenceConfig(
-                mask_mode="MASK_MODE_FOREGROUND",
-                mask_dilation=0.0
+        # Use the dedicated Virtual Try-On model
+        person_image = types.Image(image_bytes=person_bytes)
+        product_image = types.Image(image_bytes=garment_bytes)
+        
+        # Call Virtual Try-On API
+        result = client.models.generate_images(
+            model="virtual-try-on-001",
+            image=person_image,
+            config=types.VirtualTryOnConfig(
+                product_images=[product_image],
+                sample_count=1
             )
         )
         
-        # Edit prompt for outfit change
-        edit_prompt = f"The person wearing {garment_desc}. Keep the exact same face, hair, and skin tone. Only change the clothing. Professional fashion photography, high quality."
-        
-        # Use edit_image with reference images
-        result = client.models.edit_image(
-            model="imagen-3.0-capability-001",
-            prompt=edit_prompt,
-            reference_images=[raw_ref, mask_ref],
-            config=types.EditImageConfig(
-                edit_mode="EDIT_MODE_INPAINT_INSERTION",
-                number_of_images=1,
-                person_generation="allow_adult"
-            )
-        )
+        if result.generated_images and len(result.generated_images) > 0:
+            generated_image = result.generated_images[0]
+            image_bytes = generated_image.image.image_bytes
+            avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            avatar_url = f"data:image/png;base64,{avatar_base64}"
+            return {"avatar_url": avatar_url, "success": True, "outfit_name": garment_name}
+        else:
+            raise HTTPException(status_code=500, detail="No image generated")
+            
+    except Exception as e:
+        logger.error(f"Error in virtual try-on: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
         
         if result.generated_images and len(result.generated_images) > 0:
             generated_image = result.generated_images[0]
