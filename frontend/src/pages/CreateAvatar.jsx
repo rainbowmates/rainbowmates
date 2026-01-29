@@ -45,7 +45,7 @@ export default function CreateAvatar({ user }) {
   const relationshipOptions = [
     { id: 'Men', label: 'Men', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/nw8g9ohn_men.svg' },
     { id: 'Women', label: 'Women', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/9hj7p885_women.svg' },
-    { id: 'Single', label: 'Single', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0fxiv5lh_single.svg' },
+    { id: 'Myself', label: 'Myself', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0fxiv5lh_single.svg' },
     { id: 'Bisexual', label: 'Bisexual', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0y5dym4o_bisexual.svg' }
   ];
   
