@@ -96,6 +96,45 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# ============= OUTFIT ROUTES =============
+
+@api_router.get("/outfits/catalog")
+async def get_outfit_catalog():
+    """Get the catalog of available outfits organized by category"""
+    return OUTFIT_CATALOG
+
+@api_router.get("/outfits/image/{outfit_id}")
+async def get_outfit_image(outfit_id: str):
+    """Get a specific outfit image by ID"""
+    # Find the outfit in catalog
+    for category, outfits in OUTFIT_CATALOG.items():
+        for outfit in outfits:
+            if outfit["id"] == outfit_id:
+                file_path = OUTFITS_DIR / outfit["file"]
+                if file_path.exists():
+                    with open(file_path, "rb") as f:
+                        image_data = f.read()
+                    return Response(content=image_data, media_type="image/png")
+                else:
+                    raise HTTPException(status_code=404, detail="Image file not found")
+    raise HTTPException(status_code=404, detail="Outfit not found")
+
+@api_router.get("/outfits/image-base64/{outfit_id}")
+async def get_outfit_image_base64(outfit_id: str):
+    """Get a specific outfit image as base64"""
+    for category, outfits in OUTFIT_CATALOG.items():
+        for outfit in outfits:
+            if outfit["id"] == outfit_id:
+                file_path = OUTFITS_DIR / outfit["file"]
+                if file_path.exists():
+                    with open(file_path, "rb") as f:
+                        image_data = f.read()
+                    b64 = base64.b64encode(image_data).decode('utf-8')
+                    return {"image": f"data:image/png;base64,{b64}", "outfit": outfit}
+                else:
+                    raise HTTPException(status_code=404, detail="Image file not found")
+    raise HTTPException(status_code=404, detail="Outfit not found")
+
 # ============= MODELS =============
 
 class User(BaseModel):
