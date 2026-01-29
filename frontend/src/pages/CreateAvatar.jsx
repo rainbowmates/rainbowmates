@@ -236,44 +236,22 @@ export default function CreateAvatar({ user }) {
     const messageInterval = setInterval(() => {
       messageIndex = (messageIndex + 1) % loadingMessages.length;
       setLoadingMessage(loadingMessages[messageIndex]);
-    }, 3000);
+    }, 2000);
     
     console.log('Preparing avatar with outfit:', outfit);
     
-    try {
-      // Call the Virtual Try-On API with outfit_id
-      const response = await axios.post(`${API}/avatar/virtual-try-on`, {
-        user_id: user.id,
-        person_image: originalPhoto,
-        outfit_id: outfit.id
-      });
-      
-      clearInterval(messageInterval);
-      
-      if (response.data.avatar_url) {
-        setAvatarUrl(response.data.avatar_url);
-        setCurrentOutfitDescription(response.data.outfit_name || outfit.name);
-        setShowOutfitReview(true);
-        toast.success('Your avatar is ready! Check it out!');
-      } else {
-        throw new Error('No avatar returned');
-      }
-    } catch (error) {
-      clearInterval(messageInterval);
-      console.error('Virtual try-on error:', error);
-      
-      // Check if it's a quota error
-      const errorMsg = error.response?.data?.detail || error.message || '';
-      if (errorMsg.includes('quota') || errorMsg.includes('429') || error.response?.status === 429) {
-        setQuotaError(true);
-      } else {
-        toast.error('Failed to generate avatar. Please try again.');
-        setShowOutfitSelection(true);
-        setSelectedOutfitCategory(null);
-      }
-    } finally {
-      setGenerating(false);
-    }
+    // For now, skip Virtual Try-On API and use original photo
+    // Virtual Try-On will be enabled once quota is increased
+    await new Promise(resolve => setTimeout(resolve, 2000));
+    
+    clearInterval(messageInterval);
+    
+    // Use original photo with selected outfit info
+    setAvatarUrl(originalPhoto);
+    setCurrentOutfitDescription(outfit.name);
+    setShowOutfitReview(true);
+    setGenerating(false);
+    toast.success('Avatar ready! Virtual outfit preview coming soon.');
   };
 
   const handleChangeOutfit = () => {
