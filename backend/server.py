@@ -377,7 +377,7 @@ class VirtualTryOnRequest(BaseModel):
 
 @api_router.post("/avatar/virtual-try-on")
 async def virtual_try_on(request: VirtualTryOnRequest):
-    """Virtual try-on using Google Vertex AI - puts garment on person while preserving face"""
+    """Virtual try-on using Google Vertex AI Imagen - generates person with new outfit"""
     try:
         from google import genai
         from google.genai import types
@@ -395,53 +395,52 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             person_image_data = person_image_data.split(',')[1]
         person_bytes = base64.b64decode(person_image_data)
         
-        # Prepare garment image
-        garment_image_data = request.garment_image
-        if garment_image_data.startswith('http'):
-            # Download the garment image from URL
-            import httpx
-            async with httpx.AsyncClient() as http_client:
-                response = await http_client.get(garment_image_data)
-                garment_bytes = response.content
-        else:
-            if ',' in garment_image_data:
-                garment_image_data = garment_image_data.split(',')[1]
-            garment_bytes = base64.b64decode(garment_image_data)
+        # Get garment description (text or URL)
+        garment_desc = request.garment_image
         
-        logger.info(f"Virtual try-on: person image {len(person_bytes)} bytes, garment {len(garment_bytes)} bytes")
+        logger.info(f"Virtual try-on: person image {len(person_bytes)} bytes, garment: {garment_desc[:50]}...")
         
-        # Create the virtual try-on request using Imagen
-        # Using Imagen 3 with edit mode for virtual try-on
+        # Use Imagen 3 to edit the image - keeping face but changing clothes
         person_image = types.Image(image_bytes=person_bytes)
-        garment_image = types.Image(image_bytes=garment_bytes)
         
-        # Generate using Imagen with the try-on prompt
-        result = client.models.generate_images(
-            model="imagen-3.0-generate-002",
-            prompt=f"A photorealistic image of the person from the reference photo wearing the outfit shown. Keep the person's face, body shape, skin tone, and features exactly the same. Only change their clothing to match the garment provided. Professional fashion photography style.",
-            config=types.GenerateImagesConfig(
+        # Edit prompt focused on clothing change while preserving face
+        edit_prompt = f"""Edit this photo to change ONLY the clothing.
+Keep the EXACT same:
+- Face (all facial features, expressions, skin tone)
+- Hair (style, color, length)
+- Body proportions
+- Background
+- Lighting
+
+Change ONLY the outfit to: {garment_desc}
+
+The result should look like the exact same person in a professional fashion photo wearing {garment_desc}."""
+
+        # Generate using Imagen edit mode
+        result = client.models.edit_image(
+            model="imagen-3.0-capability-001",
+            prompt=edit_prompt,
+            image=person_image,
+            config=types.EditImageConfig(
+                edit_mode="inpaint-insert",
                 number_of_images=1,
-                aspect_ratio="3:4",
                 person_generation="allow_adult"
             )
         )
         
         if result.generated_images and len(result.generated_images) > 0:
-            # Get the generated image
             generated_image = result.generated_images[0]
             image_bytes = generated_image.image.image_bytes
-            
-            # Convert to base64
             avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
             avatar_url = f"data:image/png;base64,{avatar_base64}"
-            
             return {"avatar_url": avatar_url, "success": True}
         else:
-            raise HTTPException(status_code=500, detail="Failed to generate virtual try-on image")
+            raise HTTPException(status_code=500, detail="Failed to generate image")
             
     except Exception as e:
         logger.error(f"Error in virtual try-on: {str(e)}")
-        raise HTTPException(status_code=500, detail=str(e))
+        # Fallback: return original image with message
+        raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
 
 @api_router.post("/avatar/generate-with-outfit")
 async def generate_avatar_with_outfit(request: OutfitGenerationRequest):
