@@ -87,6 +87,17 @@ export default function CreateAvatar({ user }) {
   ];
 
   useEffect(() => {
+    // Fetch outfit catalog from backend
+    const fetchOutfitCatalog = async () => {
+      try {
+        const response = await axios.get(`${API}/outfits/catalog`);
+        setOutfitCatalog(response.data);
+      } catch (error) {
+        console.error('Failed to fetch outfit catalog:', error);
+      }
+    };
+    fetchOutfitCatalog();
+    
     // Check if user already has an avatar (edit mode)
     if (user.avatar_url) {
       setIsEditMode(true);
