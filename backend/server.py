@@ -497,11 +497,11 @@ async def virtual_try_on(request: VirtualTryOnRequest):
         
         logger.info(f"Virtual try-on: person image ready, garment: {garment_name}")
         
-        # Initialize Vertex AI client
+        # Initialize Vertex AI client - using asia-east1 for better quota
         client = genai.Client(
             vertexai=True,
             project=GOOGLE_CLOUD_PROJECT,
-            location="us-central1"
+            location="asia-east1"
         )
         
         # Create person image object
@@ -523,9 +523,9 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             number_of_images=1
         )
         
-        # Call Virtual Try-On API
+        # Call Virtual Try-On API using preview model
         response = client.models.recontext_image(
-            model="virtual-try-on-001",
+            model="virtual-try-on-preview",
             source=source,
             config=config
         )
