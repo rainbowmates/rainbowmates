@@ -509,7 +509,7 @@ async def virtual_try_on(request: VirtualTryOnRequest):
         
         # Create product image object
         product_image = types.ProductImage(
-            image=types.Image(image_bytes=garment_bytes)
+            product_image=types.Image(image_bytes=garment_bytes)
         )
         
         # Create source for recontext_image
