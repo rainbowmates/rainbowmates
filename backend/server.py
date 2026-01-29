@@ -382,7 +382,7 @@ async def virtual_try_on(request: VirtualTryOnRequest):
         from google import genai
         from google.genai import types
         
-        # Initialize client
+        # Initialize client with Vertex AI
         client = genai.Client(
             vertexai=True,
             project=GOOGLE_CLOUD_PROJECT,
@@ -395,34 +395,36 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             person_image_data = person_image_data.split(',')[1]
         person_bytes = base64.b64decode(person_image_data)
         
-        # Get garment description (text or URL)
+        # Get garment description
         garment_desc = request.garment_image
         
-        logger.info(f"Virtual try-on: person image {len(person_bytes)} bytes, garment: {garment_desc[:50]}...")
+        logger.info(f"Virtual try-on: person image {len(person_bytes)} bytes, outfit: {garment_desc[:50]}...")
         
-        # Use Imagen 3 to edit the image - keeping face but changing clothes
-        person_image = types.Image(image_bytes=person_bytes)
+        # Create reference image
+        raw_ref = types.RawReferenceImage(
+            reference_id=1,
+            reference_image=types.Image(image_bytes=person_bytes)
+        )
         
-        # Edit prompt focused on clothing change while preserving face
-        edit_prompt = f"""Edit this photo to change ONLY the clothing.
-Keep the EXACT same:
-- Face (all facial features, expressions, skin tone)
-- Hair (style, color, length)
-- Body proportions
-- Background
-- Lighting
-
-Change ONLY the outfit to: {garment_desc}
-
-The result should look like the exact same person in a professional fashion photo wearing {garment_desc}."""
-
-        # Generate using Imagen edit mode
+        # Create mask for clothing area (foreground subject)
+        mask_ref = types.MaskReferenceImage(
+            reference_id=2,
+            config=types.MaskReferenceConfig(
+                mask_mode="MASK_MODE_FOREGROUND",
+                mask_dilation=0.0
+            )
+        )
+        
+        # Edit prompt for outfit change
+        edit_prompt = f"The person wearing {garment_desc}. Keep the exact same face, hair, and skin tone. Only change the clothing. Professional fashion photography, high quality."
+        
+        # Use edit_image with reference images
         result = client.models.edit_image(
             model="imagen-3.0-capability-001",
             prompt=edit_prompt,
-            image=person_image,
+            reference_images=[raw_ref, mask_ref],
             config=types.EditImageConfig(
-                edit_mode="inpaint-insert",
+                edit_mode="EDIT_MODE_INPAINT_INSERTION",
                 number_of_images=1,
                 person_generation="allow_adult"
             )
@@ -435,11 +437,10 @@ The result should look like the exact same person in a professional fashion phot
             avatar_url = f"data:image/png;base64,{avatar_base64}"
             return {"avatar_url": avatar_url, "success": True}
         else:
-            raise HTTPException(status_code=500, detail="Failed to generate image")
+            raise HTTPException(status_code=500, detail="No image generated")
             
     except Exception as e:
         logger.error(f"Error in virtual try-on: {str(e)}")
-        # Fallback: return original image with message
         raise HTTPException(status_code=500, detail=f"Virtual try-on failed: {str(e)}")
 
 @api_router.post("/avatar/generate-with-outfit")
