@@ -227,6 +227,8 @@ export default function CreateAvatar({ user }) {
   const handleSelectOutfit = async (outfit) => {
     setGenerating(true);
     setShowOutfitSelection(false);
+    setQuotaError(false);
+    setLastSelectedOutfit(outfit);
     
     // Start rotating messages
     let messageIndex = 0;
@@ -263,14 +265,12 @@ export default function CreateAvatar({ user }) {
       // Check if it's a quota error
       const errorMsg = error.response?.data?.detail || error.message || '';
       if (errorMsg.includes('quota') || errorMsg.includes('429') || error.response?.status === 429) {
-        toast.error('Service is busy. Please try again in a few minutes.');
+        setQuotaError(true);
       } else {
         toast.error('Failed to generate avatar. Please try again.');
+        setShowOutfitSelection(true);
+        setSelectedOutfitCategory(null);
       }
-      
-      // Go back to outfit selection
-      setShowOutfitSelection(true);
-      setSelectedOutfitCategory(null);
     } finally {
       setGenerating(false);
     }
