@@ -440,6 +440,57 @@ export default function CreateAvatar({ user }) {
         {step === 1 ? (
           // STEP 1: Image Upload & Avatar Creation
           <div className="card-soft p-6 space-y-6">
+          
+          {/* Edit Mode - Show avatar with 3 options */}
+          {isEditMode && avatarUrl && !showFilterOptions && !showOutfitSelection && !showOutfitReview && !generating && !quotaError && (
+            <div className="space-y-4">
+              {/* Avatar Preview */}
+              <div className="relative w-full aspect-[3/4] max-h-64 rounded-2xl overflow-hidden bg-muted mx-auto">
+                <img 
+                  src={avatarUrl} 
+                  alt="Your Avatar" 
+                  className="w-full h-full object-cover"
+                  style={{
+                    filter: `brightness(${filterStyle.brightness}%) contrast(${filterStyle.contrast}%) saturate(${filterStyle.saturate}%)`,
+                    ...(filterStyle.warmth > 0 ? { filter: `brightness(${filterStyle.brightness}%) contrast(${filterStyle.contrast}%) saturate(${filterStyle.saturate}%) sepia(${filterStyle.warmth}%)` } : {})
+                  }}
+                />
+              </div>
+
+              {/* Edit Options */}
+              <div className="space-y-3">
+                <button
+                  data-testid="change-filter-button"
+                  onClick={() => setShowFilterOptions(true)}
+                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-soft-yellow/30 to-neon-pink/30 text-dark-purple font-semibold hover:from-soft-yellow/50 hover:to-neon-pink/50 transition-all flex items-center justify-between"
+                >
+                  <span>Change Filter Effects</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                
+                <button
+                  data-testid="choose-outfit-button"
+                  onClick={() => {
+                    setOriginalPhoto(avatarUrl);
+                    setShowOutfitSelection(true);
+                  }}
+                  className="w-full py-3 px-4 rounded-2xl bg-gradient-to-r from-soft-blue/30 to-neon-pink/30 text-dark-purple font-semibold hover:from-soft-blue/50 hover:to-neon-pink/50 transition-all flex items-center justify-between"
+                >
+                  <span>Choose Your Outfit</span>
+                  <ChevronRight className="w-5 h-5" />
+                </button>
+                
+                <button
+                  data-testid="next-about-you-button"
+                  onClick={() => setStep(2)}
+                  className="w-full neon-button"
+                >
+                  Next: About You
+                </button>
+              </div>
+            </div>
+          )}
+          
           {/* Only show upload section if not in edit mode or if creating new */}
           {!isEditMode && !avatarUrl && (
             <>
