@@ -224,21 +224,36 @@ export default function CreateAvatar({ user }) {
     
     console.log('Preparing avatar with outfit:', { outfitOption });
     
-    // Simulate processing time for better UX (2-3 seconds)
-    await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    clearInterval(messageInterval);
-    
-    // TEMPORARY SOLUTION: Use the original photo instead of AI generation
-    // AI cannot preserve the exact face, so we show the original photo
-    // Future: Implement proper face-swap or image-to-image technology
-    
-    setAvatarUrl(originalPhoto);
-    setCurrentOutfitDescription(outfitOption);
-    setShowOutfitReview(true);
-    setGenerating(false);
-    
-    toast.info('Your photo is ready! (Outfit visualization coming soon)');
+    try {
+      // Call the Virtual Try-On API
+      const response = await axios.post(`${API}/avatar/virtual-try-on`, {
+        user_id: user.id,
+        person_image: originalPhoto,
+        garment_image: outfitOption // Send the outfit description
+      });
+      
+      clearInterval(messageInterval);
+      
+      if (response.data.avatar_url) {
+        setAvatarUrl(response.data.avatar_url);
+        setCurrentOutfitDescription(outfitOption);
+        setShowOutfitReview(true);
+        toast.success('Your avatar is ready! Check it out!');
+      } else {
+        throw new Error('No avatar returned');
+      }
+    } catch (error) {
+      clearInterval(messageInterval);
+      console.error('Virtual try-on error:', error);
+      
+      // Fallback: Use the original photo
+      setAvatarUrl(originalPhoto);
+      setCurrentOutfitDescription(outfitOption);
+      setShowOutfitReview(true);
+      toast.info('Showing your photo (outfit visualization in development)');
+    } finally {
+      setGenerating(false);
+    }
   };
 
   const handleChangeOutfit = () => {
