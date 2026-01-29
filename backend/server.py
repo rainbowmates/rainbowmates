@@ -523,9 +523,9 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             number_of_images=1
         )
         
-        # Call Virtual Try-On API - trying experimental model
+        # Call Virtual Try-On API
         response = client.models.recontext_image(
-            model="virtual-try-on-exp",
+            model="virtual-try-on-001",
             source=source,
             config=config
         )
