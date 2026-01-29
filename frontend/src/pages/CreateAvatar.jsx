@@ -39,6 +39,15 @@ export default function CreateAvatar({ user }) {
   const [loadingMessage, setLoadingMessage] = useState('');
   const [quotaError, setQuotaError] = useState(false);
   const [lastSelectedOutfit, setLastSelectedOutfit] = useState(null);
+  const [showRelationshipPopup, setShowRelationshipPopup] = useState(false);
+  
+  // Relationship options with images
+  const relationshipOptions = [
+    { id: 'Men', label: 'Men', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/nw8g9ohn_men.svg' },
+    { id: 'Women', label: 'Women', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/9hj7p885_women.svg' },
+    { id: 'Single', label: 'Single', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0fxiv5lh_single.svg' },
+    { id: 'Bisexual', label: 'Bisexual', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0y5dym4o_bisexual.svg' }
+  ];
   
   const loadingMessages = [
     "Finding the perfect outfit for you...",
