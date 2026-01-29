@@ -670,6 +670,48 @@ export default function CreateAvatar({ user }) {
             </div>
           )}
 
+          {/* Quota Error Screen */}
+          {quotaError && !generating && (
+            <div className="space-y-6 py-8" data-testid="quota-error-screen">
+              <div className="text-center">
+                <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-orange-100 flex items-center justify-center">
+                  <span className="text-4xl">⏳</span>
+                </div>
+                <h3 className="text-xl font-bold text-dark-purple mb-2">Service Temporarily Busy</h3>
+                <p className="text-sm text-dark-purple/70 mb-4">
+                  Our virtual try-on service is experiencing high demand. Please wait a moment and try again.
+                </p>
+              </div>
+              
+              <div className="space-y-3">
+                <button
+                  data-testid="retry-outfit-button"
+                  onClick={() => {
+                    setQuotaError(false);
+                    if (lastSelectedOutfit) {
+                      handleSelectOutfit(lastSelectedOutfit);
+                    }
+                  }}
+                  className="w-full neon-button text-base py-3"
+                >
+                  Try Again
+                </button>
+                
+                <button
+                  data-testid="choose-different-outfit-button"
+                  onClick={() => {
+                    setQuotaError(false);
+                    setShowOutfitSelection(true);
+                    setSelectedOutfitCategory(null);
+                  }}
+                  className="w-full py-3 px-6 rounded-full bg-white border-2 border-neon-pink text-dark-purple font-semibold hover:bg-muted transition-all"
+                >
+                  Choose Different Outfit
+                </button>
+              </div>
+            </div>
+          )}
+
           {/* Outfit Review - Show generated avatar for approval */}
           {showOutfitReview && avatarUrl && !generating && (
             <div className="space-y-4" data-testid="outfit-review-screen">
