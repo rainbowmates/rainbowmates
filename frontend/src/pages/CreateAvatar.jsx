@@ -258,11 +258,17 @@ export default function CreateAvatar({ user }) {
       clearInterval(messageInterval);
       console.error('Virtual try-on error:', error);
       
-      // Fallback: Use the original photo
-      setAvatarUrl(originalPhoto);
-      setCurrentOutfitDescription(outfitOption);
-      setShowOutfitReview(true);
-      toast.info('Showing your photo (outfit visualization in development)');
+      // Check if it's a quota error
+      const errorMsg = error.response?.data?.detail || error.message || '';
+      if (errorMsg.includes('quota') || errorMsg.includes('429') || error.response?.status === 429) {
+        toast.error('Service is busy. Please try again in a few minutes.');
+      } else {
+        toast.error('Failed to generate avatar. Please try again.');
+      }
+      
+      // Go back to outfit selection
+      setShowOutfitSelection(true);
+      setSelectedOutfitCategory(null);
     } finally {
       setGenerating(false);
     }
