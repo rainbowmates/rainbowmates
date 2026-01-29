@@ -468,7 +468,6 @@ async def virtual_try_on(request: VirtualTryOnRequest):
     """Virtual try-on using Google Vertex AI - puts actual garment on person"""
     try:
         from google import genai
-        from google.genai import types
         
         # Find the garment image from catalog
         garment_file = None
@@ -488,14 +487,15 @@ async def virtual_try_on(request: VirtualTryOnRequest):
         # Read garment image
         with open(garment_file, "rb") as f:
             garment_bytes = f.read()
+        garment_b64 = base64.b64encode(garment_bytes).decode('utf-8')
         
         # Prepare person image
         person_image_data = request.person_image
         if ',' in person_image_data:
             person_image_data = person_image_data.split(',')[1]
-        person_bytes = base64.b64decode(person_image_data)
+        person_b64 = person_image_data
         
-        logger.info(f"Virtual try-on: person {len(person_bytes)} bytes, garment {garment_name} ({len(garment_bytes)} bytes)")
+        logger.info(f"Virtual try-on: person image ready, garment: {garment_name}")
         
         # Initialize Vertex AI client
         client = genai.Client(
@@ -504,25 +504,34 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             location="us-central1"
         )
         
-        # Use the dedicated Virtual Try-On model
-        person_image = types.Image(image_bytes=person_bytes)
-        product_image = types.Image(image_bytes=garment_bytes)
-        
-        # Call Virtual Try-On API
-        result = client.models.generate_images(
+        # Call Virtual Try-On API using recontext_image method
+        response = client.models.recontext_image(
             model="virtual-try-on-001",
-            image=person_image,
-            config=types.VirtualTryOnConfig(
-                product_images=[product_image],
-                sample_count=1
-            )
+            personImage={
+                "image": {
+                    "bytesBase64Encoded": person_b64,
+                    "mimeType": "image/png"
+                }
+            },
+            productImages=[
+                {
+                    "image": {
+                        "bytesBase64Encoded": garment_b64,
+                        "mimeType": "image/png"
+                    }
+                }
+            ],
+            parameters={
+                "sampleCount": 1,
+                "addWatermark": False
+            }
         )
         
-        if result.generated_images and len(result.generated_images) > 0:
-            generated_image = result.generated_images[0]
-            image_bytes = generated_image.image.image_bytes
-            avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
-            avatar_url = f"data:image/png;base64,{avatar_base64}"
+        if response.images and len(response.images) > 0:
+            # Get the generated image
+            generated_image = response.images[0]
+            image_b64 = generated_image.image.bytesBase64Encoded
+            avatar_url = f"data:image/png;base64,{image_b64}"
             return {"avatar_url": avatar_url, "success": True, "outfit_name": garment_name}
         else:
             raise HTTPException(status_code=500, detail="No image generated")
