@@ -468,6 +468,7 @@ async def virtual_try_on(request: VirtualTryOnRequest):
     """Virtual try-on using Google Vertex AI - puts actual garment on person"""
     try:
         from google import genai
+        from google.genai import types
         
         # Find the garment image from catalog
         garment_file = None
@@ -487,13 +488,12 @@ async def virtual_try_on(request: VirtualTryOnRequest):
         # Read garment image
         with open(garment_file, "rb") as f:
             garment_bytes = f.read()
-        garment_b64 = base64.b64encode(garment_bytes).decode('utf-8')
         
         # Prepare person image
         person_image_data = request.person_image
         if ',' in person_image_data:
             person_image_data = person_image_data.split(',')[1]
-        person_b64 = person_image_data
+        person_bytes = base64.b64decode(person_image_data)
         
         logger.info(f"Virtual try-on: person image ready, garment: {garment_name}")
         
@@ -504,34 +504,38 @@ async def virtual_try_on(request: VirtualTryOnRequest):
             location="us-central1"
         )
         
-        # Call Virtual Try-On API using recontext_image method
-        response = client.models.recontext_image(
-            model="virtual-try-on-001",
-            personImage={
-                "image": {
-                    "bytesBase64Encoded": person_b64,
-                    "mimeType": "image/png"
-                }
-            },
-            productImages=[
-                {
-                    "image": {
-                        "bytesBase64Encoded": garment_b64,
-                        "mimeType": "image/png"
-                    }
-                }
-            ],
-            parameters={
-                "sampleCount": 1,
-                "addWatermark": False
-            }
+        # Create person image object
+        person_image = types.Image(image_bytes=person_bytes)
+        
+        # Create product image object
+        product_image = types.ProductImage(
+            image=types.Image(image_bytes=garment_bytes)
         )
         
-        if response.images and len(response.images) > 0:
+        # Create source for recontext_image
+        source = types.RecontextImageSource(
+            person_image=person_image,
+            product_images=[product_image]
+        )
+        
+        # Create config
+        config = types.RecontextImageConfig(
+            number_of_images=1
+        )
+        
+        # Call Virtual Try-On API
+        response = client.models.recontext_image(
+            model="virtual-try-on-001",
+            source=source,
+            config=config
+        )
+        
+        if response.generated_images and len(response.generated_images) > 0:
             # Get the generated image
-            generated_image = response.images[0]
-            image_b64 = generated_image.image.bytesBase64Encoded
-            avatar_url = f"data:image/png;base64,{image_b64}"
+            generated_image = response.generated_images[0]
+            image_bytes = generated_image.image.image_bytes
+            avatar_base64 = base64.b64encode(image_bytes).decode('utf-8')
+            avatar_url = f"data:image/png;base64,{avatar_base64}"
             return {"avatar_url": avatar_url, "success": True, "outfit_name": garment_name}
         else:
             raise HTTPException(status_code=500, detail="No image generated")
