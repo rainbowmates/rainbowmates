@@ -868,25 +868,65 @@ export default function CreateAvatar({ user }) {
               </select>
             </div>
 
-            {/* Relationship With */}
+            {/* Relationship With - Image Selector */}
             <div>
               <label className="block text-sm font-medium text-dark-purple mb-2">
                 Relationship With
               </label>
-              <select
-                data-testid="relationship-with"
-                value={formData.relationship_with}
-                onChange={(e) => setFormData({ ...formData, relationship_with: e.target.value })}
-                className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+              <button
+                data-testid="relationship-with-button"
+                onClick={() => setShowRelationshipPopup(true)}
+                className="w-full px-4 py-3 rounded-2xl bg-muted border-2 border-transparent hover:border-neon-pink focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none flex items-center justify-between transition-all"
               >
-                <option>Men</option>
-                <option>A woman</option>
-                <option>Multiple women</option>
-                <option>Bi</option>
-                <option>Transgender person</option>
-                <option>Rather not say</option>
-              </select>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={relationshipOptions.find(o => o.id === formData.relationship_with)?.image || relationshipOptions[0].image} 
+                    alt={formData.relationship_with}
+                    className="w-8 h-8"
+                  />
+                  <span className="text-dark-purple">{formData.relationship_with}</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-dark-purple/50" />
+              </button>
             </div>
+
+            {/* Relationship With Popup */}
+            {showRelationshipPopup && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowRelationshipPopup(false)}>
+                <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-dark-purple">Relationship With</h3>
+                    <button 
+                      onClick={() => setShowRelationshipPopup(false)}
+                      className="p-1 rounded-full hover:bg-muted transition-all"
+                    >
+                      <X className="w-5 h-5 text-dark-purple/50" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    {relationshipOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        data-testid={`relationship-option-${option.id.toLowerCase()}`}
+                        onClick={() => {
+                          setFormData({ ...formData, relationship_with: option.id });
+                          setShowRelationshipPopup(false);
+                        }}
+                        className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
+                          formData.relationship_with === option.id 
+                            ? 'border-neon-pink bg-neon-pink/10' 
+                            : 'border-border hover:border-neon-pink/50'
+                        }`}
+                      >
+                        <img src={option.image} alt={option.label} className="w-16 h-16" />
+                        <span className="text-sm font-medium text-dark-purple">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Relationship Feel */}
             <div>
