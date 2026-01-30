@@ -161,6 +161,84 @@ class UserCreate(BaseModel):
     mobile: str
     email: str
     password: str
+    
+    @field_validator('first_name')
+    @classmethod
+    def validate_first_name(cls, v):
+        if not v or not v.strip():
+            raise ValueError('First name is required')
+        if len(v.strip()) < 2:
+            raise ValueError('First name must be at least 2 characters')
+        if len(v.strip()) > 50:
+            raise ValueError('First name must be less than 50 characters')
+        return v.strip()
+    
+    @field_validator('surname')
+    @classmethod
+    def validate_surname(cls, v):
+        if not v or not v.strip():
+            raise ValueError('Surname is required')
+        if len(v.strip()) < 2:
+            raise ValueError('Surname must be at least 2 characters')
+        if len(v.strip()) > 50:
+            raise ValueError('Surname must be less than 50 characters')
+        return v.strip()
+    
+    @field_validator('dob')
+    @classmethod
+    def validate_dob(cls, v):
+        if not v:
+            raise ValueError('Date of birth is required')
+        try:
+            birth_date = datetime.strptime(v, '%Y-%m-%d')
+            today = datetime.now()
+            age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+            if age < 18:
+                raise ValueError('You must be at least 18 years old')
+            if age > 120:
+                raise ValueError('Please enter a valid date of birth')
+        except ValueError as e:
+            if 'at least 18' in str(e) or 'valid date' in str(e):
+                raise e
+            raise ValueError('Invalid date format')
+        return v
+    
+    @field_validator('email')
+    @classmethod
+    def validate_email(cls, v):
+        if not v:
+            raise ValueError('Email is required')
+        import re
+        email_regex = r'^[^\s@]+@[^\s@]+\.[^\s@]+$'
+        if not re.match(email_regex, v):
+            raise ValueError('Please enter a valid email address')
+        return v.lower().strip()
+    
+    @field_validator('mobile')
+    @classmethod
+    def validate_mobile(cls, v):
+        if not v:
+            raise ValueError('Mobile number is required')
+        # Remove all non-digits except + at the start
+        import re
+        cleaned = re.sub(r'[^\d+]', '', v)
+        if not cleaned.startswith('+'):
+            raise ValueError('Mobile must include country code (e.g., +44)')
+        digits_only = cleaned[1:] if cleaned.startswith('+') else cleaned
+        if len(digits_only) < 9 or len(digits_only) > 15:
+            raise ValueError('Please enter a valid mobile number')
+        return cleaned
+    
+    @field_validator('password')
+    @classmethod
+    def validate_password(cls, v):
+        if not v:
+            raise ValueError('Password is required')
+        if len(v) < 6:
+            raise ValueError('Password must be at least 6 characters')
+        if len(v) > 100:
+            raise ValueError('Password must be less than 100 characters')
+        return v
 
 class UserLogin(BaseModel):
     identifier: str  # email or mobile
