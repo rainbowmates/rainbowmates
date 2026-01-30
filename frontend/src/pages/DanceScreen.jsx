@@ -217,9 +217,6 @@ export default function DanceScreen({ user, bestie: propBestie }) {
                       <div className="w-20 h-28 rounded-xl overflow-hidden border-3 border-neon-pink shadow-lg">
                         <img src={user.avatar_url} alt="You" className="w-full h-full object-cover object-top" />
                       </div>
-                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-neon-pink text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
-                        You
-                      </div>
                     </div>
                   )}
                   
@@ -242,9 +239,6 @@ export default function DanceScreen({ user, bestie: propBestie }) {
                     >
                       <div className="w-20 h-28 rounded-xl overflow-hidden border-3 border-soft-yellow shadow-lg">
                         <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
-                      </div>
-                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-soft-yellow text-dark-purple text-[10px] px-2 py-0.5 rounded-full font-bold">
-                        {bestie.name}
                       </div>
                     </div>
                   )}
