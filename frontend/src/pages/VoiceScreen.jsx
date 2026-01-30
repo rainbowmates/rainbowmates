@@ -133,7 +133,11 @@ export default function VoiceScreen({ user }) {
 
         <div className="card-soft p-6 text-center space-y-4">
           <div className={`w-28 h-28 mx-auto rounded-full bg-gradient-to-br from-neon-pink to-soft-yellow flex items-center justify-center overflow-hidden ${speaking ? 'animate-pulse ring-4 ring-neon-pink/50' : ''}`}>
-            {bestie.avatar_url && <img src={bestie.avatar_url} alt={bestie.name} className="w-full h-full object-cover" />}
+            {bestie.image_url ? (
+              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            ) : bestie.avatar_url ? (
+              <img src={bestie.avatar_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            ) : null}
           </div>
 
           <div>

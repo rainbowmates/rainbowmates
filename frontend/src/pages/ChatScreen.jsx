@@ -115,7 +115,11 @@ export default function ChatScreen({ user }) {
             <ArrowLeft className="w-5 h-5 text-dark-purple" />
           </button>
           <div className="w-10 h-10 rounded-full bg-gradient-to-br from-neon-pink to-soft-yellow flex items-center justify-center overflow-hidden">
-            {bestie.avatar_url && <img src={bestie.avatar_url} alt={bestie.name} className="w-full h-full object-cover" />}
+            {bestie.image_url ? (
+              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            ) : bestie.avatar_url ? (
+              <img src={bestie.avatar_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            ) : null}
           </div>
           <div>
             <h2 className="font-bold text-dark-purple">{bestie.name}</h2>
