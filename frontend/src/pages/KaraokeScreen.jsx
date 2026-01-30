@@ -72,14 +72,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular karaoke songs - VERIFIED karaoke versions with lyrics on screen
-  // Using Sing King and KaraFun channels which allow embedding
+  // Popular karaoke songs - tested for embedding compatibility
   const popularKaraokeSongs = [
-    { title: 'Dancing Queen - ABBA (Karaoke)', id: '7fCMws3U2zE' },
-    { title: 'Dance Monkey - Tones & I (Karaoke)', id: '1YN5Emwwoss' },
-    { title: 'Always Remember Us This Way - Lady Gaga (Karaoke)', id: 'oVbXpK_BRbw' },
-    { title: 'I Have a Dream - ABBA (Karaoke)', id: 'IQEzFe9-bsg' },
-    { title: 'The Sound of Silence - Disturbed (Karaoke)', id: 'y4ceeXF7j4Y' }
+    { title: 'Bohemian Rhapsody - Queen (Karaoke)', id: 'xyF04rAhHaQ' },
+    { title: 'Dancing Queen - ABBA (Karaoke)', id: '9sVKwwSvvLw' },
+    { title: 'Sweet Caroline - Neil Diamond (Karaoke)', id: 'NsLyI1_R01M' },
+    { title: 'Wonderwall - Oasis (Karaoke)', id: 'Gvfgut8nAgw' },
+    { title: 'Happy - Pharrell Williams (Karaoke)', id: 'C7dPqrmDWxs' }
   ];
 
   return (
