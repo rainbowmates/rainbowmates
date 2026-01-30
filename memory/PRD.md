@@ -24,11 +24,10 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
    - OTP verification (hardcoded: 123456)
    - UK as default country, 18+ age verification
 
-2. **Avatar Creation Flow (Multi-Step)**
-   - Step 1: Image upload with resize optimization
-   - Filter presets (Natural, Warm Glow, Cool Vibes, Soft & Dreamy)
-   - Outfit selection by category (6 categories, 30 garment images)
+2. **Avatar Selection (Simplified)**
+   - Step 1: Choose from 5 pre-built avatar options (Priya, Sofia, Maya, Yuki, Luna)
    - Step 2: "About You" form
+   - Selected avatar preview shown in Step 2
 
 3. **About You Form**
    - **Relationship Status**: Image-based popup selector with 5 options
@@ -37,12 +36,6 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
    - **Relationship With**: Image-based popup selector with 4 options
      - Men, Women, Myself, Bisexual
    - **How does it feel?**: Dropdown (Fun, Boring, Coming to an end, Rather not say)
-
-4. **Edit Avatar Mode**
-   - Shows current avatar with 3 options:
-     - Change Filter Effects
-     - Choose Your Outfit
-     - Next: About You
 
 5. **AI Bestie Chat**
    - Detailed emotional intelligence prompts
