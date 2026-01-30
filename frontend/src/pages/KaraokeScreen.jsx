@@ -73,12 +73,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
   };
 
   // Popular karaoke songs - VERIFIED karaoke versions with lyrics on screen
+  // Using Sing King and KaraFun channels which allow embedding
   const popularKaraokeSongs = [
-    { title: 'Dancing Queen - ABBA (Karaoke)', id: 'WHayJZ3eMcE' },
-    { title: 'Let It Go - Frozen (Karaoke)', id: 'ifCAfAzOBJM' },
-    { title: 'I Will Survive - Gloria Gaynor (Karaoke)', id: 'FsUa8P-L2Ag' },
-    { title: 'Shallow - Lady Gaga (Karaoke)', id: '_nHT_k9Rswc' },
-    { title: 'Someone Like You - Adele (Karaoke)', id: 'rMSQwIp4Jg8' }
+    { title: 'Dancing Queen - ABBA (Karaoke)', id: '7fCMws3U2zE' },
+    { title: 'Dance Monkey - Tones & I (Karaoke)', id: '1YN5Emwwoss' },
+    { title: 'Always Remember Us This Way - Lady Gaga (Karaoke)', id: 'oVbXpK_BRbw' },
+    { title: 'I Have a Dream - ABBA (Karaoke)', id: 'IQEzFe9-bsg' },
+    { title: 'The Sound of Silence - Disturbed (Karaoke)', id: 'y4ceeXF7j4Y' }
   ];
 
   return (
