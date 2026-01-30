@@ -17,7 +17,7 @@ export default function SubscriptionScreen({ user }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [selectedPlan, setSelectedPlan] = useState('3_months');
-  const [autoRenew, setAutoRenew] = useState(false);
+  const [autoRenew, setAutoRenew] = useState(true);
   const [loading, setLoading] = useState(false);
   const [checking, setChecking] = useState(false);
   const sessionId = searchParams.get('session_id');
