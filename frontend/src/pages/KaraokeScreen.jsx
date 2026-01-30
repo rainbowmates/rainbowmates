@@ -72,13 +72,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular karaoke songs with actual karaoke video IDs
+  // Popular karaoke songs with actual karaoke video IDs (embed-friendly)
   const popularKaraokeSongs = [
-    { title: 'Dancing Queen - ABBA', id: 'xFrGuyw1V8s' },
-    { title: 'I Will Survive - Gloria Gaynor', id: 'gYkACVDFmeg' },
-    { title: 'Bohemian Rhapsody - Queen', id: 'fJ9rUzIMcZQ' },
-    { title: 'Total Eclipse of the Heart', id: '4N-POQr-DQQ' },
-    { title: "Don't Stop Believin' - Journey", id: '1k8craCGpgs' }
+    { title: 'Let It Go - Frozen', id: 'YVVTZgwYwVo' },
+    { title: 'Shallow - Lady Gaga', id: 'bo_efYhYU2A' },
+    { title: 'Someone Like You - Adele', id: 'hLQl3WQQoQ0' },
+    { title: 'Perfect - Ed Sheeran', id: '2Vv-BfVoq4g' },
+    { title: 'Hello - Adele', id: 'YQHsXMglC9A' }
   ];
 
   return (
