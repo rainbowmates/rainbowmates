@@ -53,17 +53,10 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
    - Fixed viewport issues resolved
    - Scrollable layouts on all pages
 
-### 🚫 Blocked Features
-
-1. **Virtual Try-On (Google Vertex AI)**
-   - Status: BLOCKED by Google Cloud quota
-   - User action required: Request quota increase for `virtual-try-on-001`
-   - All technical implementation complete
-   - App gracefully handles with "Service Temporarily Busy" message
-
 ### 📋 Upcoming Features
 
-1. **Dance with Bestie** - Dependent on Virtual Try-On
+1. **Dance with Bestie** - Future feature
+2. **Additional avatar options** - Can add more pre-built avatars as needed
 
 ## Key Files
 
