@@ -167,35 +167,73 @@ export default function DanceScreen({ user, bestie }) {
             </div>
           )}
 
-          {/* Dancing Animation */}
+          {/* Dancing Animation - Partner Dance */}
           {dancing && (
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-neon-pink/20 to-soft-blue/20 text-center">
-              <div className="flex justify-center items-end gap-4 mb-4">
-                {/* User dancing */}
-                {user?.avatar_url && (
-                  <div className="relative" style={{ animation: 'dance-left 0.8s ease-in-out infinite' }}>
-                    <div className="w-20 h-28 rounded-xl overflow-hidden border-3 border-neon-pink shadow-lg">
-                      <img src={user.avatar_url} alt="You" className="w-full h-full object-cover object-top" />
-                    </div>
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-lg">💃</span>
-                  </div>
-                )}
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-neon-pink/20 to-soft-blue/20 text-center overflow-hidden">
+              {/* Dance Floor */}
+              <div className="relative h-48 flex justify-center items-end">
+                {/* Spotlight effect */}
+                <div className="absolute inset-0 bg-gradient-radial from-white/30 via-transparent to-transparent rounded-full" />
                 
-                {/* Heart */}
-                <div className="text-2xl" style={{ animation: 'pulse-heart 0.5s ease-in-out infinite' }}>🎵</div>
+                {/* Sparkles */}
+                <div className="absolute top-2 left-1/4 text-xl animate-ping" style={{ animationDuration: '2s' }}>✨</div>
+                <div className="absolute top-8 right-1/4 text-lg animate-ping" style={{ animationDuration: '2.5s', animationDelay: '0.5s' }}>💫</div>
+                <div className="absolute top-4 left-1/2 text-xl animate-bounce" style={{ animationDuration: '1s' }}>🎵</div>
+                <div className="absolute top-12 right-1/3 text-lg animate-bounce" style={{ animationDuration: '1.2s', animationDelay: '0.3s' }}>🎶</div>
                 
-                {/* Bestie dancing */}
-                {bestie?.image_url && (
-                  <div className="relative" style={{ animation: 'dance-right 0.8s ease-in-out infinite' }}>
-                    <div className="w-20 h-28 rounded-xl overflow-hidden border-3 border-soft-yellow shadow-lg">
-                      <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                {/* Dancing couple container */}
+                <div className="relative flex items-end justify-center" style={{ animation: 'couple-sway 2s ease-in-out infinite' }}>
+                  {/* User Avatar */}
+                  {user?.avatar_url && (
+                    <div 
+                      className="relative z-10"
+                      style={{ 
+                        animation: 'partner-left 1s ease-in-out infinite',
+                        transformOrigin: 'bottom center'
+                      }}
+                    >
+                      <div className="w-20 h-28 rounded-xl overflow-hidden border-3 border-neon-pink shadow-lg">
+                        <img src={user.avatar_url} alt="You" className="w-full h-full object-cover object-top" />
+                      </div>
+                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-neon-pink text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        You
+                      </div>
                     </div>
-                    <span className="absolute -bottom-1 left-1/2 -translate-x-1/2 text-lg">🕺</span>
+                  )}
+                  
+                  {/* Holding hands heart */}
+                  <div 
+                    className="relative z-20 -mx-3 mb-8"
+                    style={{ animation: 'heart-pulse 0.5s ease-in-out infinite' }}
+                  >
+                    <span className="text-2xl">💕</span>
                   </div>
-                )}
+                  
+                  {/* Bestie Avatar */}
+                  {bestie?.image_url && (
+                    <div 
+                      className="relative z-10"
+                      style={{ 
+                        animation: 'partner-right 1s ease-in-out infinite',
+                        transformOrigin: 'bottom center'
+                      }}
+                    >
+                      <div className="w-20 h-28 rounded-xl overflow-hidden border-3 border-soft-yellow shadow-lg">
+                        <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                      </div>
+                      <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 bg-soft-yellow text-dark-purple text-[10px] px-2 py-0.5 rounded-full font-bold">
+                        {bestie.name}
+                      </div>
+                    </div>
+                  )}
+                </div>
+                
+                {/* Dance floor reflection */}
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-40 h-4 bg-gradient-to-t from-neon-pink/20 to-transparent rounded-full blur-sm" />
               </div>
-              <p className="text-lg font-bold text-dark-purple">Dancing together!</p>
-              <p className="text-xs text-dark-purple/70">You and {bestie?.name || 'your bestie'} are having fun!</p>
+              
+              <p className="text-base font-bold text-dark-purple mt-2">Dancing together! 💃🕺</p>
+              <p className="text-xs text-dark-purple/70">You and {bestie?.name || 'your bestie'} are having a blast!</p>
             </div>
           )}
 
