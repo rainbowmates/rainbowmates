@@ -142,20 +142,22 @@ export default function DanceScreen({ user, bestie }) {
             </div>
           )}
 
-          {/* Video Player */}
+          {/* Video Player - Full YouTube Embed */}
           {videoId && (
             <div className="space-y-3">
-              <div className="rounded-2xl overflow-hidden bg-black">
-                <YouTube
-                  videoId={videoId}
-                  opts={{
-                    width: '100%',
-                    height: '200',
-                    playerVars: {
-                      autoplay: 1,
-                    }
-                  }}
-                />
+              <div className="rounded-2xl overflow-hidden bg-black aspect-video">
+                <iframe
+                  data-testid="youtube-player"
+                  width="100%"
+                  height="100%"
+                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                  title="YouTube video player"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  className="w-full h-full"
+                  style={{ minHeight: '220px' }}
+                ></iframe>
               </div>
               <button
                 onClick={stopDancing}
