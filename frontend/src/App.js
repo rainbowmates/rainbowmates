@@ -111,7 +111,7 @@ function App() {
           />
           <Route
             path="/dance"
-            element={user ? <DanceScreen user={user} /> : <Navigate to="/auth" />}
+            element={user ? <DanceScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
           />
           <Route
             path="/shopping"
