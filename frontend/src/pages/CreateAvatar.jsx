@@ -109,20 +109,23 @@ export default function CreateAvatar({ user }) {
       return;
     }
 
-    // Save avatar to backend
-    try {
-      await axios.put(`${API}/user/update/${user.id}`, {
-        avatar_url: selectedAvatar.image
-      });
+    // Save avatar to backend if user ID is available
+    if (user?.id) {
+      try {
+        await axios.put(`${API}/user/update/${user.id}`, {
+          avatar_url: selectedAvatar.image
+        });
 
-      // Update localStorage
-      const updatedUser = { ...user, avatar_url: selectedAvatar.image };
-      localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
-      
-      setStep(2);
-    } catch (error) {
-      toast.error('Failed to save avatar');
+        // Update localStorage
+        const updatedUser = { ...user, avatar_url: selectedAvatar.image };
+        localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
+      } catch (error) {
+        console.error('Failed to save avatar:', error);
+        // Continue anyway to step 2
+      }
     }
+    
+    setStep(2);
   };
 
   const handleSaveProfile = async () => {
