@@ -116,24 +116,45 @@ export default function Dashboard({ user, onLogout }) {
         )}
 
         {/* Bestie Card */}
-        <div className="card-soft p-6" data-testid="bestie-card">
-          <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-br from-soft-yellow to-neon-pink flex items-center justify-center overflow-hidden">
-              {bestie?.avatar_url ? (
-                <img src={bestie.avatar_url} alt="Bestie" className="w-full h-full object-cover" />
-              ) : (
+        {bestie ? (
+          <div 
+            className="card-soft p-4 cursor-pointer hover:shadow-lg transition-all"
+            data-testid="bestie-card"
+            onClick={() => navigate('/create-bestie')}
+          >
+            <div className="flex items-center gap-4">
+              <div className="w-24 h-32 rounded-2xl overflow-hidden border-4 border-soft-yellow shadow-md">
+                <img 
+                  src={bestie.image_url} 
+                  alt={bestie.name} 
+                  className="w-full h-full object-cover object-top"
+                />
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-dark-purple">{bestie.name}</h3>
+                <p className="text-sm text-dark-purple/70 mb-3">{bestie.personality.join(', ')}</p>
+                <button
+                  data-testid="edit-bestie-button"
+                  className="px-4 py-2 rounded-full bg-gradient-to-r from-soft-yellow/20 to-neon-pink/20 text-dark-purple font-semibold text-sm border border-soft-yellow/30 hover:border-soft-yellow transition-all flex items-center gap-2"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                  </svg>
+                  Edit Bestie
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="card-soft p-6" data-testid="bestie-card">
+            <div className="flex items-center gap-4">
+              <div className="w-20 h-20 rounded-full bg-gradient-to-br from-soft-yellow to-neon-pink flex items-center justify-center overflow-hidden">
                 <Heart className="w-10 h-10 text-white" />
-              )}
-            </div>
-            <div className="flex-1">
-              <h3 className="text-xl font-bold text-dark-purple">
-                {bestie ? bestie.name : 'Your Bestie'}
-              </h3>
-              <p className="text-sm text-dark-purple/70">
-                {bestie ? bestie.personality.join(', ') : 'Choose your virtual best friend'}
-              </p>
-            </div>
-            {!bestie && (
+              </div>
+              <div className="flex-1">
+                <h3 className="text-xl font-bold text-dark-purple">Your Bestie</h3>
+                <p className="text-sm text-dark-purple/70">Choose your virtual best friend</p>
+              </div>
               <button
                 data-testid="create-bestie-button"
                 onClick={() => navigate('/create-bestie')}
@@ -141,9 +162,9 @@ export default function Dashboard({ user, onLogout }) {
               >
                 Choose
               </button>
-            )}
+            </div>
           </div>
-        </div>
+        )}
 
         {/* Play Button */}
         {bestie && (
