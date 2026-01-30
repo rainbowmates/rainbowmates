@@ -424,7 +424,7 @@ export default function AuthPage({ onLogin }) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
-                      Mobile Number
+                      Mobile Number <span className="text-red-500">*</span>
                     </label>
                     <div className="flex gap-2">
                       <select
@@ -450,7 +450,13 @@ export default function AuthPage({ onLogin }) {
                           value={registerData.mobile}
                           onChange={(e) => {
                             const country = COUNTRY_CODES.find(c => c.isd === registerData.country_code) || COUNTRY_CODES[0];
-                            setRegisterData({ ...registerData, mobile: e.target.value.replace(/\D/g, '').slice(0, country.digits) });
+                            const value = e.target.value.replace(/\D/g, '').slice(0, country.digits);
+                            setRegisterData({ ...registerData, mobile: value });
+                            if (value && value.length !== country.digits) {
+                              setErrors({ ...errors, mobile: `Enter ${country.digits} digits` });
+                            } else {
+                              setErrors({ ...errors, mobile: '' });
+                            }
                           }}
                           placeholder={`${COUNTRY_CODES.find(c => c.isd === registerData.country_code)?.digits || 10} digits`}
                           className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
