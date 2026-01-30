@@ -45,6 +45,12 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
      - Men, Women, Myself, Bisexual
    - **How does it feel?**: Dropdown (Fun, Boring, Coming to an end, Rather not say)
 
+4. **Dashboard**
+   - Shows user's avatar image with "Edit Avatar" button
+   - Shows bestie card with "Create" option
+   - "Let's Play!" button (when bestie exists)
+   - Subscription status display
+
 5. **AI Bestie Chat**
    - Detailed emotional intelligence prompts
    - Typing indicator (shows after user submits)
