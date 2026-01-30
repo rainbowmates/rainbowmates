@@ -41,13 +41,14 @@ export default function CreateAvatar({ user }) {
   const [formData, setFormData] = useState({
     relationship_status: 'Single',
     relationship_with: 'Men',
-    relationship_feel: 'Fun'
+    relationship_feel: 'Happy'
   });
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [step, setStep] = useState(1); // 1: avatar selection, 2: relationship details
   const [generating, setGenerating] = useState(false);
   const [showRelationshipPopup, setShowRelationshipPopup] = useState(false);
   const [showStatusPopup, setShowStatusPopup] = useState(false);
+  const [showFeelPopup, setShowFeelPopup] = useState(false);
   
   // Relationship options with images
   const relationshipOptions = [
@@ -64,6 +65,14 @@ export default function CreateAvatar({ user }) {
     { id: 'Separated or Divorced', label: 'Separated or Divorced', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/26x3fll1_separated%20or%20divorced.png' },
     { id: 'Open Relationship with Men', label: 'Open Relationship with Men', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/ojopnmvx_open%20relationship%20with%20men.png' },
     { id: 'Open Relationship with Men & Women', label: 'Open Relationship with Men & Women', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/zlinwd8t_open%20relationship%20with%20men%20%26%20women.png' }
+  ];
+
+  // Relationship feel options with images
+  const feelOptions = [
+    { id: 'Happy', label: 'Happy', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/rmpuswos_happy.svg' },
+    { id: 'Bored', label: 'Bored', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/dlhl26lg_bored.svg' },
+    { id: 'Angry', label: 'Angry', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/dbohhbyy_angry.svg' },
+    { id: 'Coming to an end', label: 'Coming to an end', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/cjuy81zi_coming%20to%20an%20end.png' }
   ];
 
   useEffect(() => {
