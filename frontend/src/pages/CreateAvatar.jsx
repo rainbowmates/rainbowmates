@@ -904,24 +904,65 @@ export default function CreateAvatar({ user }) {
               <p className="text-dark-purple/70">Tell us a bit about yourself to personalize your experience</p>
             </div>
 
-            {/* Relationship Status */}
+            {/* Relationship Status - Image Selector */}
             <div>
               <label className="block text-sm font-medium text-dark-purple mb-2">
                 Relationship Status
               </label>
-              <select
-                data-testid="relationship-status"
-                value={formData.relationship_status}
-                onChange={(e) => setFormData({ ...formData, relationship_status: e.target.value })}
-                className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+              <button
+                data-testid="relationship-status-button"
+                onClick={() => setShowStatusPopup(true)}
+                className="w-full px-4 py-3 rounded-2xl bg-muted border-2 border-transparent hover:border-neon-pink focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none flex items-center justify-between transition-all"
               >
-                <option>Single</option>
-                <option>Partner</option>
-                <option>Married</option>
-                <option>Open relationship</option>
-                <option>Rather not say</option>
-              </select>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={statusOptions.find(o => o.id === formData.relationship_status)?.image || statusOptions[0].image} 
+                    alt={formData.relationship_status}
+                    className="w-8 h-8 rounded-full object-cover"
+                  />
+                  <span className="text-dark-purple">{formData.relationship_status}</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-dark-purple/50" />
+              </button>
             </div>
+
+            {/* Relationship Status Popup */}
+            {showStatusPopup && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowStatusPopup(false)}>
+                <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4 max-h-[80vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-dark-purple">Relationship Status</h3>
+                    <button 
+                      onClick={() => setShowStatusPopup(false)}
+                      className="p-1 rounded-full hover:bg-muted transition-all"
+                    >
+                      <X className="w-5 h-5 text-dark-purple/50" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    {statusOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        data-testid={`status-option-${option.id.toLowerCase().replace(/\s+/g, '-')}`}
+                        onClick={() => {
+                          setFormData({ ...formData, relationship_status: option.id });
+                          setShowStatusPopup(false);
+                        }}
+                        className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
+                          formData.relationship_status === option.id 
+                            ? 'border-neon-pink bg-neon-pink/10' 
+                            : 'border-border hover:border-neon-pink/50'
+                        }`}
+                      >
+                        <img src={option.image} alt={option.label} className="w-14 h-14 rounded-full object-cover" />
+                        <span className="text-xs font-medium text-dark-purple text-center leading-tight">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Relationship With - Image Selector */}
             <div>
