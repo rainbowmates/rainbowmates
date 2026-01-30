@@ -361,23 +361,65 @@ export default function CreateAvatar({ user }) {
               </div>
             )}
 
-            {/* Relationship Feel */}
+            {/* Relationship Feel - Image Selector */}
             <div>
               <label className="block text-sm font-medium text-dark-purple mb-2">
-                How does it feel?
+                How does the relationship feel?
               </label>
-              <select
-                data-testid="relationship-feel"
-                value={formData.relationship_feel}
-                onChange={(e) => setFormData({ ...formData, relationship_feel: e.target.value })}
-                className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+              <button
+                data-testid="relationship-feel-button"
+                onClick={() => setShowFeelPopup(true)}
+                className="w-full px-4 py-3 rounded-2xl bg-muted border-2 border-transparent hover:border-neon-pink focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none flex items-center justify-between transition-all"
               >
-                <option>Fun</option>
-                <option>Boring</option>
-                <option>Coming to an end</option>
-                <option>Rather not say</option>
-              </select>
+                <div className="flex items-center gap-3">
+                  <img 
+                    src={feelOptions.find(o => o.id === formData.relationship_feel)?.image || feelOptions[0].image} 
+                    alt={formData.relationship_feel}
+                    className="w-8 h-8 object-contain"
+                  />
+                  <span className="text-dark-purple">{formData.relationship_feel}</span>
+                </div>
+                <ChevronRight className="w-5 h-5 text-dark-purple/50" />
+              </button>
             </div>
+
+            {/* Relationship Feel Popup */}
+            {showFeelPopup && (
+              <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowFeelPopup(false)}>
+                <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4" onClick={(e) => e.stopPropagation()}>
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-bold text-dark-purple">How does the relationship feel?</h3>
+                    <button 
+                      onClick={() => setShowFeelPopup(false)}
+                      className="p-1 rounded-full hover:bg-muted transition-all"
+                    >
+                      <X className="w-5 h-5 text-dark-purple/50" />
+                    </button>
+                  </div>
+                  
+                  <div className="grid grid-cols-2 gap-3">
+                    {feelOptions.map((option) => (
+                      <button
+                        key={option.id}
+                        data-testid={`feel-option-${option.id.toLowerCase().replace(/\s+/g, '-')}`}
+                        onClick={() => {
+                          setFormData({ ...formData, relationship_feel: option.id });
+                          setShowFeelPopup(false);
+                        }}
+                        className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
+                          formData.relationship_feel === option.id 
+                            ? 'border-neon-pink bg-neon-pink/10' 
+                            : 'border-border hover:border-neon-pink/50'
+                        }`}
+                      >
+                        <img src={option.image} alt={option.label} className="w-14 h-14 object-contain" />
+                        <span className="text-xs font-medium text-dark-purple text-center">{option.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button
