@@ -334,13 +334,24 @@ export default function AuthPage({ onLogin }) {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-dark-purple mb-2">
-                        First Name
+                        First Name <span className="text-red-500">*</span>
                       </label>
                       <input
                         data-testid="register-firstname"
                         type="text"
                         value={registerData.first_name}
-                        onChange={(e) => setRegisterData({ ...registerData, first_name: e.target.value })}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterData({ ...registerData, first_name: value });
+                          if (value.trim().length < 2 && value.length > 0) {
+                            setErrors({ ...errors, first_name: 'Min 2 characters' });
+                          } else {
+                            setErrors({ ...errors, first_name: '' });
+                          }
+                        }}
+                        placeholder="Enter first name"
+                        minLength={2}
+                        maxLength={50}
                         className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
                           errors.first_name ? 'border-red-500' : 'border-transparent'
                         } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
@@ -353,13 +364,24 @@ export default function AuthPage({ onLogin }) {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-dark-purple mb-2">
-                        Surname
+                        Surname <span className="text-red-500">*</span>
                       </label>
                       <input
                         data-testid="register-surname"
                         type="text"
                         value={registerData.surname}
-                        onChange={(e) => setRegisterData({ ...registerData, surname: e.target.value })}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterData({ ...registerData, surname: value });
+                          if (value.trim().length < 2 && value.length > 0) {
+                            setErrors({ ...errors, surname: 'Min 2 characters' });
+                          } else {
+                            setErrors({ ...errors, surname: '' });
+                          }
+                        }}
+                        placeholder="Enter surname"
+                        minLength={2}
+                        maxLength={50}
                         className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
                           errors.surname ? 'border-red-500' : 'border-transparent'
                         } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
@@ -373,13 +395,22 @@ export default function AuthPage({ onLogin }) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
-                      Date of Birth
+                      Date of Birth <span className="text-red-500">*</span>
+                      <span className="text-dark-purple/50 text-xs ml-1">(Must be 18+)</span>
                     </label>
                     <input
                       data-testid="register-dob"
                       type="date"
                       value={registerData.dob}
-                      onChange={(e) => setRegisterData({ ...registerData, dob: e.target.value })}
+                      onChange={(e) => {
+                        const value = e.target.value;
+                        setRegisterData({ ...registerData, dob: value });
+                        if (value && !validateAge(value)) {
+                          setErrors({ ...errors, dob: 'You must be 18 or older' });
+                        } else {
+                          setErrors({ ...errors, dob: '' });
+                        }
+                      }}
                       max={new Date().toISOString().split('T')[0]}
                       className={`w-full px-4 py-3 rounded-2xl bg-muted border-2 ${
                         errors.dob ? 'border-red-500' : 'border-transparent'
