@@ -18,6 +18,7 @@ import { Toaster } from "@/components/ui/sonner";
 
 function App() {
   const [user, setUser] = useState(null);
+  const [bestie, setBestie] = useState(null);
   const [showSplash, setShowSplash] = useState(true);
   const [loading, setLoading] = useState(true);
 
@@ -27,6 +28,13 @@ function App() {
     if (savedUser) {
       setUser(JSON.parse(savedUser));
     }
+    
+    // Check for saved bestie
+    const savedBestie = localStorage.getItem("rainbow_mates_bestie");
+    if (savedBestie) {
+      setBestie(JSON.parse(savedBestie));
+    }
+    
     setLoading(false);
 
     // Show splash for 3 seconds
