@@ -1072,6 +1072,69 @@ Your personality: {personality_str}
         logger.error(f"Error getting shopping recommendations: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# ============= YOUTUBE SEARCH ROUTES =============
+
+@api_router.get("/youtube/search")
+async def search_youtube(q: str):
+    """Search YouTube for videos and return results with embedded player support"""
+    try:
+        import aiohttp
+        
+        # Use YouTube's search suggest/oembed or scrape search results
+        # For simplicity, we'll use a basic search approach
+        search_query = q.replace(' ', '+')
+        
+        # Try to get video IDs from YouTube search
+        async with aiohttp.ClientSession() as session:
+            # Use YouTube's search page and parse results
+            search_url = f"https://www.youtube.com/results?search_query={search_query}"
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+            }
+            
+            async with session.get(search_url, headers=headers) as response:
+                if response.status == 200:
+                    html = await response.text()
+                    
+                    # Extract video IDs from the page
+                    import re
+                    video_ids = re.findall(r'\"videoId\":\"([a-zA-Z0-9_-]{11})\"', html)
+                    titles = re.findall(r'\"title\":\{\"runs\":\[\{\"text\":\"([^\"]+)\"', html)
+                    channels = re.findall(r'\"ownerText\":\{\"runs\":\[\{\"text\":\"([^\"]+)\"', html)
+                    
+                    # Remove duplicates while preserving order
+                    seen = set()
+                    unique_results = []
+                    
+                    for i, vid in enumerate(video_ids):
+                        if vid not in seen and len(unique_results) < 10:
+                            seen.add(vid)
+                            title = titles[i] if i < len(titles) else f"Video {i+1}"
+                            channel = channels[i] if i < len(channels) else "Unknown"
+                            
+                            unique_results.append({
+                                "videoId": vid,
+                                "title": title,
+                                "channelTitle": channel,
+                                "thumbnail": f"https://img.youtube.com/vi/{vid}/mqdefault.jpg"
+                            })
+                    
+                    return {"results": unique_results}
+                else:
+                    return {"results": []}
+                    
+    except Exception as e:
+        logger.error(f"YouTube search error: {str(e)}")
+        # Return some default dance songs as fallback
+        return {
+            "results": [
+                {"videoId": "TUVcZfQe-Kw", "title": "Levitating - Dua Lipa", "channelTitle": "Dua Lipa", "thumbnail": "https://img.youtube.com/vi/TUVcZfQe-Kw/mqdefault.jpg"},
+                {"videoId": "4NRXx6U8ABQ", "title": "Blinding Lights - The Weeknd", "channelTitle": "The Weeknd", "thumbnail": "https://img.youtube.com/vi/4NRXx6U8ABQ/mqdefault.jpg"},
+                {"videoId": "q0hyYWKXF0Q", "title": "Dance Monkey - Tones and I", "channelTitle": "Tones and I", "thumbnail": "https://img.youtube.com/vi/q0hyYWKXF0Q/mqdefault.jpg"}
+            ]
+        }
+
 # ============= SUBSCRIPTION & PAYMENT ROUTES =============
 
 SUBSCRIPTION_PLANS = {
