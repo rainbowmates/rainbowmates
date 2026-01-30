@@ -184,7 +184,7 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
                   data-testid="karaoke-player"
                   width="100%"
                   height="100%"
-                  src={`https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`}
+                  src={`https://www.youtube-nocookie.com/embed/${videoId}?autoplay=1&rel=0&modestbranding=1`}
                   title="Karaoke video player"
                   frameBorder="0"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
