@@ -72,13 +72,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular karaoke songs with actual karaoke video IDs (embed-friendly)
+  // Popular karaoke songs - VERIFIED karaoke versions with lyrics on screen
   const popularKaraokeSongs = [
-    { title: 'Let It Go - Frozen', id: 'YVVTZgwYwVo' },
-    { title: 'Shallow - Lady Gaga', id: 'bo_efYhYU2A' },
-    { title: 'Someone Like You - Adele', id: 'hLQl3WQQoQ0' },
-    { title: 'Perfect - Ed Sheeran', id: '2Vv-BfVoq4g' },
-    { title: 'Hello - Adele', id: 'YQHsXMglC9A' }
+    { title: 'Dancing Queen - ABBA (Karaoke)', id: 'WHayJZ3eMcE' },
+    { title: 'Let It Go - Frozen (Karaoke)', id: 'ifCAfAzOBJM' },
+    { title: 'I Will Survive - Gloria Gaynor (Karaoke)', id: 'FsUa8P-L2Ag' },
+    { title: 'Shallow - Lady Gaga (Karaoke)', id: '_nHT_k9Rswc' },
+    { title: 'Someone Like You - Adele (Karaoke)', id: 'rMSQwIp4Jg8' }
   ];
 
   return (
