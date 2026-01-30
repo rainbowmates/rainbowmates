@@ -269,19 +269,56 @@ export default function DanceScreen({ user, bestie }) {
           )}
         </div>
         
-        {/* CSS for dance animations */}
+        {/* CSS for partner dance animations */}
         <style>{`
-          @keyframes dance-left {
-            0%, 100% { transform: translateY(0) rotate(-5deg); }
-            50% { transform: translateY(-10px) rotate(5deg); }
+          /* Couple sways together as a unit */
+          @keyframes couple-sway {
+            0%, 100% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
           }
-          @keyframes dance-right {
-            0%, 100% { transform: translateY(-10px) rotate(5deg); }
-            50% { transform: translateY(0) rotate(-5deg); }
+          
+          /* Left partner dance - leans in and out */
+          @keyframes partner-left {
+            0%, 100% { 
+              transform: rotate(-8deg) translateY(0);
+            }
+            25% {
+              transform: rotate(3deg) translateY(-12px);
+            }
+            50% { 
+              transform: rotate(8deg) translateY(-5px);
+            }
+            75% {
+              transform: rotate(-3deg) translateY(-12px);
+            }
           }
-          @keyframes pulse-heart {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+          
+          /* Right partner dance - mirrors left */
+          @keyframes partner-right {
+            0%, 100% { 
+              transform: rotate(8deg) translateY(-5px);
+            }
+            25% {
+              transform: rotate(-3deg) translateY(-12px);
+            }
+            50% { 
+              transform: rotate(-8deg) translateY(0);
+            }
+            75% {
+              transform: rotate(3deg) translateY(-12px);
+            }
+          }
+          
+          /* Heart pulses between them */
+          @keyframes heart-pulse {
+            0%, 100% { transform: scale(1) translateY(0); }
+            50% { transform: scale(1.3) translateY(-5px); }
+          }
+          
+          /* Spin move - can be triggered */
+          @keyframes partner-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
           }
         `}</style>
       </div>
