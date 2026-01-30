@@ -467,7 +467,7 @@ export default function AuthPage({ onLogin }) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
-                      Email
+                      Email <span className="text-red-500">*</span>
                     </label>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
@@ -475,7 +475,16 @@ export default function AuthPage({ onLogin }) {
                         data-testid="register-email"
                         type="email"
                         value={registerData.email}
-                        onChange={(e) => setRegisterData({ ...registerData, email: e.target.value })}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterData({ ...registerData, email: value });
+                          if (value && !validateEmail(value)) {
+                            setErrors({ ...errors, email: 'Enter a valid email address' });
+                          } else {
+                            setErrors({ ...errors, email: '' });
+                          }
+                        }}
+                        placeholder="your@email.com"
                         className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
                           errors.email ? 'border-red-500' : 'border-transparent'
                         } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
@@ -489,7 +498,8 @@ export default function AuthPage({ onLogin }) {
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-dark-purple mb-2">
-                      Password
+                      Password <span className="text-red-500">*</span>
+                      <span className="text-dark-purple/50 text-xs ml-1">(Min 6 characters)</span>
                     </label>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
@@ -497,7 +507,17 @@ export default function AuthPage({ onLogin }) {
                         data-testid="register-password"
                         type="password"
                         value={registerData.password}
-                        onChange={(e) => setRegisterData({ ...registerData, password: e.target.value })}
+                        onChange={(e) => {
+                          const value = e.target.value;
+                          setRegisterData({ ...registerData, password: value });
+                          if (value && value.length < 6) {
+                            setErrors({ ...errors, password: 'Password must be at least 6 characters' });
+                          } else {
+                            setErrors({ ...errors, password: '' });
+                          }
+                        }}
+                        placeholder="Enter password"
+                        minLength={6}
                         className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${
                           errors.password ? 'border-red-500' : 'border-transparent'
                         } focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
