@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Play, Music, X } from 'lucide-react';
-import YouTube from 'react-youtube';
 import { toast } from 'sonner';
 import axios from 'axios';
 
