@@ -64,18 +64,36 @@ export default function SubscriptionScreen({ user }) {
   };
 
   const handleSubscribe = async () => {
+    if (!user?.id) {
+      toast.error('Please log in to subscribe');
+      return;
+    }
+    
     setLoading(true);
     try {
+      console.log('Creating subscription for user:', user.id);
       const response = await axios.post(`${API}/subscription/create?user_id=${user.id}`, {
         plan: selectedPlan,
         auto_renew: autoRenew
       });
 
+      console.log('Subscription response:', response.data);
+      
       if (response.data.checkout_url) {
-        window.location.href = response.data.checkout_url;
+        console.log('Redirecting to:', response.data.checkout_url);
+        // Try window.open first, fallback to location.href
+        const newWindow = window.open(response.data.checkout_url, '_blank');
+        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+          // Popup was blocked, use direct redirect
+          window.location.href = response.data.checkout_url;
+        }
+      } else {
+        toast.error('No checkout URL received');
+        setLoading(false);
       }
     } catch (error) {
-      toast.error('Failed to create subscription');
+      console.error('Subscription error:', error);
+      toast.error(error.response?.data?.detail || 'Failed to create subscription');
       setLoading(false);
     }
   };
