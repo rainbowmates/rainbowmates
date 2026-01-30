@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Search, Play, Music, X } from 'lucide-react';
 import { toast } from 'sonner';
@@ -7,13 +7,35 @@ import axios from 'axios';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
-export default function DanceScreen({ user, bestie }) {
+export default function DanceScreen({ user, bestie: propBestie }) {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [videoId, setVideoId] = useState('');
   const [dancing, setDancing] = useState(false);
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
+  const [bestie, setBestie] = useState(propBestie || null);
+
+  // Fetch bestie if not passed as prop
+  useEffect(() => {
+    const fetchBestie = async () => {
+      if (!bestie && user?.id) {
+        try {
+          const response = await axios.get(`${API}/bestie/${user.id}`);
+          if (response.data) {
+            setBestie(response.data);
+          }
+        } catch (error) {
+          // Check localStorage as fallback
+          const savedBestie = localStorage.getItem('rainbow_mates_bestie');
+          if (savedBestie) {
+            setBestie(JSON.parse(savedBestie));
+          }
+        }
+      }
+    };
+    fetchBestie();
+  }, [user, bestie]);
 
   const searchSong = async () => {
     if (!searchQuery.trim()) {
