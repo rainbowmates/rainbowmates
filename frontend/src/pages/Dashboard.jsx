@@ -130,7 +130,7 @@ export default function Dashboard({ user, onLogout }) {
                 {bestie ? bestie.name : 'Your Bestie'}
               </h3>
               <p className="text-sm text-dark-purple/70">
-                {bestie ? bestie.personality.join(', ') : 'Create your virtual best friend'}
+                {bestie ? bestie.personality.join(', ') : 'Choose your virtual best friend'}
               </p>
             </div>
             {!bestie && (
@@ -139,7 +139,7 @@ export default function Dashboard({ user, onLogout }) {
                 onClick={() => navigate('/create-bestie')}
                 className="px-6 py-2 rounded-full bg-neon-pink text-white font-semibold hover:bg-[#D670D7] transition-all"
               >
-                Create
+                Choose
               </button>
             )}
           </div>
