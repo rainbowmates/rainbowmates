@@ -9,7 +9,11 @@ const API = `${BACKEND_URL}/api`;
 
 export default function Dashboard({ user, onLogout }) {
   const navigate = useNavigate();
-  const [bestie, setBestie] = useState(null);
+  // Initialize bestie from localStorage for immediate display
+  const [bestie, setBestie] = useState(() => {
+    const saved = localStorage.getItem('rainbow_mates_bestie');
+    return saved ? JSON.parse(saved) : null;
+  });
   const [subscription, setSubscription] = useState(null);
   const [loading, setLoading] = useState(true);
 
@@ -19,14 +23,15 @@ export default function Dashboard({ user, onLogout }) {
 
   const fetchData = async () => {
     try {
-      // Fetch bestie
+      // Fetch bestie (will update if changed on server)
       try {
         const bestieRes = await axios.get(`${API}/bestie/${user.id}`);
         setBestie(bestieRes.data);
-        // Also save to localStorage for other screens
         localStorage.setItem('rainbow_mates_bestie', JSON.stringify(bestieRes.data));
       } catch (err) {
-        // No bestie yet
+        // No bestie yet - clear localStorage if server has none
+        localStorage.removeItem('rainbow_mates_bestie');
+        setBestie(null);
       }
 
       // Fetch subscription
