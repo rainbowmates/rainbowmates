@@ -147,7 +147,7 @@ export default function Dashboard({ user, onLogout }) {
             </button>
 
             {/* Subscription Status */}
-            {subscription?.subscription?.status === 'active' ? (
+            {subscription?.has_subscription && subscription?.subscription?.is_active ? (
               <div className="card-soft p-4 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200">
                 <div className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full bg-green-500 flex items-center justify-center">
