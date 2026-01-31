@@ -409,6 +409,114 @@ async def login(credentials: UserLogin):
     
     return {"message": "Login successful", "user": parse_from_mongo(user_doc)}
 
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    email: str
+    otp: str
+    new_password: str
+
+@api_router.post("/auth/forgot-password")
+async def forgot_password(data: ForgotPasswordRequest):
+    """Request password reset - sends OTP to email"""
+    user_doc = await db.users.find_one({"email": data.email}, {"_id": 0})
+    
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="Email not found")
+    
+    # In production, send actual OTP via email
+    # For testing, we use hardcoded OTP 123456
+    otp = "123456"
+    
+    # Store reset OTP (in production, use a separate collection with expiry)
+    await db.users.update_one(
+        {"email": data.email},
+        {"$set": {"reset_otp": otp, "reset_otp_created": datetime.now(timezone.utc)}}
+    )
+    
+    return {"message": "Reset OTP sent to your email"}
+
+@api_router.post("/auth/reset-password")
+async def reset_password(data: ResetPasswordRequest):
+    """Reset password with OTP verification"""
+    user_doc = await db.users.find_one({"email": data.email}, {"_id": 0})
+    
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="Email not found")
+    
+    # Verify OTP (hardcoded 123456 for testing)
+    if data.otp != "123456" and data.otp != user_doc.get("reset_otp"):
+        raise HTTPException(status_code=400, detail="Invalid OTP")
+    
+    # Update password
+    await db.users.update_one(
+        {"email": data.email},
+        {"$set": {"password": data.new_password}, "$unset": {"reset_otp": "", "reset_otp_created": ""}}
+    )
+    
+    return {"message": "Password reset successful"}
+
+# ============= GOOGLE OAUTH ROUTES =============
+
+class GoogleAuthCallback(BaseModel):
+    session_id: str
+
+@api_router.post("/auth/google/callback")
+async def google_auth_callback(data: GoogleAuthCallback):
+    """Exchange Google OAuth session_id for user data"""
+    import aiohttp
+    
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.get(
+                "https://demobackend.emergentagent.com/auth/v1/env/oauth/session-data",
+                headers={"X-Session-ID": data.session_id}
+            ) as response:
+                if response.status != 200:
+                    raise HTTPException(status_code=401, detail="Invalid session")
+                
+                google_user = await response.json()
+        
+        # Check if user exists
+        existing_user = await db.users.find_one({"email": google_user["email"]}, {"_id": 0})
+        
+        if existing_user:
+            # Update existing user with Google data
+            await db.users.update_one(
+                {"email": google_user["email"]},
+                {"$set": {
+                    "name": google_user.get("name", existing_user.get("name")),
+                    "picture": google_user.get("picture"),
+                    "google_id": google_user.get("id"),
+                    "is_verified": True
+                }}
+            )
+            user_doc = await db.users.find_one({"email": google_user["email"]}, {"_id": 0})
+        else:
+            # Create new user from Google data
+            user_id = f"user_{uuid.uuid4().hex[:12]}"
+            new_user = {
+                "id": user_id,
+                "email": google_user["email"],
+                "name": google_user.get("name", ""),
+                "first_name": google_user.get("name", "").split()[0] if google_user.get("name") else "",
+                "surname": " ".join(google_user.get("name", "").split()[1:]) if google_user.get("name") else "",
+                "picture": google_user.get("picture"),
+                "google_id": google_user.get("id"),
+                "is_verified": True,
+                "created_at": datetime.now(timezone.utc),
+                "auth_provider": "google"
+            }
+            await db.users.insert_one(new_user)
+            user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+        
+        return {"user": parse_from_mongo(user_doc), "session_token": google_user.get("session_token")}
+        
+    except Exception as e:
+        logger.error(f"Google auth error: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============= AVATAR ROUTES =============
 
 @api_router.post("/avatar/create")
