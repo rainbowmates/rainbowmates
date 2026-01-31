@@ -49,7 +49,7 @@ export default function Dashboard({ user, onLogout }) {
   };
 
   const handleLetsPlay = () => {
-    if (subscription?.subscription?.status === 'active') {
+    if (subscription?.has_subscription && subscription?.subscription?.is_active) {
       navigate('/play');
     } else {
       navigate('/subscription');
