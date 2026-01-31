@@ -1032,16 +1032,16 @@ async def delete_chat_history(user_id: str, bestie_id: str, timeframe: str = "al
 
 # ============= VOICE ROUTES =============
 
-# ElevenLabs voice mapping based on accent/personality
+# ElevenLabs voice mapping - Male voices with sympathetic/warm tone
+# These are the bestie's voices (gay best friend character)
 VOICE_MAP = {
-    "British": "21m00Tcm4TlvDq8ikWAM",  # Rachel - warm British female
-    "American": "EXAVITQu4vr4xnSDxMaL",  # Bella - American female
-    "Australian": "pNInz6obpgDQGcFmaJgB",  # Adam - can work for Australian
-    "Irish": "Xb7hH8MSUJpSbSDYk0k2",  # Alice - soft tone
-    "Southern US": "nPczCjzI2devNBz1zQrb",  # Brian - friendly US
-    "French": "z9fAnlkpzviPz146aGWa",  # Glinda - elegant
-    "Spanish": "XrExE9yKIg1WjnnlVkGX",  # Matilda - warm
-    "default": "21m00Tcm4TlvDq8ikWAM"  # Rachel as default
+    "British": "pNInz6obpgDQGcFmaJgB",  # Adam - warm British male
+    "American": "nPczCjzI2devNBz1zQrb",  # Brian - friendly sympathetic American male
+    "Australian": "ZQe5CZNOzWyzPSCn5a3c",  # James - warm Australian male
+    "Southern": "TxGEqnHWrfWFTfGW9XjX",  # Josh - friendly Southern male
+    "New York": "VR6AewLTigWG4xSOukaG",  # Arnold - New York male
+    "Valley Girl": "nPczCjzI2devNBz1zQrb",  # Brian - use friendly male for this too
+    "default": "nPczCjzI2devNBz1zQrb"  # Brian as default - sympathetic male voice
 }
 
 @api_router.post("/voice/tts")
