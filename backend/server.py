@@ -776,29 +776,12 @@ REMEMBER: Keep the EXACT same face, just change the clothes to {request.outfit_d
 
 @api_router.post("/bestie/create")
 async def create_bestie(user_id: str, bestie_data: BestieCreate):
-    """Create a bestie"""
+    """Create a bestie - uses the user-selected image from the frontend"""
     try:
-        # Generate bestie avatar
-        image_gen = OpenAIImageGeneration(api_key=EMERGENT_LLM_KEY)
-        personality_str = ", ".join(bestie_data.personality)
-        interests_str = ", ".join(bestie_data.interests)
-        prompt = f"Create an avatar for {bestie_data.name}, a {personality_str} gay best friend who loves {interests_str}. Stylish, friendly, fashionable portrait."
-        
-        images = await image_gen.generate_images(
-            prompt=prompt,
-            model="gpt-image-1",
-            number_of_images=1
-        )
-        
-        avatar_url = None
-        if images and len(images) > 0:
-            avatar_base64 = base64.b64encode(images[0]).decode('utf-8')
-            avatar_url = f"data:image/png;base64,{avatar_base64}"
-        
+        # Use the image_url selected by the user from the frontend
         bestie = Bestie(
             user_id=user_id,
-            **bestie_data.model_dump(),
-            avatar_url=avatar_url
+            **bestie_data.model_dump()
         )
         
         doc = prepare_for_mongo(bestie.model_dump())
