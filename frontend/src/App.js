@@ -85,6 +85,10 @@ function App() {
             }
           />
           <Route
+            path="/auth/callback"
+            element={<AuthCallback onLogin={handleLogin} />}
+          />
+          <Route
             path="/dashboard"
             element={
               user ? (
