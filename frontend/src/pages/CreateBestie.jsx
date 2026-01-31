@@ -57,9 +57,25 @@ export default function CreateBestie({ user }) {
 
     setGenerating(true);
     try {
-      await axios.post(`${API}/bestie/create?user_id=${user.id}`, formData);
+      const response = await axios.post(`${API}/bestie/create?user_id=${user.id}`, formData);
+      const newBestie = response.data;
+      
+      // Save bestie to localStorage immediately
+      localStorage.setItem('rainbow_mates_bestie', JSON.stringify(newBestie));
+      
+      // Also refresh user data from backend to ensure avatar_url is included
+      try {
+        const userResponse = await axios.get(`${API}/user/${user.id}`);
+        if (userResponse.data) {
+          localStorage.setItem('rainbow_mates_user', JSON.stringify(userResponse.data));
+        }
+      } catch (e) {
+        // User data refresh failed, but bestie was created
+        console.log('User refresh skipped');
+      }
+      
       toast.success('Bestie created successfully!');
-      setTimeout(() => navigate('/dashboard'), 2000);
+      navigate('/dashboard');
     } catch (error) {
       toast.error(error.response?.data?.detail || 'Failed to create bestie');
     } finally {
