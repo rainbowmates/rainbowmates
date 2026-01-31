@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "@/App.css";
 import SplashScreen from "./pages/SplashScreen";
 import AuthPage from "./pages/AuthPage";
+import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
 import CreateAvatar from "./pages/CreateAvatar";
 import CreateBestie from "./pages/CreateBestie";
