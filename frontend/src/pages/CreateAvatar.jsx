@@ -131,16 +131,18 @@ export default function CreateAvatar({ user }) {
   const handleSaveProfile = async () => {
     setGenerating(true);
     try {
-      // Update user profile with relationship details
+      // Update user profile with avatar and relationship details
       await axios.put(`${API}/user/update/${user.id}`, {
+        avatar_url: selectedAvatar?.image,
         relationship_status: formData.relationship_status,
         relationship_with: formData.relationship_with,
         relationship_feel: formData.relationship_feel
       });
 
-      // Update localStorage
+      // Update localStorage with avatar_url included
       const updatedUser = {
         ...user,
+        avatar_url: selectedAvatar?.image,
         relationship_status: formData.relationship_status,
         relationship_with: formData.relationship_with,
         relationship_feel: formData.relationship_feel
