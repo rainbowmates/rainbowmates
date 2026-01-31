@@ -31,18 +31,21 @@ export default function SubscriptionScreen({ user }) {
   const checkPaymentStatus = async (sessionId) => {
     setChecking(true);
     let attempts = 0;
-    const maxAttempts = 5;
+    const maxAttempts = 10; // Increased attempts
 
     const poll = async () => {
       try {
+        console.log(`Checking payment status, attempt ${attempts + 1}`);
         const response = await axios.get(`${API}/subscription/status/${sessionId}`);
+        console.log('Status response:', response.data);
         
         if (response.data.payment_status === 'paid') {
-          toast.success('Payment successful! Subscription activated.');
-          setTimeout(() => navigate('/dashboard'), 2000);
+          toast.success('Payment successful! Welcome to Premium!');
+          // Navigate immediately - subscription should be created by backend
+          navigate('/dashboard');
           return;
         } else if (response.data.status === 'expired') {
-          toast.error('Payment session expired.');
+          toast.error('Payment session expired. Please try again.');
           setChecking(false);
           return;
         }
@@ -51,12 +54,28 @@ export default function SubscriptionScreen({ user }) {
         if (attempts < maxAttempts) {
           setTimeout(poll, 2000);
         } else {
-          toast.info('Payment is being processed...');
+          // After max attempts, check if subscription was created anyway
+          try {
+            const subCheck = await axios.get(`${API}/subscription/${user.id}`);
+            if (subCheck.data.has_subscription) {
+              toast.success('Subscription activated!');
+              navigate('/dashboard');
+              return;
+            }
+          } catch (e) {
+            console.log('Subscription check failed:', e);
+          }
+          toast.info('Payment is being processed. Please check back in a moment.');
           setChecking(false);
         }
       } catch (error) {
         console.error('Error checking status:', error);
-        setChecking(false);
+        attempts++;
+        if (attempts < maxAttempts) {
+          setTimeout(poll, 2000);
+        } else {
+          setChecking(false);
+        }
       }
     };
 
