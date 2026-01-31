@@ -97,4 +97,14 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
 - OTP: 123456
 
 ---
-*Last updated: January 30, 2026*
+*Last updated: January 31, 2026*
+
+## Bug Fixes Log
+
+### January 31, 2026
+- **P0 FIXED**: Dashboard now correctly shows both avatars after completing avatar and bestie creation
+  - Root cause: localStorage not being updated with bestie data after creation
+  - Fix: Save bestie to localStorage immediately after API call, refresh user data from backend
+- **P1 FIXED**: Bestie creation now fast (under 5 seconds vs. 15+ seconds before)
+  - Root cause: Backend was generating AI images even though user selected from a grid
+  - Fix: Backend now uses user-selected image_url instead of generating a new one
