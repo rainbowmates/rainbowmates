@@ -23,6 +23,11 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
    - Login with email/mobile
    - OTP verification (hardcoded: 123456)
    - UK as default country, 18+ age verification
+   - **Forgot Password** - Email-based OTP reset flow
+   - **Social Logins**:
+     - ✅ Google Login (Emergent-managed OAuth - working)
+     - 🔜 Facebook Login (requires App credentials)
+     - 🔜 Apple Login (requires Developer credentials)
    - **Field Validations (Frontend + Backend)**:
      - First name: Min 2 chars, max 50 chars, required
      - Surname: Min 2 chars, max 50 chars, required
