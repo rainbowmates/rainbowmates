@@ -46,6 +46,31 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Refresh user data from localStorage periodically (for avatar updates)
+  useEffect(() => {
+    const refreshUser = () => {
+      const savedUser = localStorage.getItem("rainbow_mates_user");
+      if (savedUser) {
+        const parsedUser = JSON.parse(savedUser);
+        // Only update if data has changed
+        if (JSON.stringify(parsedUser) !== JSON.stringify(user)) {
+          setUser(parsedUser);
+        }
+      }
+    };
+
+    // Check for updates every second when page is visible
+    const interval = setInterval(refreshUser, 1000);
+    
+    // Also refresh on focus
+    window.addEventListener('focus', refreshUser);
+    
+    return () => {
+      clearInterval(interval);
+      window.removeEventListener('focus', refreshUser);
+    };
+  }, [user]);
+
   const handleLogin = (userData) => {
     setUser(userData);
     localStorage.setItem("rainbow_mates_user", JSON.stringify(userData));
