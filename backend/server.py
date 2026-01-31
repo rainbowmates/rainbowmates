@@ -573,6 +573,15 @@ async def create_user_avatar(
         logger.error(f"Error creating avatar: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@api_router.get("/user/{user_id}")
+async def get_user(user_id: str):
+    """Get user data by ID"""
+    user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+    if not user_doc:
+        raise HTTPException(status_code=404, detail="User not found")
+    return user_doc
+
 @api_router.get("/avatar/refresh/{user_id}")
 async def refresh_user_avatar(user_id: str):
     """Regenerate user avatar"""
