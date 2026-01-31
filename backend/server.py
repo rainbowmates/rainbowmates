@@ -785,18 +785,30 @@ REMEMBER: Keep the EXACT same face, just change the clothes to {request.outfit_d
 
 @api_router.post("/bestie/create")
 async def create_bestie(user_id: str, bestie_data: BestieCreate):
-    """Create a bestie - uses the user-selected image from the frontend"""
+    """Create or update a bestie - uses the user-selected image from the frontend"""
     try:
-        # Use the image_url selected by the user from the frontend
-        bestie = Bestie(
-            user_id=user_id,
-            **bestie_data.model_dump()
-        )
+        # Check if user already has a bestie
+        existing_bestie = await db.besties.find_one({"user_id": user_id}, {"_id": 0})
         
-        doc = prepare_for_mongo(bestie.model_dump())
-        await db.besties.insert_one(doc)
-        
-        return bestie
+        if existing_bestie:
+            # Update existing bestie
+            update_data = bestie_data.model_dump()
+            await db.besties.update_one(
+                {"user_id": user_id},
+                {"$set": update_data}
+            )
+            # Return updated bestie
+            updated_bestie = await db.besties.find_one({"user_id": user_id}, {"_id": 0})
+            return updated_bestie
+        else:
+            # Create new bestie
+            bestie = Bestie(
+                user_id=user_id,
+                **bestie_data.model_dump()
+            )
+            doc = prepare_for_mongo(bestie.model_dump())
+            await db.besties.insert_one(doc)
+            return bestie
         
     except Exception as e:
         logger.error(f"Error creating bestie: {str(e)}")
