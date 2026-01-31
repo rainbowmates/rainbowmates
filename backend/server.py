@@ -1323,28 +1323,35 @@ async def get_subscription_status(session_id: str):
         )
         
         if transaction_doc and status.payment_status == "paid" and transaction_doc.get("payment_status") != "completed":
+            logger.info(f"Payment confirmed for session {session_id}, creating subscription")
             # Update transaction
             await db.payment_transactions.update_one(
                 {"session_id": session_id},
                 {"$set": {"payment_status": "completed", "status": "completed"}}
             )
             
-            # Create subscription
+            # Create subscription - first check if one already exists
             user_id = transaction_doc["user_id"]
-            plan = transaction_doc["plan"]
-            months = int(plan.split("_")[0])
-            end_date = datetime.now(timezone.utc) + timedelta(days=30 * months)
+            existing_sub = await db.subscriptions.find_one({"user_id": user_id, "is_active": True})
             
-            subscription = Subscription(
-                user_id=user_id,
-                plan=plan,
-                amount=transaction_doc["amount"],
-                end_date=end_date,
-                auto_renew=transaction_doc.get("metadata", {}).get("auto_renew", False),
-                stripe_session_id=session_id
-            )
-            
-            await db.subscriptions.insert_one(prepare_for_mongo(subscription.model_dump()))
+            if not existing_sub:
+                plan = transaction_doc["plan"]
+                months = int(plan.split("_")[0])
+                end_date = datetime.now(timezone.utc) + timedelta(days=30 * months)
+                
+                subscription = Subscription(
+                    user_id=user_id,
+                    plan=plan,
+                    amount=transaction_doc["amount"],
+                    end_date=end_date,
+                    auto_renew=transaction_doc.get("metadata", {}).get("auto_renew", False),
+                    stripe_session_id=session_id
+                )
+                
+                await db.subscriptions.insert_one(prepare_for_mongo(subscription.model_dump()))
+                logger.info(f"Subscription created for user {user_id}")
+            else:
+                logger.info(f"User {user_id} already has an active subscription")
         
         return status
         
