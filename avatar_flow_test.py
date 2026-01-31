@@ -7,7 +7,7 @@ import io
 from datetime import datetime
 
 class AvatarFlowTester:
-    def __init__(self, base_url="https://virtual-bff.preview.emergentagent.com"):
+    def __init__(self, base_url="https://rainbowmates.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.user_data = None
