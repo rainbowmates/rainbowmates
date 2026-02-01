@@ -53,6 +53,26 @@ const avatarOptions = [
     id: 'avatar-9', 
     name: 'Elena',
     image: 'https://customer-assets.emergentagent.com/job_a9da2ea3-f639-454d-8f3d-963457776e39/artifacts/5vk4z770_fruitee.fun_A_semi-realistic_AI_fashion_model_full-body_stand_cac51ae0-5cac-421a-af32-680d557ee0e1_1.png'
+  },
+  { 
+    id: 'avatar-10', 
+    name: 'Bella',
+    image: 'https://customer-assets.emergentagent.com/job_a9da2ea3-f639-454d-8f3d-963457776e39/artifacts/9qyuc7sa_fruitee.fun_A_semi-realistic_AI_fashion_model_full-body_stand_d174b439-1c12-4cbf-b138-9d053311cde4_1.png'
+  },
+  { 
+    id: 'avatar-11', 
+    name: 'Jasmine',
+    image: 'https://customer-assets.emergentagent.com/job_a9da2ea3-f639-454d-8f3d-963457776e39/artifacts/06r5ickk_fruitee.fun_A_semi-realistic_AI_fashion_model_full-body_stand_302f1647-4add-412d-b6bc-7385cd7eb38a_2.png'
+  },
+  { 
+    id: 'avatar-12', 
+    name: 'Hana',
+    image: 'https://customer-assets.emergentagent.com/job_a9da2ea3-f639-454d-8f3d-963457776e39/artifacts/jc8ih4vw_fruitee.fun_A_semi-realistic_AI_fashion_model_full-body_stand_eb5762ec-3381-43c9-99e5-026d59f183dd_1.png'
+  },
+  { 
+    id: 'avatar-13', 
+    name: 'Layla',
+    image: 'https://customer-assets.emergentagent.com/job_a9da2ea3-f639-454d-8f3d-963457776e39/artifacts/huc1elyo_fruitee.fun_A_semi-realistic_AI_fashion_model_full-body_stand_110b887f-6ced-4fa0-8e40-6ca95d6c2819_0.png'
   }
 ];
 
