@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Send, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -14,6 +14,7 @@ export default function ChatScreen({ user }) {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [showTyping, setShowTyping] = useState(false);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
@@ -47,7 +48,7 @@ export default function ChatScreen({ user }) {
     if (!input.trim() || loading) return;
 
     const messageContent = input.trim();
-    const userMessage = { role: 'user', content: messageContent, timestamp: new Date().toISOString() };
+    const userMessage = { id: Date.now().toString(), role: 'user', content: messageContent, timestamp: new Date().toISOString() };
     
     // Clear input first, then update messages
     setInput('');
@@ -72,6 +73,7 @@ export default function ChatScreen({ user }) {
       setShowTyping(false);
 
       const bestieMessage = {
+        id: (Date.now() + 1).toString(),
         role: 'bestie',
         content: response.data.message,
         timestamp: new Date().toISOString()
@@ -88,15 +90,28 @@ export default function ChatScreen({ user }) {
     }
   };
 
-  const deleteHistory = async () => {
-    if (!window.confirm('Delete all chat history?')) return;
+  const deleteMessage = async (messageId, index) => {
+    // Remove from local state immediately
+    setMessages(prev => prev.filter((_, idx) => idx !== index));
+    toast.success('Message deleted');
+    
+    // Optionally sync with backend
+    try {
+      await axios.delete(`${API}/chat/message/${user.id}/${bestie.id}/${messageId}`);
+    } catch (error) {
+      // Silent fail - local state is already updated
+      console.log('Backend sync failed for delete');
+    }
+  };
 
+  const clearAllHistory = async () => {
     try {
       await axios.delete(`${API}/chat/history/${user.id}/${bestie.id}?timeframe=all`);
       setMessages([]);
-      toast.success('Chat history deleted');
+      setShowClearConfirm(false);
+      toast.success('All chat history cleared');
     } catch (error) {
-      toast.error('Failed to delete history');
+      toast.error('Failed to clear history');
     }
   };
 
@@ -104,6 +119,32 @@ export default function ChatScreen({ user }) {
 
   return (
     <div className="app-container min-h-screen flex flex-col">
+      {/* Clear Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-lg font-bold text-dark-purple mb-2">Clear All Messages?</h3>
+            <p className="text-dark-purple/70 mb-6">
+              Are you sure you want to delete all chat history with {bestie.name}? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="flex-1 px-4 py-2 rounded-full border border-border text-dark-purple hover:bg-muted transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={clearAllHistory}
+                className="flex-1 px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="bg-white border-b border-border p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
@@ -127,9 +168,10 @@ export default function ChatScreen({ user }) {
           </div>
         </div>
         <button
-          data-testid="delete-history-button"
-          onClick={deleteHistory}
+          data-testid="clear-history-button"
+          onClick={() => setShowClearConfirm(true)}
           className="p-2 rounded-full hover:bg-muted transition-all"
+          title="Clear all messages"
         >
           <Trash2 className="w-5 h-5 text-dark-purple" />
         </button>
@@ -144,10 +186,21 @@ export default function ChatScreen({ user }) {
         )}
         {messages.map((msg, idx) => (
           <div
-            key={idx}
+            key={msg.id || idx}
             data-testid={`message-${msg.role}`}
-            className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+            className={`flex group ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
           >
+            {/* Delete button for user messages (left side) */}
+            {msg.role === 'user' && (
+              <button
+                onClick={() => deleteMessage(msg.id, idx)}
+                className="opacity-0 group-hover:opacity-100 p-1 mr-2 self-center text-dark-purple/40 hover:text-red-500 transition-all"
+                title="Delete message"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
+            
             <div
               className={`max-w-[80%] rounded-2xl px-4 py-3 ${
                 msg.role === 'user'
@@ -157,6 +210,17 @@ export default function ChatScreen({ user }) {
             >
               <p className="text-sm">{msg.content}</p>
             </div>
+
+            {/* Delete button for bestie messages (right side) */}
+            {msg.role === 'bestie' && (
+              <button
+                onClick={() => deleteMessage(msg.id, idx)}
+                className="opacity-0 group-hover:opacity-100 p-1 ml-2 self-center text-dark-purple/40 hover:text-red-500 transition-all"
+                title="Delete message"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            )}
           </div>
         ))}
         {showTyping && (
