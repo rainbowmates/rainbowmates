@@ -34,6 +34,16 @@ export default function ShoppingScreen({ user }) {
     try {
       const response = await axios.get(`${API}/bestie/${user.id}`);
       setBestie(response.data);
+      
+      // Add a greeting message when entering shopping
+      if (conversation.length === 0) {
+        const greetingMessage = {
+          role: 'bestie',
+          text: `Hey honey! 🛍️ Ready for some retail therapy? How are you feeling today? Tell me what you're in the mood for and I'll help you find something fabulous!`,
+          followup: ''
+        };
+        setConversation([greetingMessage]);
+      }
     } catch (error) {
       toast.error('Failed to load bestie');
       navigate('/dashboard');
