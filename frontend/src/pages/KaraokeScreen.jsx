@@ -81,6 +81,16 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     { title: 'Happy - Pharrell Williams (Karaoke)', id: 'C7dPqrmDWxs' }
   ];
 
+  // Greeting message from bestie
+  const getGreeting = () => {
+    const greetings = [
+      `Hey superstar! 🎤 Ready to belt out some tunes? How are you feeling today? Let's find a song that matches your vibe!`,
+      `Ooh, karaoke time! 🎵 I'm SO here for this! How's it going, babe? What should we sing together?`,
+      `Yes! Singing time! 💕 How are you doing today? Pick something fun and let's make some memories!`
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  };
+
   return (
     <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
       <div className="p-4 pb-8 space-y-4">
@@ -99,6 +109,19 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
             <p className="text-xs text-dark-purple/70">Sing along with {bestie?.name || 'your bestie'}!</p>
           </div>
         </div>
+
+        {/* Bestie Greeting */}
+        {bestie && !videoId && (
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/80 border border-neon-pink/20">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0">
+              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            </div>
+            <div>
+              <p className="font-bold text-dark-purple text-sm">{bestie.name}</p>
+              <p className="text-dark-purple/80 text-sm mt-1">{getGreeting()}</p>
+            </div>
+          </div>
+        )}
 
         <div className="card-soft p-4 space-y-4">
           {/* Search */}
