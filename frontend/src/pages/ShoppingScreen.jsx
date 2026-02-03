@@ -410,6 +410,14 @@ export default function ShoppingScreen({ user }) {
                           })}
                         </div>
                       </div>
+                        <button
+                          onClick={() => deleteMessage(msgIdx)}
+                          className="opacity-0 group-hover:opacity-100 p-1 ml-2 self-start mt-4 text-dark-purple/40 hover:text-red-500 transition-all"
+                          title="Delete message"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
                       
                       {/* Follow-up question as separate bubble */}
                       {msg.followup && (
