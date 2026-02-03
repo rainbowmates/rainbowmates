@@ -269,139 +269,154 @@ export default function ShoppingScreen({ user }) {
             </div>
           </div>
 
-          {/* Get Recommendations Button */}
-          <button
-            data-testid="get-recommendations-button"
-            onClick={getRecommendations}
-            disabled={loading || !userRequest.trim()}
-            className="w-full neon-button disabled:opacity-50 flex items-center justify-center gap-2"
-          >
-            {loading ? (
-              <>
-                <Sparkles className="w-5 h-5 animate-spin" />
-                {bestie.name} is thinking...
-              </>
-            ) : (
-              <>
-                <Send className="w-5 h-5" />
-                Ask {bestie.name}
-              </>
-            )}
-          </button>
+          {/* Get Recommendations Button - Only show if no conversation started */}
+          {conversation.length === 0 && (
+            <button
+              data-testid="get-recommendations-button"
+              onClick={getRecommendations}
+              disabled={loading || !userRequest.trim()}
+              className="w-full neon-button disabled:opacity-50 flex items-center justify-center gap-2"
+            >
+              {loading ? (
+                <>
+                  <Sparkles className="w-5 h-5 animate-spin" />
+                  {bestie.name} is thinking...
+                </>
+              ) : (
+                <>
+                  <Send className="w-5 h-5" />
+                  Ask {bestie.name}
+                </>
+              )}
+            </button>
+          )}
 
-          {/* Recommendations */}
-          {recommendations && (
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-soft-yellow/20 to-neon-pink/20" data-testid="recommendations">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-neon-pink">
-                  <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+          {/* Conversation Thread */}
+          {conversation.length > 0 && (
+            <div className="space-y-4" data-testid="conversation-thread">
+              {conversation.map((msg, msgIdx) => (
+                <div key={msgIdx}>
+                  {msg.role === 'user' ? (
+                    /* User Message */
+                    <div className="flex justify-end">
+                      <div className="max-w-[85%] p-4 rounded-2xl bg-neon-pink text-white">
+                        <p>{msg.text}</p>
+                      </div>
+                    </div>
+                  ) : (
+                    /* Bestie Message */
+                    <div className="space-y-3">
+                      <div className="p-5 rounded-2xl bg-gradient-to-br from-soft-yellow/20 to-neon-pink/20">
+                        <div className="flex items-center gap-3 mb-3">
+                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-neon-pink">
+                            <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                          </div>
+                          <span className="font-bold text-dark-purple">{bestie.name}</span>
+                        </div>
+                        <div className="text-dark-purple leading-relaxed space-y-2">
+                          {msg.text.split('\n').map((line, idx) => {
+                            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                            const parts = [];
+                            let lastIndex = 0;
+                            let match;
+                            
+                            while ((match = linkRegex.exec(line)) !== null) {
+                              if (match.index > lastIndex) {
+                                parts.push(line.substring(lastIndex, match.index));
+                              }
+                              parts.push(
+                                <a
+                                  key={`${msgIdx}-${idx}-${match.index}`}
+                                  href={match[2]}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-neon-pink hover:text-[#D670D7] underline font-medium"
+                                >
+                                  {match[1]}
+                                </a>
+                              );
+                              lastIndex = match.index + match[0].length;
+                            }
+                            
+                            if (lastIndex < line.length) {
+                              parts.push(line.substring(lastIndex));
+                            }
+                            
+                            if (parts.length === 0) {
+                              parts.push(line);
+                            }
+                            
+                            return (
+                              <p key={idx} className={line.startsWith('👉') ? 'ml-4' : ''}>
+                                {parts}
+                              </p>
+                            );
+                          })}
+                        </div>
+                      </div>
+                      
+                      {/* Follow-up question as separate bubble */}
+                      {msg.followup && (
+                        <div className="p-4 rounded-2xl bg-white border-2 border-neon-pink/30 shadow-sm ml-4">
+                          <div className="flex items-start gap-3">
+                            <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0">
+                              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                            </div>
+                            <p className="text-dark-purple font-medium">{msg.followup}</p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
-                <h3 className="text-lg font-bold text-dark-purple">
-                  {bestie.name} says:
-                </h3>
-              </div>
-              <div className="text-dark-purple leading-relaxed space-y-2">
-                {recommendations.split('\n').map((line, idx) => {
-                  // Parse markdown links [text](url)
-                  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-                  const parts = [];
-                  let lastIndex = 0;
-                  let match;
-                  
-                  while ((match = linkRegex.exec(line)) !== null) {
-                    // Add text before the link
-                    if (match.index > lastIndex) {
-                      parts.push(line.substring(lastIndex, match.index));
-                    }
-                    // Add the link
-                    parts.push(
-                      <a
-                        key={`${idx}-${match.index}`}
-                        href={match[2]}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-neon-pink hover:text-[#D670D7] underline font-medium"
+              ))}
+
+              {/* Loading indicator */}
+              {loading && (
+                <div className="flex items-center gap-3 p-4">
+                  <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-neon-pink">
+                    <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                  </div>
+                  <div className="flex items-center gap-2 text-dark-purple/70">
+                    <Sparkles className="w-5 h-5 animate-spin text-neon-pink" />
+                    <span>{bestie.name} is thinking...</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Reply Input */}
+              {!loading && (
+                <div className="space-y-2 pt-2" data-testid="reply-section">
+                  <div className="relative">
+                    <input
+                      data-testid="reply-input"
+                      type="text"
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      onKeyPress={(e) => e.key === 'Enter' && sendReply()}
+                      placeholder="Type your reply..."
+                      className="w-full px-4 py-3 pr-24 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none placeholder:text-dark-purple/40"
+                    />
+                    <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                      <button
+                        onClick={isReplyRecording ? stopReplyRecording : startReplyRecording}
+                        className={`p-2 rounded-full transition-all ${
+                          isReplyRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-neon-pink/20 text-neon-pink hover:bg-neon-pink/30'
+                        }`}
                       >
-                        {match[1]}
-                      </a>
-                    );
-                    lastIndex = match.index + match[0].length;
-                  }
-                  
-                  // Add remaining text after last link
-                  if (lastIndex < line.length) {
-                    parts.push(line.substring(lastIndex));
-                  }
-                  
-                  // If no links found, just return the line
-                  if (parts.length === 0) {
-                    parts.push(line);
-                  }
-                  
-                  return (
-                    <p key={idx} className={line.startsWith('👉') ? 'ml-4' : ''}>
-                      {parts}
-                    </p>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {/* Follow-up Question - Separate Message */}
-          {followupQuestion && (
-            <div className="p-4 rounded-2xl bg-white border-2 border-neon-pink/30 shadow-sm" data-testid="followup-question">
-              <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0">
-                  <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                        {isReplyRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                      </button>
+                      <button
+                        onClick={sendReply}
+                        disabled={!replyText.trim() || loading}
+                        className="p-2 rounded-full bg-neon-pink text-white hover:bg-[#D670D7] disabled:opacity-50 transition-all"
+                      >
+                        <Send className="w-4 h-4" />
+                      </button>
+                    </div>
+                  </div>
                 </div>
-                <p className="text-dark-purple font-medium">{followupQuestion}</p>
-              </div>
-            </div>
-          )}
-
-          {/* Reply Input - Shows after recommendations */}
-          {(recommendations || followupQuestion) && (
-            <div className="space-y-3" data-testid="reply-section">
-              <label className="block text-sm font-medium text-dark-purple">
-                Your reply:
-              </label>
-              <div className="relative">
-                <input
-                  data-testid="reply-input"
-                  type="text"
-                  value={replyText}
-                  onChange={(e) => setReplyText(e.target.value)}
-                  onKeyPress={(e) => e.key === 'Enter' && sendReply()}
-                  placeholder="Type your response..."
-                  className="w-full px-4 py-3 pr-24 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none placeholder:text-dark-purple/40"
-                />
-                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
-                  <button
-                    onClick={isReplyRecording ? stopReplyRecording : startReplyRecording}
-                    className={`p-2 rounded-full transition-all ${
-                      isReplyRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-neon-pink/20 text-neon-pink hover:bg-neon-pink/30'
-                    }`}
-                  >
-                    {isReplyRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
-                  </button>
-                  <button
-                    onClick={sendReply}
-                    disabled={!replyText.trim() || loading}
-                    className="p-2 rounded-full bg-neon-pink text-white hover:bg-[#D670D7] disabled:opacity-50 transition-all"
-                  >
-                    <Send className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
-
-          {/* Loading indicator for replies */}
-          {loading && recommendations && (
-            <div className="flex items-center gap-2 text-dark-purple/70">
-              <Sparkles className="w-5 h-5 animate-spin text-neon-pink" />
-              <span>{bestie.name} is thinking...</span>
+              )}
             </div>
           )}
 
