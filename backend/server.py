@@ -312,7 +312,8 @@ class PaymentTransaction(BaseModel):
 
 class ShoppingRequest(BaseModel):
     bestie_id: str
-    gender: str
+    user_request: str  # What the user wants to find
+    gender: Optional[str] = "Female"
     style: Optional[str] = None
     length: Optional[str] = None
     max_price: Optional[float] = None
