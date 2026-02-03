@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { ArrowLeft, ShoppingBag, Send, Mic, MicOff, Sparkles } from 'lucide-react';
@@ -13,13 +13,23 @@ export default function ShoppingScreen({ user }) {
   const [userRequest, setUserRequest] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
   const [recommendations, setRecommendations] = useState('');
+  const [followupQuestion, setFollowupQuestion] = useState('');
+  const [replyText, setReplyText] = useState('');
+  const [conversation, setConversation] = useState([]); // Store conversation history
   const [loading, setLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
+  const [isReplyRecording, setIsReplyRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
+  const conversationEndRef = useRef(null);
 
   useEffect(() => {
     fetchBestie();
   }, []);
+
+  useEffect(() => {
+    // Scroll to bottom when conversation updates
+    conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversation, followupQuestion]);
 
   const fetchBestie = async () => {
     try {
