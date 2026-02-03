@@ -127,19 +127,26 @@ export default function ShoppingScreen({ user }) {
     }
 
     // Add user's request to conversation
-    setConversation(prev => [...prev, { role: 'user', text: userRequest }]);
+    const newUserMessage = { role: 'user', text: userRequest };
+    setConversation(prev => [...prev, newUserMessage]);
+    const currentRequest = userRequest;
+    setUserRequest(''); // Clear input immediately
     
     setLoading(true);
     try {
       const response = await axios.post(`${API}/shopping/recommendations?user_id=${user.id}`, {
         bestie_id: bestie.id,
-        user_request: userRequest,
+        user_request: currentRequest,
         max_price: maxPrice ? parseFloat(maxPrice) : null
       });
 
-      setRecommendations(response.data.recommendations);
-      setFollowupQuestion(response.data.followup_question || '');
-      setUserRequest(''); // Clear input after sending
+      // Add bestie's response to conversation
+      const bestieMessage = { 
+        role: 'bestie', 
+        text: response.data.recommendations,
+        followup: response.data.followup_question || ''
+      };
+      setConversation(prev => [...prev, bestieMessage]);
     } catch (error) {
       toast.error('Failed to get recommendations');
     } finally {
@@ -150,27 +157,27 @@ export default function ShoppingScreen({ user }) {
   const sendReply = async () => {
     if (!replyText.trim()) return;
     
-    // Add reply to conversation
-    setConversation(prev => [
-      ...prev,
-      { role: 'bestie', text: recommendations, followup: followupQuestion },
-      { role: 'user', text: replyText }
-    ]);
+    // Add user's reply to conversation
+    const newUserMessage = { role: 'user', text: replyText };
+    setConversation(prev => [...prev, newUserMessage]);
+    const currentReply = replyText;
+    setReplyText(''); // Clear input immediately
     
     setLoading(true);
-    setFollowupQuestion('');
-    setRecommendations('');
-    
     try {
       const response = await axios.post(`${API}/shopping/recommendations?user_id=${user.id}`, {
         bestie_id: bestie.id,
-        user_request: replyText,
+        user_request: currentReply,
         max_price: maxPrice ? parseFloat(maxPrice) : null
       });
 
-      setRecommendations(response.data.recommendations);
-      setFollowupQuestion(response.data.followup_question || '');
-      setReplyText('');
+      // Add bestie's response to conversation
+      const bestieMessage = { 
+        role: 'bestie', 
+        text: response.data.recommendations,
+        followup: response.data.followup_question || ''
+      };
+      setConversation(prev => [...prev, bestieMessage]);
     } catch (error) {
       toast.error('Failed to get recommendations');
     } finally {
