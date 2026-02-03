@@ -37,7 +37,19 @@ export default function ChatScreen({ user }) {
       setBestie(bestieRes.data);
 
       const messagesRes = await axios.get(`${API}/chat/history/${user.id}/${bestieRes.data.id}`);
-      setMessages(messagesRes.data);
+      
+      // If no messages, add a greeting from bestie
+      if (!messagesRes.data || messagesRes.data.length === 0) {
+        const greetingMessage = {
+          id: 'greeting',
+          role: 'bestie',
+          content: `Hey babe! 💕 It's so good to see you! How are you feeling today? I'm all ears and ready to chat about whatever's on your mind!`,
+          timestamp: new Date().toISOString()
+        };
+        setMessages([greetingMessage]);
+      } else {
+        setMessages(messagesRes.data);
+      }
     } catch (error) {
       toast.error('Failed to load chat');
       navigate('/dashboard');
