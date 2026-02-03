@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Mic, Volume2, StopCircle } from 'lucide-react';
+import { ArrowLeft, Mic, Volume2, StopCircle, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -14,17 +14,40 @@ export default function VoiceScreen({ user }) {
   const [processing, setProcessing] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [lastMessage, setLastMessage] = useState('');
+  const [conversation, setConversation] = useState([]);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const audioRef = useRef(null);
+  const conversationEndRef = useRef(null);
 
   useEffect(() => {
     fetchBestie();
   }, []);
 
+  useEffect(() => {
+    conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [conversation]);
+
   const fetchBestie = async () => {
     try {
       const response = await axios.get(`${API}/bestie/${user.id}`);
       setBestie(response.data);
+      
+      // Load voice conversation history
+      try {
+        const historyRes = await axios.get(`${API}/chat/history/${user.id}/${response.data.id}`);
+        if (historyRes.data && historyRes.data.length > 0) {
+          // Convert to conversation format with IDs
+          const formattedHistory = historyRes.data.map((msg, idx) => ({
+            id: msg.id || `history-${idx}`,
+            role: msg.role,
+            text: msg.content,
+            timestamp: msg.timestamp
+          }));
+          setConversation(formattedHistory);
+        }
+      } catch (e) {
+        // No history yet
+      }
     } catch (error) {
       toast.error('Failed to load bestie');
       navigate('/dashboard');
@@ -74,7 +97,15 @@ export default function VoiceScreen({ user }) {
       });
 
       const transcribedText = sttResponse.data.text;
-      toast.success(`You: "${transcribedText}"`);
+      
+      // Add user message to conversation
+      const userMessage = {
+        id: Date.now().toString(),
+        role: 'user',
+        text: transcribedText,
+        timestamp: new Date().toISOString()
+      };
+      setConversation(prev => [...prev, userMessage]);
 
       // Get bestie response
       const chatResponse = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
@@ -83,7 +114,15 @@ export default function VoiceScreen({ user }) {
       });
 
       const bestieResponse = chatResponse.data.message;
-      setLastMessage(bestieResponse);
+      
+      // Add bestie message to conversation
+      const bestieMessage = {
+        id: (Date.now() + 1).toString(),
+        role: 'bestie',
+        text: bestieResponse,
+        timestamp: new Date().toISOString()
+      };
+      setConversation(prev => [...prev, bestieMessage]);
 
       // Convert bestie response to speech
       setSpeaking(true);
@@ -106,6 +145,22 @@ export default function VoiceScreen({ user }) {
     }
   };
 
+  const deleteMessage = (messageId, index) => {
+    setConversation(prev => prev.filter((_, idx) => idx !== index));
+    toast.success('Message deleted');
+  };
+
+  const clearAllHistory = async () => {
+    try {
+      await axios.delete(`${API}/chat/history/${user.id}/${bestie.id}?timeframe=all`);
+      setConversation([]);
+      setShowClearConfirm(false);
+      toast.success('All conversation cleared');
+    } catch (error) {
+      toast.error('Failed to clear history');
+    }
+  };
+
   const getStatusText = () => {
     if (speaking) return `${bestie.name} is speaking...`;
     if (processing) return 'Processing...';
@@ -116,8 +171,35 @@ export default function VoiceScreen({ user }) {
   if (!bestie) return <div className="app-container min-h-screen flex items-center justify-center">Loading...</div>;
 
   return (
-    <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
-      <div className="p-4 pb-8 space-y-4">
+    <div className="app-container gradient-mesh min-h-screen overflow-y-auto flex flex-col">
+      {/* Clear Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-lg font-bold text-dark-purple mb-2">Clear All Messages?</h3>
+            <p className="text-dark-purple/70 mb-6">
+              Are you sure you want to delete all voice chat history with {bestie.name}? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="flex-1 px-4 py-2 rounded-full border border-border text-dark-purple hover:bg-muted transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={clearAllHistory}
+                className="flex-1 px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Header */}
+      <div className="p-4 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             data-testid="back-button"
@@ -130,64 +212,115 @@ export default function VoiceScreen({ user }) {
             Voice Chat
           </h1>
         </div>
+        {conversation.length > 0 && (
+          <button
+            data-testid="clear-history-button"
+            onClick={() => setShowClearConfirm(true)}
+            className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all"
+            title="Clear all messages"
+          >
+            <Trash2 className="w-5 h-5 text-dark-purple" />
+          </button>
+        )}
+      </div>
 
-        <div className="card-soft p-6 text-center space-y-4">
-          <div className={`w-28 h-28 mx-auto rounded-full bg-gradient-to-br from-neon-pink to-soft-yellow flex items-center justify-center overflow-hidden ${speaking ? 'animate-pulse ring-4 ring-neon-pink/50' : ''}`}>
-            {bestie.image_url ? (
-              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
-            ) : bestie.avatar_url ? (
-              <img src={bestie.avatar_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
-            ) : null}
-          </div>
-
-          <div>
-            <h2 className="text-xl font-bold text-dark-purple mb-1">{bestie.name}</h2>
-            <p className={`text-sm ${speaking ? 'text-neon-pink font-medium' : 'text-dark-purple/70'}`}>
-              {getStatusText()}
-            </p>
-          </div>
-
-          {/* Last message bubble */}
-          {lastMessage && (
-            <div className="bg-muted rounded-2xl p-4 text-left">
-              <p className="text-sm text-dark-purple">{lastMessage}</p>
+      {/* Bestie Avatar & Status */}
+      <div className="card-soft mx-4 p-4 text-center">
+        <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-neon-pink to-soft-yellow flex items-center justify-center overflow-hidden ${speaking ? 'animate-pulse ring-4 ring-neon-pink/50' : ''}`}>
+          {bestie.image_url ? (
+            <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+          ) : bestie.avatar_url ? (
+            <img src={bestie.avatar_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+          ) : null}
+        </div>
+        <h2 className="text-lg font-bold text-dark-purple mt-2">{bestie.name}</h2>
+        <p className={`text-sm ${speaking ? 'text-neon-pink font-medium' : 'text-dark-purple/70'}`}>
+          {getStatusText()}
+        </p>
+        
+        {speaking && (
+          <div className="flex justify-center items-center gap-1 mt-2">
+            <Volume2 className="w-4 h-4 text-neon-pink" />
+            <div className="flex gap-1">
+              <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
+              <span className="w-1 h-4 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
+              <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
+              <span className="w-1 h-5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '450ms' }}></span>
+              <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '600ms' }}></span>
             </div>
-          )}
+          </div>
+        )}
+      </div>
 
-          <div className="flex justify-center pt-4">
-            {!recording ? (
+      {/* Conversation History */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+        {conversation.length === 0 && (
+          <div className="text-center text-dark-purple/50 py-8">
+            <p>Start talking with {bestie.name}!</p>
+            <p className="text-sm mt-1">Tap the mic button below</p>
+          </div>
+        )}
+        {conversation.map((msg, idx) => (
+          <div
+            key={msg.id || idx}
+            className={`flex group ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+          >
+            {/* Delete button for user messages */}
+            {msg.role === 'user' && (
               <button
-                data-testid="start-recording-button"
-                onClick={startRecording}
-                disabled={processing || speaking}
-                className="w-20 h-20 rounded-full bg-neon-pink text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all disabled:opacity-50 disabled:hover:scale-100"
+                onClick={() => deleteMessage(msg.id, idx)}
+                className="opacity-0 group-hover:opacity-100 p-1 mr-2 self-center text-dark-purple/40 hover:text-red-500 transition-all"
+                title="Delete message"
               >
-                <Mic className="w-10 h-10" />
+                <X className="w-4 h-4" />
               </button>
-            ) : (
+            )}
+            
+            <div
+              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
+                msg.role === 'user'
+                  ? 'bg-neon-pink text-white rounded-br-sm'
+                  : 'bg-white text-dark-purple rounded-bl-sm shadow-sm'
+              }`}
+            >
+              <p className="text-sm">{msg.text || msg.content}</p>
+            </div>
+
+            {/* Delete button for bestie messages */}
+            {msg.role === 'bestie' && (
               <button
-                data-testid="stop-recording-button"
-                onClick={stopRecording}
-                className="w-20 h-20 rounded-full bg-red-500 text-white flex items-center justify-center animate-pulse"
+                onClick={() => deleteMessage(msg.id, idx)}
+                className="opacity-0 group-hover:opacity-100 p-1 ml-2 self-center text-dark-purple/40 hover:text-red-500 transition-all"
+                title="Delete message"
               >
-                <StopCircle className="w-10 h-10" />
+                <X className="w-4 h-4" />
               </button>
             )}
           </div>
+        ))}
+        <div ref={conversationEndRef} />
+      </div>
 
-          {speaking && (
-            <div className="flex justify-center items-center gap-1 pt-2">
-              <Volume2 className="w-4 h-4 text-neon-pink" />
-              <div className="flex gap-1">
-                <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
-                <span className="w-1 h-4 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                <span className="w-1 h-5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '450ms' }}></span>
-                <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '600ms' }}></span>
-              </div>
-            </div>
-          )}
-        </div>
+      {/* Mic Button */}
+      <div className="p-6 flex justify-center">
+        {!recording ? (
+          <button
+            data-testid="start-recording-button"
+            onClick={startRecording}
+            disabled={processing || speaking}
+            className="w-16 h-16 rounded-full bg-neon-pink text-white flex items-center justify-center shadow-lg hover:scale-110 transition-all disabled:opacity-50 disabled:hover:scale-100"
+          >
+            <Mic className="w-8 h-8" />
+          </button>
+        ) : (
+          <button
+            data-testid="stop-recording-button"
+            onClick={stopRecording}
+            className="w-16 h-16 rounded-full bg-red-500 text-white flex items-center justify-center animate-pulse"
+          >
+            <StopCircle className="w-8 h-8" />
+          </button>
+        )}
       </div>
     </div>
   );
