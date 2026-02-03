@@ -209,7 +209,51 @@ export default function ShoppingScreen({ user }) {
                   {bestie.name} says:
                 </h3>
               </div>
-              <div className="text-dark-purple whitespace-pre-line leading-relaxed">{recommendations}</div>
+              <div className="text-dark-purple leading-relaxed space-y-2">
+                {recommendations.split('\n').map((line, idx) => {
+                  // Parse markdown links [text](url)
+                  const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                  const parts = [];
+                  let lastIndex = 0;
+                  let match;
+                  
+                  while ((match = linkRegex.exec(line)) !== null) {
+                    // Add text before the link
+                    if (match.index > lastIndex) {
+                      parts.push(line.substring(lastIndex, match.index));
+                    }
+                    // Add the link
+                    parts.push(
+                      <a
+                        key={`${idx}-${match.index}`}
+                        href={match[2]}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-neon-pink hover:text-[#D670D7] underline font-medium"
+                      >
+                        {match[1]}
+                      </a>
+                    );
+                    lastIndex = match.index + match[0].length;
+                  }
+                  
+                  // Add remaining text after last link
+                  if (lastIndex < line.length) {
+                    parts.push(line.substring(lastIndex));
+                  }
+                  
+                  // If no links found, just return the line
+                  if (parts.length === 0) {
+                    parts.push(line);
+                  }
+                  
+                  return (
+                    <p key={idx} className={line.startsWith('👉') ? 'ml-4' : ''}>
+                      {parts}
+                    </p>
+                  );
+                })}
+              </div>
             </div>
           )}
         </div>
