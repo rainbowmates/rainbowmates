@@ -44,9 +44,25 @@ export default function VoiceScreen({ user }) {
             timestamp: msg.timestamp
           }));
           setConversation(formattedHistory);
+        } else {
+          // Add greeting if no history
+          const greetingMessage = {
+            id: 'greeting',
+            role: 'bestie',
+            text: `Hey gorgeous! 🎤 Ready for a voice chat? Tell me, how's your day going? I want to hear all about it!`,
+            timestamp: new Date().toISOString()
+          };
+          setConversation([greetingMessage]);
         }
       } catch (e) {
-        // No history yet
+        // No history - add greeting
+        const greetingMessage = {
+          id: 'greeting',
+          role: 'bestie',
+          text: `Hey gorgeous! 🎤 Ready for a voice chat? Tell me, how's your day going? I want to hear all about it!`,
+          timestamp: new Date().toISOString()
+        };
+        setConversation([greetingMessage]);
       }
     } catch (error) {
       toast.error('Failed to load bestie');
