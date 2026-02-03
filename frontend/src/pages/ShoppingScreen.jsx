@@ -81,6 +81,44 @@ export default function ShoppingScreen({ user }) {
     }
   };
 
+  const startReplyRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream);
+      const chunks = [];
+
+      recorder.ondataavailable = (e) => chunks.push(e.data);
+      recorder.onstop = async () => {
+        const blob = new Blob(chunks, { type: 'audio/webm' });
+        stream.getTracks().forEach(track => track.stop());
+        
+        try {
+          const formData = new FormData();
+          formData.append('audio_file', blob, 'recording.webm');
+          const response = await axios.post(`${API}/voice/stt`, formData);
+          if (response.data.text) {
+            setReplyText(response.data.text);
+          }
+        } catch (error) {
+          toast.error('Failed to convert speech');
+        }
+      };
+
+      recorder.start();
+      setMediaRecorder(recorder);
+      setIsReplyRecording(true);
+    } catch (error) {
+      toast.error('Microphone access denied');
+    }
+  };
+
+  const stopReplyRecording = () => {
+    if (mediaRecorder) {
+      mediaRecorder.stop();
+      setIsReplyRecording(false);
+    }
+  };
+
   const getRecommendations = async () => {
     if (!bestie) return;
     if (!userRequest.trim()) {
@@ -88,6 +126,9 @@ export default function ShoppingScreen({ user }) {
       return;
     }
 
+    // Add user's request to conversation
+    setConversation(prev => [...prev, { role: 'user', text: userRequest }]);
+    
     setLoading(true);
     try {
       const response = await axios.post(`${API}/shopping/recommendations?user_id=${user.id}`, {
@@ -97,6 +138,39 @@ export default function ShoppingScreen({ user }) {
       });
 
       setRecommendations(response.data.recommendations);
+      setFollowupQuestion(response.data.followup_question || '');
+      setUserRequest(''); // Clear input after sending
+    } catch (error) {
+      toast.error('Failed to get recommendations');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const sendReply = async () => {
+    if (!replyText.trim()) return;
+    
+    // Add reply to conversation
+    setConversation(prev => [
+      ...prev,
+      { role: 'bestie', text: recommendations, followup: followupQuestion },
+      { role: 'user', text: replyText }
+    ]);
+    
+    setLoading(true);
+    setFollowupQuestion('');
+    setRecommendations('');
+    
+    try {
+      const response = await axios.post(`${API}/shopping/recommendations?user_id=${user.id}`, {
+        bestie_id: bestie.id,
+        user_request: replyText,
+        max_price: maxPrice ? parseFloat(maxPrice) : null
+      });
+
+      setRecommendations(response.data.recommendations);
+      setFollowupQuestion(response.data.followup_question || '');
+      setReplyText('');
     } catch (error) {
       toast.error('Failed to get recommendations');
     } finally {
