@@ -1168,7 +1168,7 @@ async def get_shopping_recommendations(user_id: str, shopping_data: ShoppingRequ
         if shopping_data.brands:
             prompt += f"Preferred brands: {', '.join(shopping_data.brands)}. "
         
-        prompt += "\nGive me 3-5 personalized fashion recommendations with brief descriptions. Consider her personality and what would make her feel confident!"
+        prompt += "\nGive me 3-5 personalized fashion recommendations with brief descriptions and shopping links. Consider her personality and what would make her feel confident!"
         
         personality_str = ", ".join(bestie.personality)
         system_message = f"""You are {bestie.name} — an emotionally intelligent, warm, and uplifting gay best friend helping with shopping.
@@ -1201,7 +1201,14 @@ Use a mix of these shopping sites based on what's appropriate:
 - Revolve: https://www.revolve.com/r/Search.jsp?search=
 - Net-a-Porter: https://www.net-a-porter.com/en-us/shop/search?query=
 
-Keep responses easy to read with clear item suggestions and visible links!"""
+**IMPORTANT - Response Format:**
+Your response MUST be in this exact JSON format:
+{{
+  "recommendations": "Your recommendations with links here...",
+  "followup_question": "A fun follow-up question to help narrow down choices, e.g., 'Which vibe are you feeling most - classic elegance or a touch of drama? 💃'"
+}}
+
+The followup_question should be engaging and help you understand their preferences better!"""
         
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
