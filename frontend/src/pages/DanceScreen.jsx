@@ -72,6 +72,16 @@ export default function DanceScreen({ user, bestie: propBestie }) {
     setDancing(false);
   };
 
+  // Greeting message from bestie
+  const getGreeting = () => {
+    const greetings = [
+      `Hey gorgeous! 💃 I'm SO ready to dance! How are you feeling? Let's find a song that matches your mood!`,
+      `Ooh, dance time! 🎶 How's my favorite person doing today? Pick a song and let's get moving!`,
+      `Hey babe! 💕 Ready to shake it? Tell me how you're feeling and let's find the perfect beat!`
+    ];
+    return greetings[Math.floor(Math.random() * greetings.length)];
+  };
+
   return (
     <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
       <div className="p-4 pb-8 space-y-4">
@@ -90,6 +100,19 @@ export default function DanceScreen({ user, bestie: propBestie }) {
             <p className="text-xs text-dark-purple/70">Dance with {bestie?.name || 'your bestie'}!</p>
           </div>
         </div>
+
+        {/* Bestie Greeting */}
+        {bestie && !dancing && (
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-white/80 border border-neon-pink/20">
+            <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0">
+              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            </div>
+            <div>
+              <p className="font-bold text-dark-purple text-sm">{bestie.name}</p>
+              <p className="text-dark-purple/80 text-sm mt-1">{getGreeting()}</p>
+            </div>
+          </div>
+        )}
 
         <div className="card-soft p-4 space-y-4">
           {/* Search */}
