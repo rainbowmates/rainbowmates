@@ -1218,7 +1218,35 @@ The followup_question should be engaging and help you understand their preferenc
         
         response = await chat.send_message(UserMessage(text=prompt))
         
-        return {"recommendations": response}
+        # Try to parse JSON response
+        try:
+            import json
+            # Try to extract JSON from the response
+            response_text = response.strip()
+            if response_text.startswith('{'):
+                parsed = json.loads(response_text)
+                return {
+                    "recommendations": parsed.get("recommendations", response),
+                    "followup_question": parsed.get("followup_question", "What do you think? Want me to find more options? 💕")
+                }
+            else:
+                # If not JSON, try to find JSON in the response
+                import re
+                json_match = re.search(r'\{[\s\S]*\}', response_text)
+                if json_match:
+                    parsed = json.loads(json_match.group())
+                    return {
+                        "recommendations": parsed.get("recommendations", response),
+                        "followup_question": parsed.get("followup_question", "What do you think? Want me to find more options? 💕")
+                    }
+        except:
+            pass
+        
+        # Fallback if JSON parsing fails
+        return {
+            "recommendations": response,
+            "followup_question": "So what do you think, babe? Any of these catching your eye? 👀✨"
+        }
         
     except Exception as e:
         logger.error(f"Error getting shopping recommendations: {str(e)}")
