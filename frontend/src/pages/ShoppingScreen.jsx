@@ -346,38 +346,46 @@ export default function ShoppingScreen({ user }) {
                 <div key={msgIdx}>
                   {msg.role === 'user' ? (
                     /* User Message */
-                    <div className="flex justify-end">
+                    <div className="flex justify-end group">
+                      <button
+                        onClick={() => deleteMessage(msgIdx)}
+                        className="opacity-0 group-hover:opacity-100 p-1 mr-2 self-center text-dark-purple/40 hover:text-red-500 transition-all"
+                        title="Delete message"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
                       <div className="max-w-[85%] p-4 rounded-2xl bg-neon-pink text-white">
                         <p>{msg.text}</p>
                       </div>
                     </div>
                   ) : (
                     /* Bestie Message */
-                    <div className="space-y-3">
-                      <div className="p-5 rounded-2xl bg-gradient-to-br from-soft-yellow/20 to-neon-pink/20">
-                        <div className="flex items-center gap-3 mb-3">
-                          <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-neon-pink">
-                            <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                    <div className="space-y-3 group">
+                      <div className="flex">
+                        <div className="flex-1 p-5 rounded-2xl bg-gradient-to-br from-soft-yellow/20 to-neon-pink/20">
+                          <div className="flex items-center gap-3 mb-3">
+                            <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-neon-pink">
+                              <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                            </div>
+                            <span className="font-bold text-dark-purple">{bestie.name}</span>
                           </div>
-                          <span className="font-bold text-dark-purple">{bestie.name}</span>
-                        </div>
-                        <div className="text-dark-purple leading-relaxed space-y-2">
-                          {msg.text.split('\n').map((line, idx) => {
-                            const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
-                            const parts = [];
-                            let lastIndex = 0;
-                            let match;
-                            
-                            while ((match = linkRegex.exec(line)) !== null) {
-                              if (match.index > lastIndex) {
-                                parts.push(line.substring(lastIndex, match.index));
-                              }
-                              parts.push(
-                                <a
-                                  key={`${msgIdx}-${idx}-${match.index}`}
-                                  href={match[2]}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                          <div className="text-dark-purple leading-relaxed space-y-2">
+                            {msg.text.split('\n').map((line, idx) => {
+                              const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
+                              const parts = [];
+                              let lastIndex = 0;
+                              let match;
+                              
+                              while ((match = linkRegex.exec(line)) !== null) {
+                                if (match.index > lastIndex) {
+                                  parts.push(line.substring(lastIndex, match.index));
+                                }
+                                parts.push(
+                                  <a
+                                    key={`${msgIdx}-${idx}-${match.index}`}
+                                    href={match[2]}
+                                    target="_blank"
+                                    rel="noopener noreferrer"
                                   className="text-neon-pink hover:text-[#D670D7] underline font-medium"
                                 >
                                   {match[1]}
