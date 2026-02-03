@@ -340,6 +340,65 @@ export default function ShoppingScreen({ user }) {
               </div>
             </div>
           )}
+
+          {/* Follow-up Question - Separate Message */}
+          {followupQuestion && (
+            <div className="p-4 rounded-2xl bg-white border-2 border-neon-pink/30 shadow-sm" data-testid="followup-question">
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0">
+                  <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                </div>
+                <p className="text-dark-purple font-medium">{followupQuestion}</p>
+              </div>
+            </div>
+          )}
+
+          {/* Reply Input - Shows after recommendations */}
+          {(recommendations || followupQuestion) && (
+            <div className="space-y-3" data-testid="reply-section">
+              <label className="block text-sm font-medium text-dark-purple">
+                Your reply:
+              </label>
+              <div className="relative">
+                <input
+                  data-testid="reply-input"
+                  type="text"
+                  value={replyText}
+                  onChange={(e) => setReplyText(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && sendReply()}
+                  placeholder="Type your response..."
+                  className="w-full px-4 py-3 pr-24 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none placeholder:text-dark-purple/40"
+                />
+                <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
+                  <button
+                    onClick={isReplyRecording ? stopReplyRecording : startReplyRecording}
+                    className={`p-2 rounded-full transition-all ${
+                      isReplyRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-neon-pink/20 text-neon-pink hover:bg-neon-pink/30'
+                    }`}
+                  >
+                    {isReplyRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
+                  </button>
+                  <button
+                    onClick={sendReply}
+                    disabled={!replyText.trim() || loading}
+                    className="p-2 rounded-full bg-neon-pink text-white hover:bg-[#D670D7] disabled:opacity-50 transition-all"
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Loading indicator for replies */}
+          {loading && recommendations && (
+            <div className="flex items-center gap-2 text-dark-purple/70">
+              <Sparkles className="w-5 h-5 animate-spin text-neon-pink" />
+              <span>{bestie.name} is thinking...</span>
+            </div>
+          )}
+
+          <div ref={conversationEndRef} />
         </div>
       </div>
     </div>
