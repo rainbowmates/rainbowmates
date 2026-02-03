@@ -12,8 +12,6 @@ export default function ShoppingScreen({ user }) {
   const [bestie, setBestie] = useState(null);
   const [userRequest, setUserRequest] = useState('');
   const [maxPrice, setMaxPrice] = useState('');
-  const [recommendations, setRecommendations] = useState('');
-  const [followupQuestion, setFollowupQuestion] = useState('');
   const [replyText, setReplyText] = useState('');
   const [conversation, setConversation] = useState([]); // Store conversation history
   const [loading, setLoading] = useState(false);
