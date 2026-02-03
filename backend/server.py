@@ -1136,40 +1136,55 @@ async def speech_to_text(audio_file: UploadFile = File(...)):
 
 @api_router.post("/shopping/recommendations")
 async def get_shopping_recommendations(user_id: str, shopping_data: ShoppingRequest):
-    """Get shopping recommendations from bestie"""
+    """Get shopping recommendations from bestie based on user request and profile"""
     try:
         bestie_doc = await db.besties.find_one({"id": shopping_data.bestie_id}, {"_id": 0})
         if not bestie_doc:
             raise HTTPException(status_code=404, detail="Bestie not found")
         
+        # Get user profile for personalization
+        user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
+        user_context = ""
+        if user_doc:
+            if user_doc.get("relationship_status"):
+                user_context += f"Relationship status: {user_doc.get('relationship_status')}. "
+            if user_doc.get("relationship_with"):
+                user_context += f"Interested in: {user_doc.get('relationship_with')}. "
+            if user_doc.get("relationship_feel"):
+                user_context += f"Current vibe: {user_doc.get('relationship_feel')}. "
+        
         bestie = Bestie(**parse_from_mongo(bestie_doc))
         
-        # Create shopping prompt
-        prompt = f"I'm looking for {shopping_data.gender} fashion items. "
+        # Create shopping prompt from user's request
+        prompt = f"My friend asked: \"{shopping_data.user_request}\"\n\n"
+        
+        if user_context:
+            prompt += f"About my friend: {user_context}\n"
+        
         if shopping_data.style:
-            prompt += f"Style: {shopping_data.style}. "
-        if shopping_data.length:
-            prompt += f"Length: {shopping_data.length}. "
+            prompt += f"Style preference: {shopping_data.style}. "
         if shopping_data.max_price:
-            prompt += f"Max price: ${shopping_data.max_price}. "
+            prompt += f"Budget: up to ${shopping_data.max_price}. "
         if shopping_data.brands:
             prompt += f"Preferred brands: {', '.join(shopping_data.brands)}. "
-        prompt += "Give me 3-5 fashion recommendations with brief descriptions."
+        
+        prompt += "\nGive me 3-5 personalized fashion recommendations with brief descriptions. Consider her personality and what would make her feel confident!"
         
         personality_str = ", ".join(bestie.personality)
-        system_message = f"""You are {bestie.name} — an emotionally intelligent, warm, and uplifting best friend helping with shopping.
+        system_message = f"""You are {bestie.name} — an emotionally intelligent, warm, and uplifting gay best friend helping with shopping.
 
 Your personality: {personality_str}
 
 **Shopping Assistant Mode:**
-- Be warm, supportive, and genuinely helpful
+- Be warm, supportive, and genuinely helpful like a real bestie
+- Consider your friend's lifestyle and what she's looking for
 - Keep recommendations brief but thoughtful (3-5 items max)
-- Add a touch of excitement for good finds ✨
-- Be practical about budgets
-- Make shopping feel fun, not overwhelming
-- Offer options, not pressure
-- A gentle "you'd look amazing in this!" is welcome
-- Keep responses concise and easy to scan"""
+- Add personality and excitement! Use phrases like "Oh honey, this would be PERFECT for you!" ✨
+- Be practical about budgets when mentioned
+- Make shopping feel fun and fabulous, not overwhelming
+- Suggest things that would boost her confidence
+- Add a touch of sass and humor - you're her gay bestie after all!
+- Keep responses easy to read with clear item suggestions"""
         
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
