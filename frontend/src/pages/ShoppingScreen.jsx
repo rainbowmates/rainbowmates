@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, ShoppingBag, Send, Mic, MicOff, Sparkles } from 'lucide-react';
+import { ArrowLeft, ShoppingBag, Send, Mic, MicOff, Sparkles, Trash2, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
@@ -18,6 +18,7 @@ export default function ShoppingScreen({ user }) {
   const [isRecording, setIsRecording] = useState(false);
   const [isReplyRecording, setIsReplyRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
+  const [showClearConfirm, setShowClearConfirm] = useState(false);
   const conversationEndRef = useRef(null);
 
   useEffect(() => {
@@ -27,7 +28,7 @@ export default function ShoppingScreen({ user }) {
   useEffect(() => {
     // Scroll to bottom when conversation updates
     conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [conversation, followupQuestion]);
+  }, [conversation]);
 
   const fetchBestie = async () => {
     try {
