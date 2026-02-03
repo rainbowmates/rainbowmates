@@ -191,22 +191,71 @@ export default function ShoppingScreen({ user }) {
     }
   };
 
+  const deleteMessage = (index) => {
+    setConversation(prev => prev.filter((_, idx) => idx !== index));
+    toast.success('Message deleted');
+  };
+
+  const clearAllConversation = () => {
+    setConversation([]);
+    setShowClearConfirm(false);
+    toast.success('Shopping conversation cleared');
+  };
+
   if (!bestie) return <div className="app-container min-h-screen flex items-center justify-center">Loading...</div>;
 
   return (
     <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
+      {/* Clear Confirmation Modal */}
+      {showClearConfirm && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+          <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
+            <h3 className="text-lg font-bold text-dark-purple mb-2">Clear Shopping Chat?</h3>
+            <p className="text-dark-purple/70 mb-6">
+              Are you sure you want to delete all shopping recommendations? This action cannot be undone.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setShowClearConfirm(false)}
+                className="flex-1 px-4 py-2 rounded-full border border-border text-dark-purple hover:bg-muted transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={clearAllConversation}
+                className="flex-1 px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all"
+              >
+                Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       <div className="p-6 space-y-6">
-        <div className="flex items-center gap-4">
-          <button
-            data-testid="back-button"
-            onClick={() => navigate('/play')}
-            className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all"
-          >
-            <ArrowLeft className="w-6 h-6 text-dark-purple" />
-          </button>
-          <h1 className="text-3xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            Shopping Time!
-          </h1>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <button
+              data-testid="back-button"
+              onClick={() => navigate('/play')}
+              className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all"
+            >
+              <ArrowLeft className="w-6 h-6 text-dark-purple" />
+            </button>
+            <h1 className="text-2xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
+              Shopping Time!
+            </h1>
+          </div>
+          {conversation.length > 0 && (
+            <button
+              data-testid="clear-shopping-button"
+              onClick={() => setShowClearConfirm(true)}
+              className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all"
+              title="Clear all messages"
+            >
+              <Trash2 className="w-5 h-5 text-dark-purple" />
+            </button>
+          )}
         </div>
 
         <div className="card-soft p-6 space-y-6">
