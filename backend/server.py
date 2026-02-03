@@ -1031,6 +1031,17 @@ async def delete_chat_history(user_id: str, bestie_id: str, timeframe: str = "al
     result = await db.messages.delete_many(query)
     return {"deleted_count": result.deleted_count}
 
+@api_router.delete("/chat/message/{user_id}/{bestie_id}/{message_id}")
+async def delete_single_message(user_id: str, bestie_id: str, message_id: str):
+    """Delete a single chat message"""
+    result = await db.messages.delete_one({
+        "user_id": user_id,
+        "bestie_id": bestie_id,
+        "id": message_id
+    })
+    return {"deleted": result.deleted_count > 0}
+
+
 # ============= VOICE ROUTES =============
 
 # ElevenLabs voice mapping - Male voices with sympathetic/warm tone
