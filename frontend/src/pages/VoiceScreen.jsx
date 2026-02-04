@@ -146,6 +146,7 @@ export default function VoiceScreen({ user }) {
       const ttsResponse = await axios.post(`${API}/voice/tts?bestie_id=${bestie.id}&text=${encodeURIComponent(bestieResponse)}`);
 
       if (ttsResponse.data.audio_url) {
+        setLastAudioUrl(ttsResponse.data.audio_url);
         const audio = new Audio(ttsResponse.data.audio_url);
         audioRef.current = audio;
         audio.onended = () => setSpeaking(false);
