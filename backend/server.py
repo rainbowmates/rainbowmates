@@ -1225,7 +1225,7 @@ The followup_question should be engaging and help you understand their preferenc
             api_key=EMERGENT_LLM_KEY,
             session_id=f"shopping_{user_id}_{shopping_data.bestie_id}",
             system_message=system_message
-        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        ).with_model("anthropic", "claude-haiku-4-20250414")  # Use faster Haiku model for shopping
         
         response = await chat.send_message(UserMessage(text=prompt))
         
