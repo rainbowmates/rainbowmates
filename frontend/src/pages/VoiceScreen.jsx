@@ -251,20 +251,20 @@ export default function VoiceScreen({ user }) {
     }
     
     setSpeaking(true);
-    const audio = new Audio(lastAudioUrl);
-    audio.volume = 1.0; // Max volume
-    audioRef.current = audio;
-    audio.onended = () => setSpeaking(false);
-    audio.onerror = (e) => {
-      console.error('Audio replay error:', e);
-      setSpeaking(false);
-    };
     
     try {
-      await audio.play();
-    } catch (playError) {
-      console.error('Audio replay failed:', playError);
-      setSpeaking(false);
+      const { source } = await playAudioFromBase64(lastAudioUrl);
+      audioSourceRef.current = source;
+      source.onended = () => setSpeaking(false);
+      source.start(0);
+    } catch (audioError) {
+      console.error('Web Audio replay failed, falling back:', audioError);
+      const audio = new Audio(lastAudioUrl);
+      audio.volume = 1.0;
+      audioRef.current = audio;
+      audio.onended = () => setSpeaking(false);
+      audio.onerror = () => setSpeaking(false);
+      audio.play().catch(() => setSpeaking(false));
     }
   };
 
