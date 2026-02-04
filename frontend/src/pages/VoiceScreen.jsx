@@ -148,9 +148,22 @@ export default function VoiceScreen({ user }) {
         const audio = new Audio(ttsResponse.data.audio_url);
         audioRef.current = audio;
         audio.onended = () => setSpeaking(false);
-        audio.onerror = () => setSpeaking(false);
-        audio.play();
+        audio.onerror = (e) => {
+          console.error('Audio playback error:', e);
+          toast.error('Failed to play audio. Please try again.');
+          setSpeaking(false);
+        };
+        
+        // Handle autoplay restrictions - try to play, catch if blocked
+        try {
+          await audio.play();
+        } catch (playError) {
+          console.error('Audio play failed:', playError);
+          toast.error('Audio playback blocked. Tap to enable audio.');
+          setSpeaking(false);
+        }
       } else {
+        toast.error('No audio received from server');
         setSpeaking(false);
       }
     } catch (error) {
