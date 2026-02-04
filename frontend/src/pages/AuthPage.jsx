@@ -160,7 +160,16 @@ export default function AuthPage({ onLogin }) {
       setStep('otp');
       setErrors({});
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Registration failed');
+      const detail = error.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        // Pydantic validation errors
+        const errorMsg = detail.map(err => err.msg || err.message || 'Validation error').join(', ');
+        toast.error(errorMsg);
+      } else if (typeof detail === 'object') {
+        toast.error(detail.msg || detail.message || 'Registration failed');
+      } else {
+        toast.error(detail || 'Registration failed');
+      }
     }
   };
 
