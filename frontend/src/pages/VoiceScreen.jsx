@@ -149,33 +149,11 @@ export default function VoiceScreen({ user }) {
       if (ttsResponse.data.audio_url) {
         setLastAudioUrl(ttsResponse.data.audio_url);
         const audio = new Audio(ttsResponse.data.audio_url);
-        audio.volume = 1.0; // Ensure max volume
+        audio.volume = 1.0;
         audioRef.current = audio;
         audio.onended = () => setSpeaking(false);
-        audio.onerror = (e) => {
-          console.error('Audio playback error:', e);
-          setSpeaking(false);
-        };
-        
-        // Play audio - should work since user just interacted with mic
-        const playAudio = async () => {
-          try {
-            await audio.play();
-          } catch (playError) {
-            console.error('Audio play failed, retrying...', playError);
-            // Retry after a short delay
-            setTimeout(async () => {
-              try {
-                await audio.play();
-              } catch (e) {
-                console.error('Audio retry failed:', e);
-                setSpeaking(false);
-              }
-            }, 100);
-          }
-        };
-        
-        await playAudio();
+        audio.onerror = () => setSpeaking(false);
+        audio.play().catch(() => setSpeaking(false));
       } else {
         toast.error('No audio received from server');
         setSpeaking(false);
