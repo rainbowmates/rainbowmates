@@ -514,6 +514,8 @@ export default function ShoppingScreen({ user }) {
                   />
                   <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
                     <button
+                      type="button"
+                      data-testid="reply-mic-button"
                       onClick={isReplyRecording ? stopReplyRecording : startReplyRecording}
                       className={`p-2 rounded-full transition-all ${
                         isReplyRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-neon-pink/20 text-neon-pink hover:bg-neon-pink/30'
@@ -522,6 +524,7 @@ export default function ShoppingScreen({ user }) {
                       {isReplyRecording ? <MicOff className="w-4 h-4" /> : <Mic className="w-4 h-4" />}
                     </button>
                     <button
+                      type="button"
                       onClick={sendReply}
                       disabled={!replyText.trim() || loading}
                       className="p-2 rounded-full bg-neon-pink text-white hover:bg-[#D670D7] disabled:opacity-50 transition-all"
