@@ -7,6 +7,44 @@ import { toast } from 'sonner';
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
+// Global AudioContext for reliable playback
+let audioContext = null;
+
+const getAudioContext = () => {
+  if (!audioContext || audioContext.state === 'closed') {
+    audioContext = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  return audioContext;
+};
+
+const playAudioFromBase64 = async (base64DataUrl) => {
+  const ctx = getAudioContext();
+  
+  // Resume context if suspended
+  if (ctx.state === 'suspended') {
+    await ctx.resume();
+  }
+  
+  // Extract base64 data from data URL
+  const base64 = base64DataUrl.split(',')[1];
+  const binaryString = atob(base64);
+  const bytes = new Uint8Array(binaryString.length);
+  for (let i = 0; i < binaryString.length; i++) {
+    bytes[i] = binaryString.charCodeAt(i);
+  }
+  
+  // Decode and play
+  const audioBuffer = await ctx.decodeAudioData(bytes.buffer);
+  const source = ctx.createBufferSource();
+  const gainNode = ctx.createGain();
+  gainNode.gain.value = 1.5; // Boost volume
+  source.buffer = audioBuffer;
+  source.connect(gainNode);
+  gainNode.connect(ctx.destination);
+  
+  return { source, ctx };
+};
+
 export default function VoiceScreen({ user }) {
   const navigate = useNavigate();
   const [bestie, setBestie] = useState(null);
@@ -18,6 +56,7 @@ export default function VoiceScreen({ user }) {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [lastAudioUrl, setLastAudioUrl] = useState(null);
   const audioRef = useRef(null);
+  const audioSourceRef = useRef(null);
   const conversationEndRef = useRef(null);
 
   useEffect(() => {
