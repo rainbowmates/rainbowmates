@@ -1044,16 +1044,17 @@ async def delete_single_message(user_id: str, bestie_id: str, message_id: str):
 
 # ============= VOICE ROUTES =============
 
-# ElevenLabs voice mapping - Male voices with warm, sympathetic tone
+# ElevenLabs voice mapping - Male voices with warm, friendly tone
 # These are the bestie's voices (gay best friend character)
+# Using verified voice IDs from ElevenLabs pre-made voices
 VOICE_MAP = {
-    "British": "IKne3meq5aSn9XLyUdCD",  # Charlie - warm British male, gentle tone
-    "American": "TX3LPaxmHKxFdv7VOQHJ",  # Liam - friendly warm American male
+    "British": "onwK4e9ZLuTAKqWW03F9",  # Daniel - warm British male, professional yet friendly
+    "American": "pNInz6obpgDQGcFmaJgB",  # Adam - deep warm American male
     "Australian": "N2lVS1w4EtoT3dr4eOWO",  # Callum - warm Australian male
-    "Southern": "TX3LPaxmHKxFdv7VOQHJ",  # Liam - friendly warm male
-    "New York": "TX3LPaxmHKxFdv7VOQHJ",  # Liam - use for New York too
-    "Valley Girl": "TX3LPaxmHKxFdv7VOQHJ",  # Liam - warm male voice
-    "default": "IKne3meq5aSn9XLyUdCD"  # Charlie as default - warm British male
+    "Southern": "ErXwobaYiN019PkySvjV",  # Antoni - warm friendly male
+    "New York": "VR6AewLTigWG4xSOukaG",  # Arnold - expressive American male
+    "Valley Girl": "pNInz6obpgDQGcFmaJgB",  # Adam - warm male voice
+    "default": "onwK4e9ZLuTAKqWW03F9"  # Daniel as default - warm British male
 }
 
 @api_router.post("/voice/tts")
