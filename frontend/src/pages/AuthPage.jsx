@@ -211,7 +211,15 @@ export default function AuthPage({ onLogin }) {
       setLoginData({ ...loginData, identifier: otpData.identifier });
       setErrors({});
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'OTP verification failed');
+      const detail = error.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        const errorMsg = detail.map(err => err.msg || err.message || 'Validation error').join(', ');
+        toast.error(errorMsg);
+      } else if (typeof detail === 'object') {
+        toast.error(detail.msg || detail.message || 'OTP verification failed');
+      } else {
+        toast.error(detail || 'OTP verification failed');
+      }
     }
   };
 
