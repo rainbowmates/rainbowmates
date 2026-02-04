@@ -6,13 +6,14 @@ import pytest
 import requests
 import os
 import uuid
+import random
 from datetime import datetime, timedelta
 
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test data with unique identifiers
 TEST_USER_EMAIL = f"test_{uuid.uuid4().hex[:8]}@example.com"
-TEST_USER_MOBILE = f"+447{uuid.uuid4().hex[:9]}"
+TEST_USER_MOBILE = f"+447{''.join([str(random.randint(0,9)) for _ in range(9)])}"
 TEST_USER_PASSWORD = "testpass123"
 TEST_USER_ID = None
 
