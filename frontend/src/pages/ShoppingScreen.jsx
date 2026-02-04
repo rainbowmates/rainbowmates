@@ -198,6 +198,7 @@ export default function ShoppingScreen({ user }) {
   };
 
   const openInIframe = (url) => {
+    console.log('Opening iframe:', url);
     setIframeUrl(url);
   };
 
@@ -220,10 +221,16 @@ export default function ShoppingScreen({ user }) {
         const linkText = match[1];
         const linkUrl = match[2];
         parts.push(
-          <span key={`${msgIdx}-${idx}-${match.index}`} className="inline-flex items-center gap-1">
+          <span key={`${msgIdx}-${idx}-${match.index}`} className="inline-flex items-center gap-1 flex-wrap">
             <button
-              onClick={() => openInIframe(linkUrl)}
-              className="text-neon-pink hover:text-[#D670D7] underline font-medium"
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                openInIframe(linkUrl);
+              }}
+              className="text-neon-pink hover:text-[#D670D7] underline font-medium cursor-pointer"
+              data-testid={`shopping-link-${msgIdx}-${idx}`}
             >
               {linkText}
             </button>
@@ -231,6 +238,7 @@ export default function ShoppingScreen({ user }) {
               href={linkUrl}
               target="_blank"
               rel="noopener noreferrer"
+              onClick={(e) => e.stopPropagation()}
               className="text-dark-purple/40 hover:text-neon-pink"
               title="Open in new tab"
             >
