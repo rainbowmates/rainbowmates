@@ -1078,10 +1078,10 @@ async def text_to_speech(bestie_id: str, text: str):
             voice_id=voice_id,
             model_id="eleven_multilingual_v2",
             voice_settings=VoiceSettings(
-                stability=0.75,  # Slightly higher for more consistent sympathetic tone
-                similarity_boost=0.75,
-                style=0.4,  # Lower style for more natural, empathetic delivery
-                use_speaker_boost=True
+                stability=0.85,  # Higher stability for calmer, more consistent tone
+                similarity_boost=0.6,  # Lower to reduce intensity
+                style=0.2,  # Very low style for gentle, natural delivery
+                use_speaker_boost=False  # Disable boost for softer sound
             )
         )
         
