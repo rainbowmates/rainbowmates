@@ -58,6 +58,7 @@ export default function VoiceScreen({ user }) {
   const audioRef = useRef(null);
   const audioSourceRef = useRef(null);
   const conversationEndRef = useRef(null);
+  const conversationTopRef = useRef(null);
 
   useEffect(() => {
     fetchBestie();
@@ -66,6 +67,10 @@ export default function VoiceScreen({ user }) {
   useEffect(() => {
     conversationEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [conversation]);
+
+  const scrollToTop = () => {
+    conversationTopRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const fetchBestie = async () => {
     try {
