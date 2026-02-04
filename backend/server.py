@@ -1335,7 +1335,7 @@ SUBSCRIPTION_PLANS = {
 }
 
 @api_router.post("/subscription/create")
-async def create_subscription(user_id: str, subscription_data: SubscriptionCreate):
+async def create_subscription(user_id: str, subscription_data: SubscriptionCreate, request: Request):
     """Create subscription checkout session"""
     try:
         plan = subscription_data.plan
@@ -1344,8 +1344,17 @@ async def create_subscription(user_id: str, subscription_data: SubscriptionCreat
         
         amount = SUBSCRIPTION_PLANS[plan]
         
-        # Initialize Stripe - use APP_URL for production compatibility
-        request_base_url = os.environ.get('APP_URL', 'https://rainbowmates.preview.emergentagent.com')
+        # Get the origin URL from request headers for proper redirect
+        origin = request.headers.get('origin') or request.headers.get('referer', '')
+        if origin:
+            # Extract base URL from origin/referer
+            from urllib.parse import urlparse
+            parsed = urlparse(origin)
+            request_base_url = f"{parsed.scheme}://{parsed.netloc}"
+        else:
+            # Fallback to APP_URL environment variable
+            request_base_url = os.environ.get('APP_URL', 'https://rainbowmates.preview.emergentagent.com')
+        
         webhook_url = f"{request_base_url}/api/webhook/stripe"
         stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
         
