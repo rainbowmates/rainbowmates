@@ -150,16 +150,23 @@ export default function AuthPage({ onLogin }) {
       return;
     }
     try {
+      // Build submit data - exclude country_code from the object sent to backend
       const submitData = {
-        ...registerData,
+        first_name: registerData.first_name,
+        surname: registerData.surname,
+        dob: registerData.dob,
+        email: registerData.email,
+        password: registerData.password,
         mobile: `${registerData.country_code}${registerData.mobile}`
       };
+      console.log('Submitting registration:', submitData);
       await axios.post(`${API}/auth/register`, submitData);
       toast.success('Registration successful! Please verify OTP (use 123456)');
       setOtpData({ ...otpData, identifier: registerData.email });
       setStep('otp');
       setErrors({});
     } catch (error) {
+      console.error('Registration error:', error.response?.data);
       const detail = error.response?.data?.detail;
       if (Array.isArray(detail)) {
         // Pydantic validation errors
