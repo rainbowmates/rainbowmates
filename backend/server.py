@@ -1344,8 +1344,8 @@ async def create_subscription(user_id: str, subscription_data: SubscriptionCreat
         
         amount = SUBSCRIPTION_PLANS[plan]
         
-        # Initialize Stripe
-        request_base_url = "https://rainbowmates.preview.emergentagent.com"
+        # Initialize Stripe - use APP_URL for production compatibility
+        request_base_url = os.environ.get('APP_URL', 'https://rainbowmates.preview.emergentagent.com')
         webhook_url = f"{request_base_url}/api/webhook/stripe"
         stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
         
