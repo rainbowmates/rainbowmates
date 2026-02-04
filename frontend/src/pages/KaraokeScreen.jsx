@@ -72,14 +72,14 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular karaoke songs - tested for embedding compatibility
+  // Popular karaoke songs - only showing available/embeddable ones
   const popularKaraokeSongs = [
-    { title: 'Bohemian Rhapsody - Queen (Karaoke)', id: 'xyF04rAhHaQ' },
-    { title: 'Dancing Queen - ABBA (Karaoke)', id: '9sVKwwSvvLw' },
-    { title: 'Sweet Caroline - Neil Diamond (Karaoke)', id: 'NsLyI1_R01M' },
-    { title: 'Wonderwall - Oasis (Karaoke)', id: 'Gvfgut8nAgw' },
-    { title: 'Happy - Pharrell Williams (Karaoke)', id: 'C7dPqrmDWxs' }
-  ];
+    { title: 'Sweet Caroline - Neil Diamond (Karaoke)', id: 'NsLyI1_R01M', available: true },
+    { title: 'Wonderwall - Oasis (Karaoke)', id: 'Gvfgut8nAgw', available: true },
+    { title: 'Happy - Pharrell Williams (Karaoke)', id: 'C7dPqrmDWxs', available: true },
+    { title: 'Shallow - Lady Gaga (Karaoke)', id: 'bo_efYhYU2A', available: true },
+    { title: 'Someone Like You - Adele (Karaoke)', id: '720FLdlNc7g', available: true }
+  ].filter(song => song.available);
 
   // Greeting message from bestie
   const getGreeting = () => {
