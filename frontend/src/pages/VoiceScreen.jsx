@@ -199,6 +199,31 @@ export default function VoiceScreen({ user }) {
     return 'Tap the mic to talk';
   };
 
+  const replayLastAudio = async () => {
+    if (!lastAudioUrl) {
+      toast.error('No audio to replay');
+      return;
+    }
+    
+    setSpeaking(true);
+    const audio = new Audio(lastAudioUrl);
+    audioRef.current = audio;
+    audio.onended = () => setSpeaking(false);
+    audio.onerror = (e) => {
+      console.error('Audio replay error:', e);
+      toast.error('Failed to replay audio');
+      setSpeaking(false);
+    };
+    
+    try {
+      await audio.play();
+    } catch (playError) {
+      console.error('Audio replay failed:', playError);
+      toast.error('Failed to play audio');
+      setSpeaking(false);
+    }
+  };
+
   if (!bestie) return <div className="app-container min-h-screen flex items-center justify-center">Loading...</div>;
 
   return (
