@@ -227,11 +227,11 @@ export default function VoiceScreen({ user }) {
     
     setSpeaking(true);
     const audio = new Audio(lastAudioUrl);
+    audio.volume = 1.0; // Max volume
     audioRef.current = audio;
     audio.onended = () => setSpeaking(false);
     audio.onerror = (e) => {
       console.error('Audio replay error:', e);
-      toast.error('Failed to replay audio');
       setSpeaking(false);
     };
     
@@ -239,7 +239,6 @@ export default function VoiceScreen({ user }) {
       await audio.play();
     } catch (playError) {
       console.error('Audio replay failed:', playError);
-      toast.error('Failed to play audio');
       setSpeaking(false);
     }
   };
