@@ -360,7 +360,7 @@ export default function ShoppingScreen({ user }) {
           <div>
             <p className="font-bold text-dark-purple">{bestie.name}</p>
             <p className="text-dark-purple/80 text-sm mt-1">
-              Hey honey! 🛍️ Ready for some retail therapy? How are you feeling today? Tell me what you're in the mood for and I'll help you find something fabulous!
+              Hey honey! 🛍️ Ready for some retail therapy? How are you feeling today? Tell me what you&apos;re in the mood for and I&apos;ll help you find something fabulous!
             </p>
           </div>
         </div>
