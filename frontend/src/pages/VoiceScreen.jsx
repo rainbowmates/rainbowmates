@@ -16,6 +16,7 @@ export default function VoiceScreen({ user }) {
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [conversation, setConversation] = useState([]);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
+  const [lastAudioUrl, setLastAudioUrl] = useState(null);
   const audioRef = useRef(null);
   const conversationEndRef = useRef(null);
 
