@@ -185,7 +185,15 @@ export default function AuthPage({ onLogin }) {
       onLogin(response.data.user);
       setErrors({});
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Login failed');
+      const detail = error.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        const errorMsg = detail.map(err => err.msg || err.message || 'Validation error').join(', ');
+        toast.error(errorMsg);
+      } else if (typeof detail === 'object') {
+        toast.error(detail.msg || detail.message || 'Login failed');
+      } else {
+        toast.error(detail || 'Login failed');
+      }
     }
   };
 
