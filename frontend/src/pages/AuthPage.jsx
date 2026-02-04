@@ -368,7 +368,11 @@ export default function AuthPage({ onLogin }) {
     <div className="app-container gradient-mesh flex items-center justify-center p-6 overflow-y-auto">
       <div className="w-full max-w-md">
         <div className="text-center mb-6">
-          <Sparkles className="w-14 h-14 mx-auto text-neon-pink mb-3" />
+          <img 
+            src={LOGO_URL} 
+            alt="Rainbow Mates Logo" 
+            className="w-20 h-20 mx-auto mb-3 object-contain"
+          />
           <h1 className="text-3xl font-bold text-dark-purple mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>
             Rainbow Mates
           </h1>
