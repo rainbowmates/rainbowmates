@@ -73,15 +73,6 @@ export default function VoiceScreen({ user }) {
 
   const startRecording = async () => {
     try {
-      // Unlock audio playback by playing a silent sound on user interaction
-      const silentAudio = new Audio("data:audio/wav;base64,UklGRigAAABXQVZFZm10IBIAAAABAAEARKwAAIhYAQACABAAAABkYXRhAgAAAAEA");
-      silentAudio.volume = 0.01;
-      try {
-        await silentAudio.play();
-      } catch (e) {
-        // Ignore - just trying to unlock audio context
-      }
-      
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
       const chunks = [];
@@ -100,6 +91,7 @@ export default function VoiceScreen({ user }) {
       setMediaRecorder(recorder);
       setRecording(true);
     } catch (error) {
+      console.error('Mic error:', error);
       toast.error('Microphone access denied');
     }
   };
