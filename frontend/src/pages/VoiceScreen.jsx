@@ -112,6 +112,12 @@ export default function VoiceScreen({ user }) {
 
   const startRecording = async () => {
     try {
+      // Initialize AudioContext on user interaction (required for autoplay)
+      const ctx = getAudioContext();
+      if (ctx.state === 'suspended') {
+        await ctx.resume();
+      }
+      
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       const recorder = new MediaRecorder(stream);
       const chunks = [];
