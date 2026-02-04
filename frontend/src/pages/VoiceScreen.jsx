@@ -441,6 +441,18 @@ export default function VoiceScreen({ user }) {
           </button>
         )}
       </div>
+
+      {/* Floating Scroll to Top Button */}
+      {conversation.length > 2 && (
+        <button
+          onClick={scrollToTop}
+          className="fixed top-20 left-1/2 -translate-x-1/2 z-40 flex items-center gap-1 px-3 py-1.5 bg-white border border-neon-pink/50 rounded-full shadow-lg text-xs font-medium text-dark-purple hover:bg-neon-pink/10 hover:border-neon-pink transition-all"
+          data-testid="scroll-to-top-button"
+        >
+          <ArrowUp className="w-3 h-3 text-neon-pink" />
+          <span>Top</span>
+        </button>
+      )}
     </div>
   );
 }
