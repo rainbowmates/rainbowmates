@@ -100,12 +100,8 @@ export default function SubscriptionScreen({ user }) {
       
       if (response.data.checkout_url) {
         console.log('Redirecting to:', response.data.checkout_url);
-        // Try window.open first, fallback to location.href
-        const newWindow = window.open(response.data.checkout_url, '_blank');
-        if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-          // Popup was blocked, use direct redirect
-          window.location.href = response.data.checkout_url;
-        }
+        // Use direct redirect so browser back button returns to this page
+        window.location.href = response.data.checkout_url;
       } else {
         toast.error('No checkout URL received');
         setLoading(false);
