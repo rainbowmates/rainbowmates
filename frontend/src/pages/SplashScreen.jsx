@@ -1,12 +1,17 @@
 import React from 'react';
-import { Sparkles } from 'lucide-react';
+
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbowpals/artifacts/ebo2v4zr_logo.png";
 
 export default function SplashScreen() {
   return (
     <div className="app-container gradient-mesh flex items-center justify-center">
       <div className="text-center space-y-6 p-8">
         <div className="animate-float">
-          <Sparkles className="w-24 h-24 mx-auto text-neon-pink animate-pulse-glow" />
+          <img 
+            src={LOGO_URL} 
+            alt="Rainbow Mates Logo" 
+            className="w-32 h-32 mx-auto animate-pulse-glow object-contain"
+          />
         </div>
         <h1 className="text-5xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
           Rainbow Mates
