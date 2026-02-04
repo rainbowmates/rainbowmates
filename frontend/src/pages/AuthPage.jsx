@@ -235,7 +235,15 @@ export default function AuthPage({ onLogin }) {
       toast.success('Reset OTP sent! (Use 123456 for testing)');
       setStep('reset');
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Failed to send reset OTP');
+      const detail = error.response?.data?.detail;
+      if (Array.isArray(detail)) {
+        const errorMsg = detail.map(err => err.msg || err.message || 'Validation error').join(', ');
+        toast.error(errorMsg);
+      } else if (typeof detail === 'object') {
+        toast.error(detail.msg || detail.message || 'Failed to send reset OTP');
+      } else {
+        toast.error(detail || 'Failed to send reset OTP');
+      }
     }
   };
 
