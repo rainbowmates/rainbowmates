@@ -361,16 +361,18 @@ export default function VoiceScreen({ user }) {
       <div className="flex-1 overflow-y-auto p-4 space-y-3 relative">
         <div ref={conversationTopRef} />
         
-        {/* Scroll to Top Button */}
-        {conversation.length > 3 && (
-          <button
-            onClick={scrollToTop}
-            className="sticky top-0 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 px-3 py-1 bg-white/90 backdrop-blur-sm border border-border rounded-full shadow-sm text-xs text-dark-purple hover:bg-muted transition-all"
-            data-testid="scroll-to-top-button"
-          >
-            <ArrowUp className="w-3 h-3" />
-            Top
-          </button>
+        {/* Scroll to Top Button - Always visible when there are messages */}
+        {conversation.length > 0 && (
+          <div className="flex justify-center mb-2">
+            <button
+              onClick={scrollToTop}
+              className="flex items-center gap-1 px-3 py-1.5 bg-white border border-neon-pink/30 rounded-full shadow-sm text-xs text-dark-purple hover:bg-neon-pink/10 transition-all"
+              data-testid="scroll-to-top-button"
+            >
+              <ArrowUp className="w-3 h-3 text-neon-pink" />
+              <span>Top</span>
+            </button>
+          </div>
         )}
         
         {conversation.length === 0 && (
