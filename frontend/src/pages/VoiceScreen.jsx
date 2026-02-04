@@ -357,8 +357,20 @@ export default function VoiceScreen({ user }) {
         <div ref={conversationEndRef} />
       </div>
 
-      {/* Mic Button */}
-      <div className="p-6 flex justify-center">
+      {/* Mic Button and Replay */}
+      <div className="p-6 flex justify-center items-center gap-4">
+        {lastAudioUrl && !recording && !processing && (
+          <button
+            data-testid="replay-audio-button"
+            onClick={replayLastAudio}
+            disabled={speaking}
+            className="w-12 h-12 rounded-full bg-white border-2 border-neon-pink text-neon-pink flex items-center justify-center shadow-md hover:bg-neon-pink/10 transition-all disabled:opacity-50"
+            title="Replay last response"
+          >
+            <Volume2 className="w-5 h-5" />
+          </button>
+        )}
+        
         {!recording ? (
           <button
             data-testid="start-recording-button"
