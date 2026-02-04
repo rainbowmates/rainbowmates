@@ -1,5 +1,10 @@
 # Rainbow Mates - Product Requirements Document
 
+## Latest Updates (Feb 4, 2025)
+- **Logo Updated**: New colorful silhouette logo added to Splash Screen and Auth Page
+- **P0 Bug Fixes Verified**: Shopping layout, iframe, and voice accent all working
+- **Shopping Model Fixed**: Changed from invalid Haiku to Sonnet model
+
 ## Overview
 Rainbow Mates is a web application for women to create a virtual gay best friend ("bestie"). Users can upload their photo, customize their avatar with filters and outfits, and interact with an AI-powered companion through chat and voice features.
 
