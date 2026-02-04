@@ -69,7 +69,7 @@ export default function VoiceScreen({ user }) {
   }, [conversation]);
 
   const scrollToTop = () => {
-    conversationTopRef.current?.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const fetchBestie = async () => {

@@ -33,7 +33,7 @@ export default function ChatScreen({ user }) {
   }, [messages, showTyping]);
 
   const scrollToTop = () => {
-    messagesTopRef.current?.scrollIntoView({ behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const fetchBestieAndMessages = async () => {
