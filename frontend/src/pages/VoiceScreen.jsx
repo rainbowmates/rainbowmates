@@ -193,12 +193,22 @@ export default function VoiceScreen({ user }) {
 
       if (ttsResponse.data.audio_url) {
         setLastAudioUrl(ttsResponse.data.audio_url);
-        const audio = new Audio(ttsResponse.data.audio_url);
-        audio.volume = 1.0;
-        audioRef.current = audio;
-        audio.onended = () => setSpeaking(false);
-        audio.onerror = () => setSpeaking(false);
-        audio.play().catch(() => setSpeaking(false));
+        
+        try {
+          const { source, ctx } = await playAudioFromBase64(ttsResponse.data.audio_url);
+          audioSourceRef.current = source;
+          source.onended = () => setSpeaking(false);
+          source.start(0);
+        } catch (audioError) {
+          console.error('Web Audio failed, falling back to HTML5:', audioError);
+          // Fallback to HTML5 Audio
+          const audio = new Audio(ttsResponse.data.audio_url);
+          audio.volume = 1.0;
+          audioRef.current = audio;
+          audio.onended = () => setSpeaking(false);
+          audio.onerror = () => setSpeaking(false);
+          audio.play().catch(() => setSpeaking(false));
+        }
       } else {
         toast.error('No audio received from server');
         setSpeaking(false);
