@@ -11,8 +11,9 @@ import time
 BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
 
 # Test user data
+import random
 TEST_USER_EMAIL = f"test_shop_{uuid.uuid4().hex[:8]}@example.com"
-TEST_USER_MOBILE = f"+447{uuid.uuid4().hex[:9]}"
+TEST_USER_MOBILE = f"+447{''.join([str(random.randint(0,9)) for _ in range(9)])}"
 TEST_USER_PASSWORD = "testpass123"
 TEST_USER_ID = None
 TEST_BESTIE_ID = None
