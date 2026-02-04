@@ -383,6 +383,8 @@ export default function ShoppingScreen({ user }) {
                 className="w-full px-4 py-3 pr-12 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none resize-none placeholder:text-dark-purple/40 text-sm"
               />
               <button
+                type="button"
+                data-testid="shopping-mic-button"
                 onClick={isRecording ? stopRecording : startRecording}
                 className={`absolute right-3 top-3 p-2 rounded-full transition-all ${
                   isRecording ? 'bg-red-500 text-white animate-pulse' : 'bg-neon-pink/20 text-neon-pink hover:bg-neon-pink/30'
