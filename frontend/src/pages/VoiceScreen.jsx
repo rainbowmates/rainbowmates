@@ -358,7 +358,21 @@ export default function VoiceScreen({ user }) {
       </div>
 
       {/* Conversation History */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 relative">
+        <div ref={conversationTopRef} />
+        
+        {/* Scroll to Top Button */}
+        {conversation.length > 3 && (
+          <button
+            onClick={scrollToTop}
+            className="sticky top-0 left-1/2 -translate-x-1/2 z-10 flex items-center gap-1 px-3 py-1 bg-white/90 backdrop-blur-sm border border-border rounded-full shadow-sm text-xs text-dark-purple hover:bg-muted transition-all"
+            data-testid="scroll-to-top-button"
+          >
+            <ArrowUp className="w-3 h-3" />
+            Top
+          </button>
+        )}
+        
         {conversation.length === 0 && (
           <div className="text-center text-dark-purple/50 py-8">
             <p>Start talking with {bestie.name}!</p>
