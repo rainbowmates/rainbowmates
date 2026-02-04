@@ -196,6 +196,7 @@ export default function ChatScreen({ user }) {
 
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 space-y-4" data-testid="chat-messages">
+        <div ref={messagesTopRef} />
         {messages.length === 0 && (
           <div className="text-center text-dark-purple/50 mt-8">
             <p>Start chatting with {bestie.name}!</p>
