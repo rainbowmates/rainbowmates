@@ -16,6 +16,7 @@ export default function ChatScreen({ user }) {
   const [showTyping, setShowTyping] = useState(false);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const messagesEndRef = useRef(null);
+  const messagesTopRef = useRef(null);
   const typingTimeoutRef = useRef(null);
 
   useEffect(() => {
@@ -30,6 +31,10 @@ export default function ChatScreen({ user }) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages, showTyping]);
+
+  const scrollToTop = () => {
+    messagesTopRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
 
   const fetchBestieAndMessages = async () => {
     try {
