@@ -1044,17 +1044,16 @@ async def delete_single_message(user_id: str, bestie_id: str, message_id: str):
 
 # ============= VOICE ROUTES =============
 
-# ElevenLabs voice mapping - Male voices with warm, friendly tone
-# These are the bestie's voices (gay best friend character)
-# Using verified voice IDs from ElevenLabs pre-made voices
+# ElevenLabs voice mapping - Bestie voices (gay best friend character)
+# Young, friendly, energetic voice to match the bestie persona
 VOICE_MAP = {
-    "British": "onwK4e9ZLuTAKqWW03F9",  # Daniel - warm British male, professional yet friendly
-    "American": "pNInz6obpgDQGcFmaJgB",  # Adam - deep warm American male
-    "Australian": "N2lVS1w4EtoT3dr4eOWO",  # Callum - warm Australian male
-    "Southern": "ErXwobaYiN019PkySvjV",  # Antoni - warm friendly male
-    "New York": "VR6AewLTigWG4xSOukaG",  # Arnold - expressive American male
-    "Valley Girl": "pNInz6obpgDQGcFmaJgB",  # Adam - warm male voice
-    "default": "onwK4e9ZLuTAKqWW03F9"  # Daniel as default - warm British male
+    "British": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
+    "American": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
+    "Australian": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
+    "Southern": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
+    "New York": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
+    "Valley Girl": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
+    "default": "qxjGnozOAtD4eqNuXms4"  # User-selected young friendly voice
 }
 
 @api_router.post("/voice/tts")
