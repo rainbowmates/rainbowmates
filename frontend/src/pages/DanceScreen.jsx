@@ -89,14 +89,9 @@ export default function DanceScreen({ user, bestie: propBestie }) {
     setSelectedSong(songTitle);
 
     try {
-      // Create a descriptive prompt based on the song and characters
+      // Create a simple, safe prompt for dance video
       const danceStyle = getDanceStyleFromSong(songTitle);
-      const prompt = `Two best friends dancing together in a stylish dance studio with colorful lights.
-One is a young woman (the user) and the other is her fashionable gay best friend named ${bestie.name}.
-They are dancing to "${songTitle}" - doing a ${danceStyle}.
-They are in sync, having fun, laughing, and showing off their moves together.
-The lighting is dynamic with pink and purple hues. High energy, joyful mood.
-Professional video quality, smooth dance movements, cinematic style.`;
+      const prompt = `Two friends dancing together in a colorful dance studio. They are doing a ${danceStyle}, having fun and smiling. Bright colorful lighting, energetic mood, professional video quality.`;
 
       const response = await axios.post(`${API}/video/generate`, {
         user_id: user.id,
