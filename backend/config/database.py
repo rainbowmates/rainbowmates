@@ -65,6 +65,8 @@ class Database:
                 logger.error(f"Unexpected error connecting to MongoDB: {e}")
                 if attempt < max_retries - 1:
                     await asyncio.sleep(retry_delay)
+                else:
+                    return False
                     
         logger.error("Failed to connect to MongoDB after all retries")
         return False
@@ -72,7 +74,7 @@ class Database:
     @classmethod
     async def disconnect(cls):
         """Close database connection."""
-        if cls.client:
+        if cls.client is not None:
             cls.client.close()
             cls._initialized = False
             logger.info("Disconnected from MongoDB")
@@ -80,7 +82,7 @@ class Database:
     @classmethod
     async def create_indexes(cls):
         """Create indexes for frequently queried fields."""
-        if not cls.db:
+        if cls.db is None:
             return
             
         try:
@@ -119,7 +121,7 @@ class Database:
         Returns:
             Dictionary with health status information
         """
-        if not cls.client or not cls._initialized:
+        if cls.client is None or not cls._initialized:
             return {
                 "status": "unhealthy",
                 "message": "Database not connected",
@@ -144,7 +146,7 @@ class Database:
     @classmethod
     def get_db(cls) -> AsyncIOMotorDatabase:
         """Get database instance."""
-        if not cls.db:
+        if cls.db is None:
             raise RuntimeError("Database not initialized. Call Database.connect() first.")
         return cls.db
 
