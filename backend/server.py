@@ -1534,16 +1534,49 @@ async def delete_user(user_id: str):
 
 # ============= MAIN =============
 
+# Include routers
 app.include_router(api_router)
+app.include_router(health_router, prefix="/api")
 
+# Add middleware (order matters - last added is first executed)
+# 1. CORS (outermost)
 app.add_middleware(
     CORSMiddleware,
     allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_origins=settings.CORS_ORIGINS if settings.CORS_ORIGINS else ["*"],
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
+# 2. Security Headers
+app.add_middleware(SecurityHeadersMiddleware)
+
+# 3. Rate Limiting
+app.add_middleware(RateLimitMiddleware)
+
+
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database connection on startup."""
+    logger.info("Starting Rainbow Mates API...")
+    
+    # Validate settings
+    missing = settings.validate()
+    if missing:
+        logger.warning(f"Missing environment variables: {missing}")
+    
+    # Connect to database with retry
+    connected = await db_manager.connect(max_retries=3)
+    if not connected:
+        logger.error("Failed to connect to database on startup")
+    else:
+        logger.info("Database connection established")
+
+
 @app.on_event("shutdown")
 async def shutdown_db_client():
-    client.close()
+    """Clean up on shutdown."""
+    if client:
+        client.close()
+    await db_manager.disconnect()
+    logger.info("Rainbow Mates API shutdown complete")
