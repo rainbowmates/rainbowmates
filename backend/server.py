@@ -1572,6 +1572,7 @@ app.include_router(api_router)
 app.include_router(health_router, prefix="/api")
 app.include_router(video_router, prefix="/api")
 app.include_router(karaoke_router, prefix="/api")
+app.include_router(date_or_mate_router, prefix="/api")
 
 # Add middleware (order matters - last added is first executed)
 # 1. CORS (outermost)
