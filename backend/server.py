@@ -546,7 +546,17 @@ async def google_auth_callback(data: GoogleAuthCallback):
             await db.users.insert_one(new_user)
             user_doc = await db.users.find_one({"id": user_id}, {"_id": 0})
         
-        return {"user": parse_from_mongo(user_doc), "session_token": google_user.get("session_token")}
+        # Generate JWT tokens
+        access_token = create_access_token(user_doc["id"])
+        refresh_token = create_refresh_token(user_doc["id"])
+        
+        return {
+            "user": parse_from_mongo(user_doc), 
+            "session_token": google_user.get("session_token"),
+            "access_token": access_token,
+            "refresh_token": refresh_token,
+            "token_type": "bearer"
+        }
         
     except Exception as e:
         logger.error(f"Google auth error: {str(e)}")
