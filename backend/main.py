@@ -71,6 +71,10 @@ async def lifespan(app: FastAPI):
         init_user_db(db)
         init_bestie_db(db)
         init_chat_db(db)
+        init_voice_db(db)
+        init_shopping_db(db)
+        init_subscription_db(db)
+        init_avatar_db(db)
     else:
         logger.error("Failed to connect to database on startup")
     
