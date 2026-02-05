@@ -107,6 +107,9 @@ app.include_router(voice_router, prefix="/api")
 app.include_router(shopping_router, prefix="/api")
 app.include_router(subscription_router, prefix="/api")
 app.include_router(avatar_router, prefix="/api")
+app.include_router(outfits_router, prefix="/api")
+app.include_router(youtube_router, prefix="/api")
+app.include_router(webhook_router, prefix="/api")
 
 # Add middleware (order matters - last added is first executed)
 app.add_middleware(
