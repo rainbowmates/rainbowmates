@@ -41,7 +41,8 @@ from routes import (
     avatar_router, init_avatar_db,
     outfits_router,
     youtube_router,
-    webhook_router, init_webhook_db
+    webhook_router, init_webhook_db,
+    video_router, init_video_db
 )
 
 # Configure logging
