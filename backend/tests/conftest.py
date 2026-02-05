@@ -6,6 +6,9 @@ import asyncio
 from unittest.mock import AsyncMock, MagicMock
 from datetime import datetime, timezone
 
+# Configure pytest-asyncio
+pytest_plugins = ('pytest_asyncio',)
+
 
 @pytest.fixture(scope="session")
 def event_loop():
