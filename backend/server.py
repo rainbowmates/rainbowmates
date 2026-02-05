@@ -1607,6 +1607,7 @@ async def startup_event():
         logger.info("Database connection established")
         # Initialize video router db
         init_video_db(db)
+        init_karaoke_db(db)
 
 
 @app.on_event("shutdown")
