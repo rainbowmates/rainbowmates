@@ -1,6 +1,9 @@
 """
 Rainbow Mates Backend API Tests
 Tests for: Registration, OTP verification, Login, Avatar, Bestie creation
+
+These are integration tests that require a running backend server.
+Run with: REACT_APP_BACKEND_URL=<url> pytest tests/test_rainbow_mates.py -v
 """
 import pytest
 import requests
@@ -9,7 +12,29 @@ import uuid
 import random
 from datetime import datetime, timedelta
 
-BASE_URL = os.environ.get('REACT_APP_BACKEND_URL', '').rstrip('/')
+
+def get_base_url():
+    """Get the backend URL from environment or frontend .env file."""
+    url = os.environ.get('REACT_APP_BACKEND_URL', '')
+    if not url:
+        # Try reading from frontend .env
+        env_path = '/app/frontend/.env'
+        if os.path.exists(env_path):
+            with open(env_path, 'r') as f:
+                for line in f:
+                    if line.startswith('REACT_APP_BACKEND_URL='):
+                        url = line.split('=', 1)[1].strip()
+                        break
+    return url.rstrip('/')
+
+
+BASE_URL = get_base_url()
+
+# Skip all tests in this module if BASE_URL is not available
+pytestmark = pytest.mark.skipif(
+    not BASE_URL,
+    reason="REACT_APP_BACKEND_URL not set - integration tests require a running backend"
+)
 
 # Test data with unique identifiers
 TEST_USER_EMAIL = f"test_{uuid.uuid4().hex[:8]}@example.com"
