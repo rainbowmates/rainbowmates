@@ -1,171 +1,293 @@
-<analysis>**original_problem_statement:** 
+<analysis>**original_problem_statement:**
 The user wants to build a web application called Rainbow Mates, a platform for women to create a virtual gay best friend (bestie).
 
 PRODUCT REQUIREMENTS:
-1.  **Avatar Creation**: Users upload their photo, which is preserved. They can apply filters and select a pre-defined outfit. The final avatar should show the user's face on the selected outfit. This process must have a preview/approval step.
-2.  **Multi-Step Flow**: The creation process is split into Image/Avatar and a separate About You form.
-3.  **UI/UX**:
-    *   The application must be mobile-responsive with a fixed viewport.
-    *   The Relationship With and Relationship Status fields in the About You section should use a popup with selectable images instead of a plain dropdown.
-    *   The Edit Avatar flow should have a specific UI showing the avatar and options to Change filter effects, Choose your outfit, and proceed to the About You section.
-4.  **Bestie Persona**: The AI bestie should have a detailed, emotionally intelligent personality, governed by a specific prompt document provided by the user. It should not start typing until the user submits their message.
-5.  **Voice Features**: The app should include voice chat capabilities using ElevenLabs for text-to-speech.
-6.  **Core Technology**: The initial attempt at outfit generation with OpenAI DALL-E failed because it couldn't preserve the user's face. The user mandated a switch to **Google Vertex AI's Virtual Try-On API**, providing a library of 30 garment images for this purpose.
+1.  **Avatar Creation**: Users select a pre-built avatar.
+2.  **Multi-Step Flow**: A Choose Your Avatar and an About You form.
+3.  **UI/UX**: Mobile-responsive with custom UI components.
+4.  **Bestie Persona & Interaction**: An AI bestie with activities like Dance Together, Karaoke, and Shopping Trial.
+5.  **Authentication**: Email/password, Forgot Password, and Google social login. Placeholders for Facebook/Apple exist.
+6.  **Core Technology**: React (Frontend), FastAPI (Backend), and MongoDB (Database).
+7.  **Conversation History**: All conversation threads must be stored, with options to delete messages or clear conversations.
+8.  **Personalized Greetings**: Bestie greets users on activity screens.
+9.  **Conversational Shopping**: A chat-like interface for shopping recommendations with clickable links displayed in-app.
 
 **User's preferred language**: English
 
 **what currently exists?**
-A full-stack application (React/FastAPI/MongoDB) with a comprehensive set of features. User authentication (register/login/OTP), a dashboard, a multi-step avatar/bestie creation flow, and various activity screens (Chat, Voice, Play) are implemented.
+The application is a full-stack platform where users can register, create a bestie, and interact with them. In this session, the application underwent a massive backend refactoring based on a technical assessment. The monolithic  was broken down into a modular, production-ready structure with separate layers for configuration, middleware, routes, services, and utils. Security features like password hashing, JWTs, rate limiting, and security headers were added.
 
-- **Backend**: Endpoints for auth, chat (with a detailed, user-defined AI prompt), ElevenLabs TTS, Stripe payments, and an outfit catalog are all functional.
-- **Frontend**: Pages for all major features are built and are mobile-responsive. The UI for Relationship With has been updated to an image-based popup selector, and a custom UI for the Edit Avatar flow has been implemented.
-- **Virtual Try-On**: The integration with Google Vertex AI's  model is fully coded on both the frontend and backend, using a library of 30 real garment images provided by the user. However, this core feature is **blocked** due to a Google Cloud quota limit. A temporary workaround has been implemented to bypass this step, and the UI now shows a clear error message when the quota is exceeded.
+Key features and bug fixes from this session include:
+-   **Voice Chat Fixes**: Addressed issues with incorrect voice accent, aggressive tone, low volume, and unreliable audio playback by implementing a more robust Web Audio API solution, a replay button, and better error handling.
+-   **Shopping Screen Fixes**: Resolved bugs with the iframe not opening for product links and the microphone button being unresponsive.
+-   **UI/UX Improvements**: Updated the app logo, added a floating Scroll to Top button on chat screens, and filtered out unavailable songs on the Karaoke screen.
+-   **Major Backend Refactoring**: Transformed the backend from a single  file to a scalable, modular architecture, improving the technical score from 29% to 91%.
+-   **Enhanced Security**: Implemented password hashing (bcrypt), JWT authentication, rate limiting, and security headers.
+-   **Improved Maintainability**: Added comprehensive documentation (README, SETUP, DEPLOYMENT, API guides), an  file, and a project health check endpoint.
 
 **Last working item**:
-- Last item agent was working: The user requested another UI enhancement for the About You section. They provided 5 SVG images to be used in a popup selector for the Relationship Status field, similar to the one already implemented for the Relationship With field.
-- Status: NOT STARTED
+- Last item agent was working: The agent was attempting to fix the final 9% gap in the technical assessment to reach a 100% score. This involved adding more granular error handling, a caching utility, and creating comprehensive unit tests for auth, services, and utils. The final step was to run the new tests with coverage, but the tests failed.
+- Status: BLOCKED
 - Agent Testing Done: N
-- Which testing method agent to use? screenshot tool
+- Which testing method agent to use? backend testing agent
 - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-- Issue 1: Virtual Try-On feature is not functional due to Google Cloud quota limits. (PRIORITY: P0)
+- Issue 1: Backend tests are failing. (PRIORITY: P0)
 
 Issues Detail:
 - Issue 1:
-  - **Description**: The main feature of generating an avatar with a user-selected outfit is blocked. The backend API call to Google's  model fails with a  error. The frontend currently bypasses this step or shows a Service Temporarily Busy message.
-  - **Attempted fixes**:
-    1.  Confirmed the  IAM role was correctly assigned.
-    2.  Attempted switching to other models (, ) and regions (), but these models were not found/available for the user's project.
-    3.  Implemented a fallback to Google Imagen, but this was rejected by the user as it does not preserve the user's face.
-    4.  The agent has correctly concluded that the only solution is for the user to request a quota increase for the  model in their Google Cloud project.
+  - **Description**: The agent created new tests in , , and  and tried to run them with ============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: /app
+plugins: cov-7.0.0, anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting backend/tests ________________________
+Defining 'pytest_plugins' in a non-top-level conftest is no longer supported:
+It affects the entire test suite instead of just below the conftest as expected.
+  /app/backend/tests/conftest.py
+Please move it to a top level conftest file at the rootdir:
+  /app
+For more information, visit:
+  https://docs.pytest.org/en/stable/deprecations.html#pytest-plugins-in-non-top-level-conftest-files
+=========================== short test summary info ============================
+ERROR backend/tests - Failed: Defining 'pytest_plugins' in a non-top-level co...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 1.01s ===============================, but the execution failed with  and other errors.
+  - **Attempted fixes**: The agent installed  to resolve the mark warning, but did not re-run the tests to confirm the fix.
   - **Next debug checklist**:
-    1.  The agent's next step should be to wait for the user to confirm that the quota has been successfully increased.
-    2.  Once confirmed, re-test the  endpoint.
-    3.  If successful, remove the temporary bypass logic in .
-  - **Why fix this issue and what will be achieved with the fix?**: This is the application's primary, user-mandated feature. Fixing it will complete the core product vision.
-  - **Status**: BLOCKED
-  - **Is recurring issue?** Y
-  - **Should Test frontend/backend/both after fix?** both
-  - **Blocked on other issue**: User action required (Requesting Google Cloud quota increase).
+    1.  Run ============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: /app
+plugins: cov-7.0.0, anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting backend/tests ________________________
+Defining 'pytest_plugins' in a non-top-level conftest is no longer supported:
+It affects the entire test suite instead of just below the conftest as expected.
+  /app/backend/tests/conftest.py
+Please move it to a top level conftest file at the rootdir:
+  /app
+For more information, visit:
+  https://docs.pytest.org/en/stable/deprecations.html#pytest-plugins-in-non-top-level-conftest-files
+=========================== short test summary info ============================
+ERROR backend/tests - Failed: Defining 'pytest_plugins' in a non-top-level co...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.34s =============================== again in the  directory to see the full error output.
+    2.  Review , , and  to fix any syntax errors or incorrect test logic.
+    3.  Ensure all test dependencies are correctly installed and  is properly configured.
+    4.  Fix the failing tests one by one until ============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: /app
+plugins: cov-7.0.0, anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting backend/tests ________________________
+Defining 'pytest_plugins' in a non-top-level conftest is no longer supported:
+It affects the entire test suite instead of just below the conftest as expected.
+  /app/backend/tests/conftest.py
+Please move it to a top level conftest file at the rootdir:
+  /app
+For more information, visit:
+  https://docs.pytest.org/en/stable/deprecations.html#pytest-plugins-in-non-top-level-conftest-files
+=========================== short test summary info ============================
+ERROR backend/tests - Failed: Defining 'pytest_plugins' in a non-top-level co...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.38s =============================== passes.
+    5.  Once tests pass, run ============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: /app
+plugins: cov-7.0.0, anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting backend/tests ________________________
+Defining 'pytest_plugins' in a non-top-level conftest is no longer supported:
+It affects the entire test suite instead of just below the conftest as expected.
+  /app/backend/tests/conftest.py
+Please move it to a top level conftest file at the rootdir:
+  /app
+For more information, visit:
+  https://docs.pytest.org/en/stable/deprecations.html#pytest-plugins-in-non-top-level-conftest-files
+=========================== short test summary info ============================
+ERROR backend/tests - Failed: Defining 'pytest_plugins' in a non-top-level co...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.90s =============================== to get the coverage report.
+  - **Why fix this issue and what will be achieved with the fix?**: A passing test suite is critical to ensure the recent massive refactoring did not introduce regressions and to validate the backend's stability. Achieving high test coverage is the main remaining task to reach the 100% technical score.
+  - **Status**: IN PROGRESS
+  - **Is recurring issue?** N
+  - **Should Test frontend/backend/both after fix?** backend
+  - **Blocked on other issue**: None
 
 **In progress Task List**:
-None.
+- Task 1: Achieve 100% on the Technical Assessment (P1)
+  - **Where to resume**: The immediate blocker is the failing test suite (Issue 1). After fixing the tests, the agent needs to migrate the few remaining legacy routes from  into the new modular structure and add a caching layer (e.g., Redis) to complete the refactoring.
+  - **What will be achieved with this?**: A fully refactored, production-grade, maintainable, and well-documented backend.
+  - **Status**: BLOCKED
+  - **Should Test frontend/backend/both after fix?** backend
+  - **Blocked on something**: Issue 1: Backend tests are failing.
 
 **Upcoming and Future Tasks**
-- **P0: Implement Relationship Status Image Popup:**
+- **P0: Implement Facebook & Apple Social Logins**:
+    - **Files:** , 
+    - **Action:** Integrate Facebook and Apple login. Blocked pending API credentials from the user.
+- **P1: Refactor Global State Management**:
+    - **Files**: , and all pages consuming  or  state.
+    - **Action**: Migrate global state (, ) from / in  to a centralized React Context to improve stability.
+- **P2: AI-Generated Dance Video (Sora 2)**:
     - **File:** 
-    - **Action:** Using the 5 new SVG images provided by the user, replace the existing Relationship Status dropdown with a new popup modal containing the image-based selectors. This will mirror the functionality recently built for the Relationship With field.
-- **P1: Implement Dance with Bestie Feature:**
-    - **File:**  (and potentially )
-    - **Action:** The user mentioned wanting to SEE herself dancing with her bestie. This implies using the now-blocked Virtual Try-On feature to generate an image or animation. This task is blocked by the P0 quota issue.
+    - **Action:** Add a button to generate a video of the user's avatar and bestie dancing together using the Sora 2 model via .
 
 **Completed work in this session**
-- **Google Virtual Try-On Integration (Blocked):**
-  - Integrated a library of 30 user-provided garment images.
-  - Created backend endpoints (, ) to manage and serve the outfits.
-  - Implemented the  API call in .
-  - Updated  to display real garment images for selection.
-  - Diagnosed and handled the Google Cloud permission and quota errors, implementing a graceful failure UI.
-- **Bestie AI Prompt Enhancement:**
-  - Updated the bestie's core prompt twice with user-provided documents, adding rules for emotional intelligence, handling extreme situations, and maintaining boundaries. The changes were tested and verified.
-- **Mobile Responsiveness Fixes:**
-  - Resolved a major scrolling issue across the application by removing  from the main container and ensuring layouts are scrollable on mobile. Verified on  and other key pages.
-- **UI/UX Enhancements:**
-  - **Relationship With Selector:** Replaced a dropdown with a custom image-based popup modal in .
-  - **Edit Avatar UI:** Created a new, dedicated UI for the avatar edit mode flow as per user specs.
-  - **Chat Typing Indicator:** Fixed a bug and improved the UX so the typing... indicator only appears after the user submits their message, with a slight delay.
-- **Bug Fixes:**
-  - **Stripe Payments:** Diagnosed and confirmed the Stripe checkout flow was working correctly, identifying the user's issue as likely client-side.
-  - **Voice Chat (STT):** Fixed a bug in the speech-to-text endpoint in  where the audio file format was not being handled correctly by the Whisper API.
-- **ElevenLabs Integration:**
-  - Successfully configured the user-provided ElevenLabs API key.
-  - Enhanced the backend TTS logic to map the bestie's accent to different voices.
+- **Technical Debt Paydown (P0/P1/P2)**:
+  - Conducted a full technical assessment and refactored the backend from a single 1600+ line  into a modular architecture (, , , , , , ).
+  - Implemented JWT authentication, password hashing (), security headers, rate limiting, and a global error handler.
+  - Added a health check endpoint (, , ) and database connection retries.
+  - Created 12 database indexes for performance.
+  - Added comprehensive documentation (, , and a new  folder with , , ).
+- **Voice Chat Feature (P0)**:
+  - Fixed incorrect voice accent by updating ElevenLabs voice ID.
+  - Corrected aggressive tone and low volume by adjusting voice settings.
+  - Resolved unreliable audio playback by switching to Web Audio API, adding auto-retry logic, and unlocking audio on user interaction.
+  - Added a Replay button for the last voice message.
+- **Bug Fixes (P1)**:
+  - Fixed shopping links not opening in an iframe.
+  - Fixed unresponsive microphone button on the shopping screen.
+  - Replaced unavailable songs in the Karaoke feature.
+  - Corrected the Scroll to Top button to scroll the entire page.
+- **UI/UX Enhancements**:
+  - Replaced the app logo on the splash and auth screens.
+  - Implemented a floating Scroll to Top button on the Chat and Voice screens.
 
 **Earlier issues found/mentioned but not fixed**
 None.
 
 **Known issue recurrence from previous fork**
-- **Issue recurrence:** The initial problem of avatar face not being preserved has evolved. The new chosen technology (Google Virtual Try-On) is implemented but is now blocked by a new issue (quota limits).
-- **Recurrence count:** 3+
-- **Status:** IN PROGRESS (The implemented solution is blocked).
+- **Issue recurrence**: The Virtual Try-On feature remains blocked due to an external Google Cloud quota issue. It has been bypassed.
+- **Recurrence count**: 3+
+- **Status**: BLOCKED
 
 **Code Architecture**
 
 
 **Key Technical Concepts**
-- **Frontend:** React, Tailwind CSS
-- **Backend:** FastAPI, Python
+- **Frontend:** React, Tailwind CSS, 
+- **Backend:** FastAPI (Python), , , 
 - **Database:** MongoDB
-- **3rd Party APIs:**
-  - **Google Vertex AI Virtual Try-On:** Implemented but blocked by quota.
-  - **ElevenLabs:** Integrated for TTS.
-  - **OpenAI Whisper:** Used for STT.
-  - **Claude Sonnet / LiteLLM:** Used for the bestie's chat logic.
-  - **Stripe:** Integrated for payments.
+- **Security:**  for password hashing, JWT for authentication, rate limiting, security headers (CSP, etc.).
+- **Testing:** ============================= test session starts ==============================
+platform linux -- Python 3.11.14, pytest-9.0.2, pluggy-1.6.0
+rootdir: /app
+plugins: cov-7.0.0, anyio-4.12.1, asyncio-1.3.0
+asyncio: mode=Mode.STRICT, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collected 0 items / 1 error
+
+==================================== ERRORS ====================================
+________________________ ERROR collecting backend/tests ________________________
+Defining 'pytest_plugins' in a non-top-level conftest is no longer supported:
+It affects the entire test suite instead of just below the conftest as expected.
+  /app/backend/tests/conftest.py
+Please move it to a top level conftest file at the rootdir:
+  /app
+For more information, visit:
+  https://docs.pytest.org/en/stable/deprecations.html#pytest-plugins-in-non-top-level-conftest-files
+=========================== short test summary info ============================
+ERROR backend/tests - Failed: Defining 'pytest_plugins' in a non-top-level co...
+!!!!!!!!!!!!!!!!!!!! Interrupted: 1 error during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.35s ===============================, , 
+- **Architecture:** Modular service-oriented pattern with separation of concerns.
 
 **key DB schema**
-- **users**: { , , , , , , , , ,  }
-- **avatars**: { , , , ,  }
-- **besties**: { , , ,  }
+- **users**: { , , , , , ... }
+- **besties**: { , , , , ... }
+- **chat_messages**: { , , , , , ,  }
+- **subscriptions**: { , , , ... }
+- **password_reset_otps**: { , ,  }
 
 **changes in tech stack**
-- Added  and  for Vertex AI.
-- Added  for TTS.
+-   **Added**:  for password hashing.
+-   **Added**: ,  for an enhanced testing suite.
+-   **Added**:  for centralized settings management.
+-   **Added**:  for JWT authentication.
 
 **All files of reference**
-- : Contains all backend logic, including the Virtual Try-On endpoint, outfit catalog, and updated AI prompts.
-- : The most heavily modified file, containing logic for the multi-step creation flow, edit mode, virtual try-on calls, and the new image-based popups.
-- : Updated with the respectful typing indicator logic.
-- : Modified to fix global mobile scrolling issues.
-- : Stores the user-provided service account key.
-- : New directory storing all garment images.
+-   **/app/backend/tests/**: The entire directory. The tests are failing and need to be fixed.
+-   **/app/backend/main.py**: The new primary entry point for the backend.
+-   **/app/backend/server.py**: The legacy monolithic file. Contains a few routes that still need to be migrated.
+-   **/app/backend/routes/**: Directory containing all the new modular API route files.
+-   **/app/backend/services/**: Directory containing the business logic.
+-   **/app/frontend/src/pages/VoiceScreen.jsx**: Contains the complex Web Audio API implementation for voice chat.
+-   **/app/TECHNICAL_ASSESSMENT.md**: The report that guided the entire refactoring effort.
 
-**Critical Info for New Agent**
-1.  **DO NOT ATTEMPT TO FIX THE VIRTUAL TRY-ON FEATURE.** The issue is a Google Cloud quota limit on the  model, which only the user can resolve by requesting an increase. All technical work for this feature is complete. The app is currently set to gracefully fail and show a Service Temporarily Busy message. Do not change this logic or try alternative models like Imagen.
-2.  Your immediate task is to implement the Relationship Status popup in  using the 5 new SVG images the user provided. Follow the pattern already established for the Relationship With selector.
-3.  Once the immediate task is done, await user instructions. They may have you work on other features while they sort out the Google Cloud quota.
+**Areas that need refactoring**:
+-   **Backend**: The remaining legacy routes in  (voice, shopping, avatar, subscription, youtube) need to be fully migrated to their respective modular files in , and  should be deleted.
+-   **Frontend**: Global state management in  using  and  is brittle and should be migrated to a centralized React Context.
 
 **key api endpoints**
-- : Attempts to generate an avatar with an outfit. **(Currently failing due to quota)**.
-- : Serves the list of available outfit categories and image IDs.
-- : Serves a specific garment image.
-- : Handles chat with the AI bestie.
-- : Generates speech from text using ElevenLabs.
-- : Transcribes speech to text using Whisper.
+-   : New health check endpoint with component status.
+-   : Now returns JWT access and refresh tokens.
+-   All other API endpoints have been modularized and can be found in the  directory.
+
+**Critical Info for New Agent**
+1.  **Your immediate task is to fix the failing backend tests.** The last agent created a comprehensive test suite in  but it failed on execution. This is the main blocker.
+2.  The backend has undergone a massive refactoring.  is being deprecated. The new entry point is , which assembles the app from modular components in , , , , and .
+3.  Once the tests are fixed, the next step is to migrate the handful of remaining routes from  to the new  modules and then delete .
+4.  After the backend refactoring is complete, propose the frontend state management refactoring (React Context) as the next major task.
+
+**documents and test reports created in this job**
+-   
+-   
+-   
+-   
+-   
+-    (Updated)
 
 **Last 10 User Messages and any pending HUMAN messages**
-1.  **User:** Requests to rename the Single option in the relationship popup to Myself. (COMPLETED)
-2.  **User:** Defines a new UI for the Edit Avatar flow with specific options. (COMPLETED)
-3.  **User:** Clicks a button in the UI. (Agent correctly interprets this as a test step).
-4.  **User:** Another UI click. (Agent interprets as test step).
-5.  **User:** Provides 5 SVG images (, , etc. - names are misleading, they represent relationship status) for a new Relationship Status popup. (PENDING - This is the current task).
-6.  **Agent:** Asks the user if they want to proceed.
-7.  **Agent:** Provides a summary of the implemented Edit Mode UI.
-8.  **Agent:** Provides a summary of all changes and asks the user to test.
-9.  **User:** Asks to test the new edit mode.
-10. **Agent:** Implements the edit mode.
+1.  **User**: Asks to fix all remaining gaps to reach 100% technical score. (IN PROGRESS)
+2.  **User**: Asks what the final technical score is after refactoring. (COMPLETED)
+3.  **User**: Asks to fix all P2 tasks from the technical assessment. (COMPLETED)
+4.  **User**: Asks for the refactoring results and reductions achieved. (COMPLETED)
+5.  **User**: Asks to fix all P0 and P1 issues from the technical assessment. (COMPLETED)
+6.  **User**: Provides a best practice guide and asks for a technical assessment. (COMPLETED)
+7.  **User**: Reports the mic button in the shopping dialogue doesn't work. (COMPLETED)
+8.  **User**: Reports three issues: top icon doesn't scroll to top, karaoke shows blocked songs, shopping link iframe doesn't open. (COMPLETED)
+9.  **User**: Wants the top icon to be free-floating on both voice and chat screens. (COMPLETED)
+10. **User**: Reports the scroll to top button is not visible on the voice chat page. (COMPLETED)
 
 **Project Health Check:**
-- **Broken:** The core Virtual Try-On feature is non-functional due to an external quota limitation. The app has been modified to handle this gracefully.
-- **Mocked:** N/A.
+-   **Broken**: The backend test suite is failing, preventing validation of the new architecture.
+-   **Mocked:** The Virtual Try-On feature remains bypassed. Facebook and Apple logins are UI-only placeholders.
 
 **3rd Party Integrations**
-- **Google Vertex AI (Virtual Try-On):** Implemented, but **blocked by user's quota**. Requires a User-provided key (already configured).
-- **ElevenLabs (TTS):** Integrated and working. Requires a User API Key (already configured).
-- **OpenAI Whisper (STT):** Integrated and working. Uses Emergent LLM Key.
-- **Claude Sonnet (via LiteLLM):** Used for chat backend. Uses Emergent LLM Key.
-- **Stripe (Payments):** Integrated and working with test keys.
-- **Twilio (SMS):** Planned/mocked.
+-   **Google Vertex AI (Virtual Try-On):** Implemented but **BLOCKED**.
+-   **Emergent-managed Google Auth:** Integrated and working.
+-   **ElevenLabs (TTS):** Integrated. Requires a User API Key.
+-   **OpenAI Whisper (STT):** Integrated. Uses Emergent LLM Key.
+-   **LiteLLM (Claude Sonnet/Haiku):** Used for chat and shopping. Uses Emergent LLM Key.
+-   **Stripe (Payments):** Integrated and working.
+-   **YouTube:** Custom backend proxy for search API.
 
 **Testing status**
-- Testing agent used after significant changes: NO
-- Troubleshoot agent used after agent stuck in loop: NO
-- Test files created: []
-- Known regressions: The avatar outfit generation feature, while now correctly implemented, is non-functional due to the quota block.
+-   Testing agent used after significant changes: NO (Agent created manual tests instead).
+-   Troubleshoot agent used after agent stuck in loop: NO
+-   Test files created:
+    -   
+    -   
+    -   
+    -   
+-   Known regressions: The entire test suite is failing.
 
 **Credentials to test flow:**
 Register a new user. The OTP for verification is hardcoded as **123456**.
 
 **What agent forgot to execute**
-The agent has been thorough and has not forgotten any user requests. It has correctly parked the main feature due to an external blocker and proceeded with other user-requested tasks.</analysis>
+- The agent did not successfully run the new test suite to completion and get a coverage report.
+- The agent did not finish migrating all routes out of , leaving some legacy code behind.</analysis>

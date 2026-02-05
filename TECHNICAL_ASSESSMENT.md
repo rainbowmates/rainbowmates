@@ -158,7 +158,7 @@ This assessment evaluates the Rainbow Mates application against the Technical Be
 
 ### Health Endpoint Test:
 ```bash
-curl -s https://rainbowpals.preview.emergentagent.com/api/health
+curl -s https://rainbow-buddies.preview.emergentagent.com/api/health
 ```
 Response:
 ```json

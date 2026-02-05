@@ -2,7 +2,7 @@
 
 ## Base URL
 
-- **Preview**: `https://rainbowpals.preview.emergentagent.com/api`
+- **Preview**: `https://rainbow-buddies.preview.emergentagent.com/api`
 - **Production**: `https://your-app.host.emergentagent.com/api`
 
 ## Authentication
