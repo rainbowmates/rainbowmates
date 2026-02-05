@@ -7,6 +7,7 @@ from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from models.schemas import User, UserCreate
+from utils.password import verify_password
 
 logger = logging.getLogger(__name__)
 
