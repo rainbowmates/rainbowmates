@@ -49,46 +49,45 @@ def init_db(database):
 @router.post("/lyrics")
 async def get_lyrics(request: LyricsRequest):
     """
-    Get lyrics for a song using AI.
-    Returns lyrics broken into lines for karaoke display.
+    Get a song description for karaoke display.
+    Returns fun karaoke prompts for the bestie to sing along.
     """
     try:
-        from emergentintegrations.llm.chat import Chat, Message, Models
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
         
-        chat = Chat(
+        chat = LlmChat(
             api_key=settings.EMERGENT_LLM_KEY,
-            model=Models.claude_sonnet
+            model="claude-3-5-haiku-20241022"
         )
         
-        prompt = f"""You are a lyrics assistant. Provide the lyrics for the song "{request.song_title}"{f' by {request.artist}' if request.artist else ''}.
+        prompt = f"""Create fun karaoke sing-along prompts for the song "{request.song_title}"{f' by {request.artist}' if request.artist else ''}.
 
-Return ONLY the lyrics, formatted as follows:
-- One line per verse line
-- Empty line between verses/choruses
-- No timestamps, no annotations
-- If you don't know the exact lyrics, provide a reasonable approximation
+Generate 10-15 short, fun lines that capture the spirit and emotion of this song. These should be:
+- Catchy phrases inspired by the song's theme
+- Encouraging singing prompts like "Here comes the chorus!" or "Sing it loud!"
+- Fun exclamations matching the song's mood
+- Short memorable phrases (4-8 words each)
 
-Start with the lyrics immediately, no introduction."""
+Do NOT include actual song lyrics. Instead, create original prompts that match the song's energy.
+Format: One line per prompt, no numbers or bullets."""
 
-        response = await chat.send_async(
-            messages=[Message(role="user", content=prompt)]
+        response = await chat.send_message_async(
+            message=UserMessage(content=prompt)
         )
         
-        lyrics_text = response.content.strip()
+        prompts_text = response.content.strip()
         
-        # Parse lyrics into lines
+        # Parse into lines
         lines = []
-        for line in lyrics_text.split('\n'):
+        for line in prompts_text.split('\n'):
             stripped = line.strip()
-            if stripped:
+            if stripped and len(stripped) > 3:
                 lines.append(stripped)
-            elif lines and lines[-1] != '':  # Add empty line for verse breaks
-                lines.append('')
         
         return {
             "song_title": request.song_title,
             "artist": request.artist,
-            "lyrics": lyrics_text,
+            "lyrics": prompts_text,
             "lines": lines
         }
         
