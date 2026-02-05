@@ -38,7 +38,10 @@ from routes import (
     voice_router, init_voice_db,
     shopping_router, init_shopping_db,
     subscription_router, init_subscription_db,
-    avatar_router, init_avatar_db
+    avatar_router, init_avatar_db,
+    outfits_router,
+    youtube_router,
+    webhook_router, init_webhook_db
 )
 
 # Configure logging
