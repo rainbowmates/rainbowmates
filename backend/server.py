@@ -1570,6 +1570,7 @@ async def delete_user(user_id: str):
 app.include_router(api_router)
 app.include_router(health_router, prefix="/api")
 app.include_router(video_router, prefix="/api")
+app.include_router(karaoke_router, prefix="/api")
 
 # Add middleware (order matters - last added is first executed)
 # 1. CORS (outermost)
