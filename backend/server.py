@@ -1603,6 +1603,8 @@ async def startup_event():
         logger.error("Failed to connect to database on startup")
     else:
         logger.info("Database connection established")
+        # Initialize video router db
+        init_video_db(db)
 
 
 @app.on_event("shutdown")
