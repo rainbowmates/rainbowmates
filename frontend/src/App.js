@@ -12,6 +12,7 @@ import ChatScreen from "./pages/ChatScreen";
 import VoiceScreen from "./pages/VoiceScreen";
 import KaraokeScreen from "./pages/KaraokeScreen";
 import DanceScreen from "./pages/DanceScreen";
+import DateOrMateScreen from "./pages/DateOrMateScreen";
 import ShoppingScreen from "./pages/ShoppingScreen";
 import SubscriptionScreen from "./pages/SubscriptionScreen";
 import SettingsScreen from "./pages/SettingsScreen";
