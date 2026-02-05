@@ -34,7 +34,11 @@ from routes import (
     auth_router, init_auth_db,
     user_router, init_user_db,
     bestie_router, init_bestie_db,
-    chat_router, init_chat_db
+    chat_router, init_chat_db,
+    voice_router, init_voice_db,
+    shopping_router, init_shopping_db,
+    subscription_router, init_subscription_db,
+    avatar_router, init_avatar_db
 )
 
 # Configure logging
