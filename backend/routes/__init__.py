@@ -11,6 +11,7 @@ from .outfits import router as outfits_router
 from .youtube import router as youtube_router
 from .webhook import router as webhook_router, init_db as init_webhook_db
 from .video import router as video_router, init_db as init_video_db
+from .karaoke import router as karaoke_router, init_db as init_karaoke_db
 
 __all__ = [
     "health_router",
@@ -25,6 +26,7 @@ __all__ = [
     "outfits_router",
     "youtube_router",
     "webhook_router", "init_webhook_db",
-    "video_router", "init_video_db"
+    "video_router", "init_video_db",
+    "karaoke_router", "init_karaoke_db"
 ]
 
