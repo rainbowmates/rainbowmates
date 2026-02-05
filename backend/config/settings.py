@@ -42,9 +42,9 @@ class Settings:
     JWT_ACCESS_TOKEN_EXPIRE_MINUTES: int = 60 * 24  # 24 hours
     JWT_REFRESH_TOKEN_EXPIRE_DAYS: int = 7
     
-    # Rate Limiting
-    RATE_LIMIT_AUTH: int = 5  # requests per minute for auth endpoints
-    RATE_LIMIT_GENERAL: int = 60  # requests per minute for general endpoints
+    # Rate Limiting (increased for test environments)
+    RATE_LIMIT_AUTH: int = int(os.getenv("RATE_LIMIT_AUTH", "30"))  # requests per minute for auth endpoints
+    RATE_LIMIT_GENERAL: int = int(os.getenv("RATE_LIMIT_GENERAL", "120"))  # requests per minute for general endpoints
     
     # Paths
     ROOT_DIR: Path = ROOT_DIR
