@@ -73,6 +73,11 @@ const avatarOptions = [
     id: 'avatar-13', 
     name: 'Layla',
     image: 'https://customer-assets.emergentagent.com/job_a9da2ea3-f639-454d-8f3d-963457776e39/artifacts/huc1elyo_fruitee.fun_A_semi-realistic_AI_fashion_model_full-body_stand_110b887f-6ced-4fa0-8e40-6ca95d6c2819_0.png'
+  },
+  { 
+    id: 'avatar-14', 
+    name: 'Test user',
+    image: 'https://customer-assets.emergentagent.com/job_59b3b69e-a28f-44fd-a869-c7d33149fa88/artifacts/om174z8b_user%201.png'
   }
 ];
 

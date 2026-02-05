@@ -15,7 +15,8 @@ const BESTIE_IMAGES = [
   { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/fmgwn4zi_gay%2040.png', description: 'Classic & Warm' },
   { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/hzbdtvjr_gay%2036.png', description: 'All Black' },
   { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/5ta5p4v7_gay%204.png', description: 'Sunny Vibes' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/qiajp76h_gay%201.png', description: 'Summer Scarf' }
+  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/qiajp76h_gay%201.png', description: 'Summer Scarf' },
+  { url: 'https://customer-assets.emergentagent.com/job_59b3b69e-a28f-44fd-a869-c7d33149fa88/artifacts/mpppkgxg_gay%204%20-%202.png', description: 'Test bestie' }
 ];
 
 const PERSONALITIES = ['Funny', 'Chatty', 'Serious', 'Gossipy', 'Sympathetic', 'Attentive', 'Intellectual', 'Bitchy'];
