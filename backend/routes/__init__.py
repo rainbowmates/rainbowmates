@@ -10,6 +10,7 @@ from .avatar import router as avatar_router, init_db as init_avatar_db
 from .outfits import router as outfits_router
 from .youtube import router as youtube_router
 from .webhook import router as webhook_router, init_db as init_webhook_db
+from .video import router as video_router, init_db as init_video_db
 
 __all__ = [
     "health_router",
@@ -23,6 +24,7 @@ __all__ = [
     "avatar_router", "init_avatar_db",
     "outfits_router",
     "youtube_router",
-    "webhook_router", "init_webhook_db"
+    "webhook_router", "init_webhook_db",
+    "video_router", "init_video_db"
 ]
 
