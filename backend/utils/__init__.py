@@ -7,6 +7,7 @@ from .auth import (
     require_auth,
     security
 )
+from .password import hash_password, verify_password
 
 __all__ = [
     "success_response",
@@ -17,5 +18,7 @@ __all__ = [
     "decode_token",
     "get_current_user_id",
     "require_auth",
-    "security"
+    "security",
+    "hash_password",
+    "verify_password"
 ]
