@@ -9,7 +9,7 @@ export default function PlayScreen({ user }) {
     { icon: MessageCircle, title: 'Chat', description: 'Text with your bestie', path: '/chat', color: 'from-neon-pink to-purple-400' },
     { icon: Mic, title: 'Voice Chat', description: 'Talk to your bestie', path: '/voice', color: 'from-soft-blue to-neon-pink' },
     { icon: Music, title: 'Karaoke', description: 'Sing together', path: '/karaoke', color: 'from-soft-yellow to-neon-pink' },
-    { icon: Music, title: 'Dance', description: 'Dance to music', path: '/dance', color: 'from-purple-400 to-neon-pink' },
+    { icon: Music, title: 'Play Music', description: 'Listen & dance together', path: '/dance', color: 'from-purple-400 to-neon-pink' },
     { icon: ShoppingBag, title: 'Shopping', description: 'Get fashion advice', path: '/shopping', color: 'from-neon-pink to-soft-yellow' }
   ];
 
