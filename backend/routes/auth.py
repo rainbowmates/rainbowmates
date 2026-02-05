@@ -10,6 +10,7 @@ from models.schemas import UserCreate, UserLogin, OTPVerify, ForgotPasswordReque
 from services.user_service import UserService, prepare_for_mongo, parse_from_mongo
 from utils.auth import create_access_token, create_refresh_token
 from utils.password import hash_password, verify_password
+from utils.errors import AuthError, UserError
 
 logger = logging.getLogger(__name__)
 
@@ -35,9 +36,9 @@ async def register(user: UserCreate):
     
     # Check if email or mobile already exists
     if await user_service.email_exists(user.email):
-        raise HTTPException(status_code=400, detail="Email already registered")
+        raise UserError.email_exists()
     if await user_service.mobile_exists(user.mobile):
-        raise HTTPException(status_code=400, detail="Mobile already registered")
+        raise UserError.mobile_exists()
     
     user_id = f"user_{uuid.uuid4().hex[:12]}"
     user_doc = {
@@ -47,7 +48,7 @@ async def register(user: UserCreate):
         "dob": user.dob,
         "mobile": user.mobile,
         "email": user.email.lower(),
-        "password": hash_password(user.password),  # Hash password
+        "password": hash_password(user.password),
         "is_verified": False,
         "created_at": datetime.now(timezone.utc)
     }
@@ -59,20 +60,18 @@ async def register(user: UserCreate):
 @router.post("/verify-otp")
 async def verify_otp(data: OTPVerify):
     """Verify OTP for registration."""
-    # Hardcoded OTP for demo
     if data.otp != "123456":
-        raise HTTPException(status_code=400, detail="Invalid OTP")
+        raise UserError.invalid_otp()
     
     user_service = UserService(db)
     user_doc = await user_service.get_by_identifier(data.identifier)
     
     if not user_doc:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise UserError.not_found()
     
     await user_service.verify(data.identifier)
     user_doc = await user_service.get_by_identifier(data.identifier)
     
-    # Generate JWT tokens
     access_token = create_access_token(user_doc["id"])
     refresh_token = create_refresh_token(user_doc["id"])
     
@@ -92,12 +91,11 @@ async def login(credentials: UserLogin):
     user_doc = await user_service.validate_credentials(credentials.identifier, credentials.password)
     
     if not user_doc:
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        raise AuthError.invalid_credentials()
     
     if not user_doc.get('is_verified'):
-        raise HTTPException(status_code=401, detail="Please verify your account first")
+        raise AuthError.not_verified()
     
-    # Generate JWT tokens
     access_token = create_access_token(user_doc["id"])
     refresh_token = create_refresh_token(user_doc["id"])
     
@@ -117,9 +115,8 @@ async def forgot_password(request: ForgotPasswordRequest):
     user_doc = await user_service.get_by_email(request.email)
     
     if not user_doc:
-        raise HTTPException(status_code=404, detail="Email not found")
+        raise UserError.not_found()
     
-    # Store OTP (hardcoded for demo)
     otp_doc = {
         "email": request.email.lower(),
         "otp": "123456",
@@ -135,20 +132,16 @@ async def forgot_password(request: ForgotPasswordRequest):
 @router.post("/reset-password")
 async def reset_password(request: ResetPasswordRequest):
     """Reset password with OTP."""
-    # Verify OTP
     otp_doc = await db.password_reset_otps.find_one({
         "email": request.email.lower(),
         "otp": request.otp
     })
     
     if not otp_doc:
-        raise HTTPException(status_code=400, detail="Invalid or expired OTP")
+        raise UserError.invalid_otp()
     
-    # Update password
     user_service = UserService(db)
-    await user_service.update_password(request.email, request.new_password)
-    
-    # Clean up OTP
+    await user_service.update_password(request.email, hash_password(request.new_password))
     await db.password_reset_otps.delete_many({"email": request.email.lower()})
     
     return {"message": "Password reset successful"}
@@ -160,7 +153,6 @@ async def google_auth_callback(data: GoogleAuthCallback):
     global EmergentGoogleAuth
     
     try:
-        # Lazy import
         if EmergentGoogleAuth is None:
             from emergentintegrations.auth.google import EmergentGoogleAuth as GoogleAuth
             EmergentGoogleAuth = GoogleAuth
@@ -175,7 +167,6 @@ async def google_auth_callback(data: GoogleAuthCallback):
         existing_user = await user_service.get_by_email(google_user["email"])
         
         if existing_user:
-            # Update existing user
             await db.users.update_one(
                 {"email": google_user["email"]},
                 {"$set": {
@@ -187,7 +178,6 @@ async def google_auth_callback(data: GoogleAuthCallback):
             )
             user_doc = await user_service.get_by_email(google_user["email"])
         else:
-            # Create new user
             user_id = f"user_{uuid.uuid4().hex[:12]}"
             new_user = {
                 "id": user_id,
@@ -204,7 +194,6 @@ async def google_auth_callback(data: GoogleAuthCallback):
             await user_service.create(new_user)
             user_doc = await user_service.get_by_id(user_id)
         
-        # Generate JWT tokens
         access_token = create_access_token(user_doc["id"])
         refresh_token = create_refresh_token(user_doc["id"])
         
