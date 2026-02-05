@@ -1610,6 +1610,7 @@ async def startup_event():
         # Initialize video router db
         init_video_db(db)
         init_karaoke_db(db)
+        init_date_or_mate_db(db)
 
 
 @app.on_event("shutdown")
