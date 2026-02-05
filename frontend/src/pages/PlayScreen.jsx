@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle, Mic, Music, ShoppingBag } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Mic, Music, ShoppingBag, Heart } from 'lucide-react';
 
 export default function PlayScreen({ user }) {
   const navigate = useNavigate();
@@ -10,6 +10,7 @@ export default function PlayScreen({ user }) {
     { icon: Mic, title: 'Voice Chat', description: 'Talk to your bestie', path: '/voice', color: 'from-soft-blue to-neon-pink' },
     { icon: Music, title: 'Karaoke', description: 'Sing together', path: '/karaoke', color: 'from-soft-yellow to-neon-pink' },
     { icon: Music, title: 'Play Music', description: 'Listen & dance together', path: '/dance', color: 'from-purple-400 to-neon-pink' },
+    { icon: Heart, title: 'Date or Mate', description: 'Get relationship advice', path: '/date-or-mate', color: 'from-red-400 to-neon-pink' },
     { icon: ShoppingBag, title: 'Shopping', description: 'Get fashion advice', path: '/shopping', color: 'from-neon-pink to-soft-yellow' }
   ];
 
