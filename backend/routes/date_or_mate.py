@@ -89,7 +89,7 @@ async def start_session(request: StartSessionRequest):
 async def chat(request: ChatRequest):
     """Process a chat message and get bestie's response."""
     try:
-        from emergentintegrations.llm.chat import LlmChat
+        from emergentintegrations.llm.chat import LlmChat, UserMessage
         
         # Build context about previous people
         previous_context = ""
@@ -128,17 +128,15 @@ Guidelines:
 - When you have enough info (after several exchanges), offer your verdict with reasoning
 - Keep responses concise (2-4 sentences usually)
 
-{previous_context}{current_context}{continuation_context}
+{previous_context}{current_context}{continuation_context}"""
 
-User's message: {request.message}"""
-
-        chat = LlmChat(
+        chat_client = LlmChat(
             api_key=settings.EMERGENT_LLM_KEY,
-            model="claude-sonnet-4-20250514",
-            system_prompt=system_prompt
-        )
+            session_id=f"date_or_mate_{request.user_id}_{request.session_id or 'default'}",
+            system_message=system_prompt
+        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
         
-        response = chat.send_message(request.message)
+        response = await chat_client.send_message(UserMessage(text=request.message))
         
         # Try to detect person's name from the conversation
         detected_person = None
