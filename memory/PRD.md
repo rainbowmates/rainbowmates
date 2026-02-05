@@ -115,10 +115,24 @@ Rainbow Mates is a web application for women to create a virtual gay best friend
 
 ## Key Files
 
-- `/app/backend/server.py` - All backend logic
+### Backend (Modular Architecture)
+- `/app/backend/main.py` - New entry point with all routers
+- `/app/backend/routes/` - All modular route files
+  - `auth.py`, `user.py`, `bestie.py`, `chat.py`, `voice.py`
+  - `shopping.py`, `subscription.py`, `avatar.py`
+  - `outfits.py`, `youtube.py`, `webhook.py`, `health.py`
+- `/app/backend/services/` - Business logic layer
+- `/app/backend/utils/` - Auth, password, errors, cache, responses
+- `/app/backend/config/` - Settings, database connection
+- `/app/backend/middleware/` - Security, rate limiting, error handling
+- `/app/backend/tests/` - Pytest test suite (55 tests)
+- `/app/backend/server.py` - Legacy monolith (deprecated, supervisor still uses it)
+
+### Frontend
 - `/app/frontend/src/pages/CreateAvatar.jsx` - Avatar creation flow
 - `/app/frontend/src/pages/ChatScreen.jsx` - Chat interface
 - `/app/frontend/src/pages/AuthPage.jsx` - Authentication
+- `/app/frontend/src/pages/VoiceScreen.jsx` - Voice chat with Web Audio API
 
 ## Test Credentials
 - Email: testuser789@test.com
