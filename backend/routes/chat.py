@@ -5,12 +5,12 @@ import logging
 import uuid
 from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
-from emergentintegrations.llm.chat import LlmChat, UserMessage
 
 from models.schemas import MessageCreate
 from services.user_service import UserService
 from services.bestie_service import BestieService
 from services.chat_service import ChatService
+from utils.errors import UserError, BestieError, ChatError
 from config.settings import settings
 
 logger = logging.getLogger(__name__)
@@ -30,20 +30,20 @@ def init_db(database):
 @router.post("/message")
 async def send_message(user_id: str, message: MessageCreate):
     """Send a message to bestie and get response."""
+    from emergentintegrations.llm.chat import LlmChat, UserMessage
+    
     user_service = UserService(db)
     bestie_service = BestieService(db)
     chat_service = ChatService(db)
     
-    # Get user and bestie
     user_doc = await user_service.get_by_id(user_id)
     if not user_doc:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise UserError.not_found()
     
     bestie_doc = await bestie_service.get_by_id(message.bestie_id)
     if not bestie_doc:
-        raise HTTPException(status_code=404, detail="Bestie not found")
+        raise BestieError.not_found()
     
-    # Store user message
     user_msg_id = f"msg_{uuid.uuid4().hex[:12]}"
     await chat_service.add_message(
         user_id=user_id,
@@ -54,27 +54,21 @@ async def send_message(user_id: str, message: MessageCreate):
     )
     
     try:
-        # Get chat history for context
         history = await chat_service.get_history(user_id, message.bestie_id, limit=20)
-        
-        # Build system prompt
         system_prompt = bestie_service.build_system_prompt(bestie_doc, user_doc)
         
-        # Generate response
         chat = LlmChat(
             api_key=settings.EMERGENT_LLM_KEY,
             system_prompt=system_prompt
         ).with_model("anthropic", "claude-sonnet-4-5-20250929")
         
-        # Add history context
-        for msg in history[:-1]:  # Exclude the just-added message
+        for msg in history[:-1]:
             if msg["role"] == "user":
                 await chat.send_message(UserMessage(text=msg["content"]))
         
         response = await chat.send_message(UserMessage(text=message.content))
         bestie_response = response.get("content", "I'm here for you, sweetie!")
         
-        # Store bestie response
         bestie_msg_id = f"msg_{uuid.uuid4().hex[:12]}"
         await chat_service.add_message(
             user_id=user_id,
@@ -85,21 +79,13 @@ async def send_message(user_id: str, message: MessageCreate):
         )
         
         return {
-            "user_message": {
-                "id": user_msg_id,
-                "content": message.content,
-                "role": "user"
-            },
-            "bestie_response": {
-                "id": bestie_msg_id,
-                "content": bestie_response,
-                "role": "bestie"
-            }
+            "user_message": {"id": user_msg_id, "content": message.content, "role": "user"},
+            "bestie_response": {"id": bestie_msg_id, "content": bestie_response, "role": "bestie"}
         }
         
     except Exception as e:
         logger.error(f"Error generating response: {e}")
-        raise HTTPException(status_code=500, detail="Failed to generate response")
+        raise ChatError.generation_failed()
 
 
 @router.get("/history/{user_id}/{bestie_id}")
@@ -125,6 +111,6 @@ async def delete_message(user_id: str, bestie_id: str, message_id: str):
     deleted = await chat_service.delete_message(user_id, bestie_id, message_id)
     
     if not deleted:
-        raise HTTPException(status_code=404, detail="Message not found")
+        raise ChatError.message_not_found()
     
     return {"message": "Message deleted"}
