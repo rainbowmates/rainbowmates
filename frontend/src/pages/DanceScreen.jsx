@@ -199,9 +199,9 @@ export default function DanceScreen({ user, bestie: propBestie }) {
   // Greeting message from bestie
   const getGreeting = () => {
     const greetings = [
-      `Hey gorgeous! 💃 I'm SO ready to dance! Pick a song and let's create an amazing dance video together!`,
-      `Ooh, dance time! 🎶 Let's make a video of us dancing! Pick your favorite song!`,
-      `Hey babe! 💕 Ready to go viral? Choose a song and watch us dance together in AI magic!`
+      `Hey gorgeous! 💃 I'm SO ready to dance! Pick a song and let's create an AI dance video featuring characters inspired by us!`,
+      `Ooh, dance time! 🎶 Let's make a fun video! Pick your favorite song and AI will create dancers just for us!`,
+      `Hey babe! 💕 Ready for some fun? Choose a song and watch AI create a dance video starring characters based on you and me!`
     ];
     return greetings[Math.floor(Math.random() * greetings.length)];
   };
