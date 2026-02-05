@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 from starlette.middleware.cors import CORSMiddleware
 from motor.motor_asyncio import AsyncIOMotorClient
 import os
+import sys
 import logging
 from pathlib import Path
 from pydantic import BaseModel, Field, ConfigDict, field_validator
@@ -18,7 +19,19 @@ from emergentintegrations.llm.openai import OpenAISpeechToText
 from emergentintegrations.payments.stripe.checkout import StripeCheckout, CheckoutSessionResponse, CheckoutStatusResponse, CheckoutSessionRequest
 from elevenlabs import ElevenLabs, VoiceSettings
 
+# Add backend directory to path for imports
 ROOT_DIR = Path(__file__).parent
+sys.path.insert(0, str(ROOT_DIR))
+
+# Import custom modules
+from config.settings import settings
+from config.database import db_manager, get_db
+from middleware.security import SecurityHeadersMiddleware
+from middleware.rate_limit import RateLimitMiddleware
+from routes.health import router as health_router
+from utils.auth import create_access_token, create_refresh_token
+from utils.responses import ErrorMessages
+
 load_dotenv(ROOT_DIR / '.env')
 
 # Set Google credentials environment variable
