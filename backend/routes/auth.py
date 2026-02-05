@@ -5,7 +5,6 @@ import logging
 import uuid
 from datetime import datetime, timezone, timedelta
 from fastapi import APIRouter, HTTPException
-from emergentintegrations.auth.google import EmergentGoogleAuth
 
 from models.schemas import UserCreate, UserLogin, OTPVerify, ForgotPasswordRequest, ResetPasswordRequest, GoogleAuthCallback
 from services.user_service import UserService, prepare_for_mongo, parse_from_mongo
@@ -17,6 +16,9 @@ router = APIRouter(prefix="/auth", tags=["Authentication"])
 
 # Will be set by main app
 db = None
+
+# Lazy import for Google Auth
+EmergentGoogleAuth = None
 
 
 def init_db(database):
