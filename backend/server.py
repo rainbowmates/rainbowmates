@@ -406,7 +406,17 @@ async def verify_otp(data: OTPVerify):
         {"_id": 0}
     )
     
-    return {"message": "OTP verified successfully", "user": parse_from_mongo(user_doc)}
+    # Generate JWT tokens
+    access_token = create_access_token(user_doc["id"])
+    refresh_token = create_refresh_token(user_doc["id"])
+    
+    return {
+        "message": "OTP verified successfully", 
+        "user": parse_from_mongo(user_doc),
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
 
 @api_router.post("/auth/login")
 async def login(credentials: UserLogin):
@@ -422,7 +432,17 @@ async def login(credentials: UserLogin):
     if not user_doc.get('is_verified'):
         raise HTTPException(status_code=401, detail="Please verify your account first")
     
-    return {"message": "Login successful", "user": parse_from_mongo(user_doc)}
+    # Generate JWT tokens
+    access_token = create_access_token(user_doc["id"])
+    refresh_token = create_refresh_token(user_doc["id"])
+    
+    return {
+        "message": "Login successful", 
+        "user": parse_from_mongo(user_doc),
+        "access_token": access_token,
+        "refresh_token": refresh_token,
+        "token_type": "bearer"
+    }
 
 class ForgotPasswordRequest(BaseModel):
     email: str
