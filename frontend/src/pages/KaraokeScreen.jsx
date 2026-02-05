@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Search, Play, Music, X, Mic } from 'lucide-react';
+import { ArrowLeft, Search, Play, Music, X, Mic, Volume2, VolumeX, Loader2, Pause } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 
@@ -15,6 +15,18 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
   const [searchResults, setSearchResults] = useState([]);
   const [searching, setSearching] = useState(false);
   const [bestie, setBestie] = useState(propBestie || null);
+  
+  // Karaoke singing states
+  const [lyrics, setLyrics] = useState([]);
+  const [currentLineIndex, setCurrentLineIndex] = useState(0);
+  const [loadingLyrics, setLoadingLyrics] = useState(false);
+  const [bestieSinging, setBestieSinging] = useState(false);
+  const [singingAudio, setSingingAudio] = useState(null);
+  const [bestieMuted, setBestieMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  
+  const audioRef = useRef(null);
+  const lyricsIntervalRef = useRef(null);
 
   // Fetch bestie if not passed as prop
   useEffect(() => {
@@ -36,6 +48,18 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     fetchBestie();
   }, [user, bestie]);
 
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      if (lyricsIntervalRef.current) {
+        clearInterval(lyricsIntervalRef.current);
+      }
+      if (audioRef.current) {
+        audioRef.current.pause();
+      }
+    };
+  }, []);
+
   const searchSong = async () => {
     if (!searchQuery.trim()) {
       toast.error('Please enter a song name');
@@ -44,7 +68,6 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     
     setSearching(true);
     try {
-      // Search specifically for karaoke versions
       const response = await axios.get(`${API}/youtube/search?q=${encodeURIComponent(searchQuery + ' karaoke lyrics on screen')}`);
       if (response.data.results && response.data.results.length > 0) {
         setSearchResults(response.data.results);
@@ -60,19 +83,122 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     }
   };
 
-  const playVideo = (id, title) => {
+  // Fetch lyrics and start bestie singing
+  const fetchLyricsAndSing = async (songTitle) => {
+    setLoadingLyrics(true);
+    setBestieSinging(true);
+    
+    try {
+      // Extract song name and artist from title
+      const parts = songTitle.replace(/\(.*?\)/g, '').split('-');
+      const songName = parts[0]?.trim() || songTitle;
+      const artist = parts[1]?.trim() || null;
+      
+      // Get lyrics
+      const lyricsResponse = await axios.post(`${API}/karaoke/lyrics`, {
+        song_title: songName,
+        artist: artist
+      });
+      
+      if (lyricsResponse.data.lines) {
+        setLyrics(lyricsResponse.data.lines);
+        setCurrentLineIndex(0);
+        
+        // Generate singing audio
+        const singResponse = await axios.post(`${API}/karaoke/sing`, {
+          bestie_id: bestie?.id || 'default',
+          lyrics: lyricsResponse.data.lyrics,
+          song_title: songName
+        });
+        
+        if (singResponse.data.audio_url) {
+          setSingingAudio(singResponse.data.audio_url);
+          
+          // Start playback
+          if (audioRef.current) {
+            audioRef.current.src = singResponse.data.audio_url;
+            audioRef.current.volume = bestieMuted ? 0 : 0.7;
+            
+            // Wait a moment for video to start, then play audio
+            setTimeout(() => {
+              if (audioRef.current) {
+                audioRef.current.play().catch(e => console.log('Audio play error:', e));
+                setIsPlaying(true);
+                startLyricsSync(lyricsResponse.data.lines);
+              }
+            }, 2000);
+          }
+        }
+      }
+    } catch (error) {
+      console.error('Lyrics/singing error:', error);
+      toast.error('Could not load lyrics. Enjoy the karaoke video!');
+    } finally {
+      setLoadingLyrics(false);
+    }
+  };
+
+  // Sync lyrics display with audio
+  const startLyricsSync = (lyricsLines) => {
+    if (lyricsIntervalRef.current) {
+      clearInterval(lyricsIntervalRef.current);
+    }
+    
+    // Estimate time per line based on total lyrics length
+    const totalLines = lyricsLines.filter(l => l.trim()).length;
+    const estimatedDuration = totalLines * 3000; // ~3 seconds per line
+    const timePerLine = estimatedDuration / totalLines;
+    
+    let lineIdx = 0;
+    lyricsIntervalRef.current = setInterval(() => {
+      if (lineIdx < lyricsLines.length) {
+        setCurrentLineIndex(lineIdx);
+        lineIdx++;
+      } else {
+        clearInterval(lyricsIntervalRef.current);
+      }
+    }, timePerLine);
+  };
+
+  const playVideo = async (id, title) => {
     setVideoId(id);
     setCurrentSong(title);
     setSearchResults([]);
+    setLyrics([]);
+    setCurrentLineIndex(0);
     toast.success(`Now playing: ${title}`);
+    
+    // Fetch lyrics and start bestie singing
+    if (bestie) {
+      await fetchLyricsAndSing(title);
+    }
   };
 
   const stopPlaying = () => {
     setVideoId('');
     setCurrentSong('');
+    setLyrics([]);
+    setCurrentLineIndex(0);
+    setBestieSinging(false);
+    setIsPlaying(false);
+    
+    if (lyricsIntervalRef.current) {
+      clearInterval(lyricsIntervalRef.current);
+    }
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.currentTime = 0;
+    }
   };
 
-  // Popular karaoke songs - only showing available/embeddable ones
+  const toggleBestieMute = () => {
+    setBestieMuted(!bestieMuted);
+    if (audioRef.current) {
+      audioRef.current.volume = bestieMuted ? 0.7 : 0;
+    }
+  };
+
+  // Popular karaoke songs
   const popularKaraokeSongs = [
     { title: 'Sweet Caroline - Neil Diamond (Karaoke)', id: 'NsLyI1_R01M', available: true },
     { title: 'Wonderwall - Oasis (Karaoke)', id: 'Gvfgut8nAgw', available: true },
@@ -84,15 +210,18 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
   // Greeting message from bestie
   const getGreeting = () => {
     const greetings = [
-      `Hey superstar! 🎤 Ready to belt out some tunes? How are you feeling today? Let's find a song that matches your vibe!`,
-      `Ooh, karaoke time! 🎵 I'm SO here for this! How's it going, babe? What should we sing together?`,
-      `Yes! Singing time! 💕 How are you doing today? Pick something fun and let's make some memories!`
+      `Hey superstar! 🎤 Ready to sing together? Pick a song and I&apos;ll sing along with you!`,
+      `Ooh, karaoke time! 🎵 I&apos;ll read the lyrics and sing with you! What should we perform?`,
+      `Yes! Singing time! 💕 Choose a song and watch me sing along on screen!`
     ];
     return greetings[Math.floor(Math.random() * greetings.length)];
   };
 
   return (
     <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
+      {/* Hidden audio element for bestie singing */}
+      <audio ref={audioRef} />
+      
       <div className="p-4 pb-8 space-y-4">
         <div className="flex items-center gap-3">
           <button
@@ -106,7 +235,7 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
             <h1 className="text-xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
               Karaoke Time
             </h1>
-            <p className="text-xs text-dark-purple/70">Sing along with {bestie?.name || 'your bestie'}!</p>
+            <p className="text-xs text-dark-purple/70">{bestie?.name || 'Your bestie'} sings along with you!</p>
           </div>
         </div>
 
@@ -195,13 +324,15 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
             </div>
           )}
 
-          {/* Video Player - Full YouTube Karaoke Embed */}
+          {/* Video Player with Lyrics */}
           {videoId && (
             <div className="space-y-3">
               <div className="text-center">
                 <p className="text-sm font-medium text-dark-purple mb-2">🎤 Now Playing</p>
                 <p className="text-xs text-dark-purple/70 truncate">{currentSong}</p>
               </div>
+              
+              {/* Video */}
               <div className="rounded-2xl overflow-hidden bg-black aspect-video">
                 <iframe
                   data-testid="karaoke-player"
@@ -217,15 +348,86 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
                 ></iframe>
               </div>
               
-              {/* Singing encouragement */}
-              <div className="p-4 rounded-2xl bg-gradient-to-br from-neon-pink/20 to-soft-blue/20 text-center">
-                <div className="flex justify-center items-center gap-2 mb-2">
-                  <Mic className="w-5 h-5 text-neon-pink animate-pulse" />
-                  <span className="text-lg">🎶</span>
+              {/* Bestie Singing Section */}
+              {bestie && (
+                <div className="p-4 rounded-2xl bg-gradient-to-br from-neon-pink/20 to-soft-blue/20">
+                  {/* Bestie header */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-3">
+                      <div className="relative">
+                        <div className="w-12 h-12 rounded-full overflow-hidden border-2 border-neon-pink">
+                          <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+                        </div>
+                        {bestieSinging && isPlaying && (
+                          <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-neon-pink rounded-full flex items-center justify-center">
+                            <Mic className="w-3 h-3 text-white animate-pulse" />
+                          </div>
+                        )}
+                      </div>
+                      <div>
+                        <p className="font-bold text-dark-purple text-sm">{bestie.name}</p>
+                        <p className="text-xs text-dark-purple/60">
+                          {loadingLyrics ? 'Getting ready to sing...' : 
+                           bestieSinging ? 'Singing along! 🎵' : 'Ready to sing'}
+                        </p>
+                      </div>
+                    </div>
+                    
+                    {/* Mute/unmute bestie */}
+                    <button
+                      onClick={toggleBestieMute}
+                      className="p-2 rounded-full bg-white/50 hover:bg-white/80 transition-all"
+                      title={bestieMuted ? 'Unmute bestie' : 'Mute bestie'}
+                    >
+                      {bestieMuted ? (
+                        <VolumeX className="w-5 h-5 text-dark-purple/50" />
+                      ) : (
+                        <Volume2 className="w-5 h-5 text-neon-pink" />
+                      )}
+                    </button>
+                  </div>
+                  
+                  {/* Lyrics Display */}
+                  {loadingLyrics ? (
+                    <div className="flex items-center justify-center py-6">
+                      <Loader2 className="w-6 h-6 text-neon-pink animate-spin mr-2" />
+                      <span className="text-sm text-dark-purple/70">Loading lyrics...</span>
+                    </div>
+                  ) : lyrics.length > 0 ? (
+                    <div className="bg-white/50 rounded-xl p-4 max-h-40 overflow-hidden">
+                      <div className="space-y-2 text-center">
+                        {/* Previous line */}
+                        {currentLineIndex > 0 && lyrics[currentLineIndex - 1] && (
+                          <p className="text-xs text-dark-purple/40 transition-all">
+                            {lyrics[currentLineIndex - 1]}
+                          </p>
+                        )}
+                        
+                        {/* Current line - highlighted */}
+                        <p className="text-base font-bold text-dark-purple animate-pulse transition-all">
+                          {lyrics[currentLineIndex] || '🎵 🎵 🎵'}
+                        </p>
+                        
+                        {/* Next line */}
+                        {currentLineIndex < lyrics.length - 1 && lyrics[currentLineIndex + 1] && (
+                          <p className="text-xs text-dark-purple/40 transition-all">
+                            {lyrics[currentLineIndex + 1]}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-center py-4">
+                      <div className="flex justify-center items-center gap-2 mb-2">
+                        <Mic className="w-5 h-5 text-neon-pink animate-pulse" />
+                        <span className="text-lg">🎶</span>
+                      </div>
+                      <p className="font-bold text-dark-purple">Sing along!</p>
+                      <p className="text-xs text-dark-purple/70">Follow the lyrics on the video</p>
+                    </div>
+                  )}
                 </div>
-                <p className="font-bold text-dark-purple">Sing along!</p>
-                <p className="text-xs text-dark-purple/70">Follow the lyrics on screen</p>
-              </div>
+              )}
               
               <button
                 onClick={stopPlaying}
@@ -236,17 +438,20 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
             </div>
           )}
 
-          {/* Popular Karaoke Songs - shown when not searching or playing */}
+          {/* Popular Karaoke Songs */}
           {!videoId && searchResults.length === 0 && (
             <div>
               <h3 className="text-sm font-bold text-dark-purple mb-2">Popular Karaoke Songs</h3>
+              <p className="text-xs text-dark-purple/50 mb-3">
+                {bestie?.name || 'Your bestie'} will sing along with you!
+              </p>
               <div className="space-y-2">
                 {popularKaraokeSongs.map((song, idx) => (
                   <button
                     key={idx}
                     data-testid={`karaoke-song-${idx}`}
                     onClick={() => playVideo(song.id, song.title)}
-                    className="w-full p-3 rounded-xl bg-muted hover:bg-neon-pink/10 text-left transition-all flex items-center justify-between"
+                    className="w-full p-3 rounded-xl bg-muted hover:bg-neon-pink/10 text-left transition-all flex items-center justify-between group"
                   >
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-neon-pink to-purple-500 flex items-center justify-center">
@@ -254,7 +459,12 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
                       </div>
                       <span className="font-medium text-dark-purple text-sm">{song.title}</span>
                     </div>
-                    <Play className="w-5 h-5 text-neon-pink" />
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-neon-pink opacity-0 group-hover:opacity-100 transition-all">
+                        Sing together!
+                      </span>
+                      <Play className="w-5 h-5 text-neon-pink" />
+                    </div>
                   </button>
                 ))}
               </div>
