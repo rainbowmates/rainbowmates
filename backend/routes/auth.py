@@ -9,6 +9,7 @@ from fastapi import APIRouter, HTTPException
 from models.schemas import UserCreate, UserLogin, OTPVerify, ForgotPasswordRequest, ResetPasswordRequest, GoogleAuthCallback
 from services.user_service import UserService, prepare_for_mongo, parse_from_mongo
 from utils.auth import create_access_token, create_refresh_token
+from utils.password import hash_password, verify_password
 
 logger = logging.getLogger(__name__)
 
