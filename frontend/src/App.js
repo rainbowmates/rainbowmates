@@ -153,6 +153,10 @@ function App() {
             element={user ? <DanceScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
           />
           <Route
+            path="/date-or-mate"
+            element={user ? <DateOrMateScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
+          />
+          <Route
             path="/shopping"
             element={user ? <ShoppingScreen user={user} /> : <Navigate to="/auth" />}
           />
