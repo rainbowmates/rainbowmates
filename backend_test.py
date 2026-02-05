@@ -7,7 +7,7 @@ import io
 import base64
 
 class RainbowMatesAPITester:
-    def __init__(self, base_url="https://rainbow-buddies.preview.emergentagent.com"):
+    def __init__(self, base_url="https://rainbow-mates-2.preview.emergentagent.com"):
         self.base_url = base_url
         self.api_url = f"{base_url}/api"
         self.user_data = None
