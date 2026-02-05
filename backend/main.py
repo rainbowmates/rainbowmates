@@ -78,6 +78,7 @@ async def lifespan(app: FastAPI):
         init_shopping_db(db)
         init_subscription_db(db)
         init_avatar_db(db)
+        init_webhook_db(db)
     else:
         logger.error("Failed to connect to database on startup")
     
