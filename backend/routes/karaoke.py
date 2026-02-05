@@ -75,7 +75,7 @@ These should be:
 
 One prompt per line, no numbers or bullets. Make them fun and encouraging!"""
 
-        response = chat.send_message(UserMessage(content=prompt))
+        response = chat.send_message(UserMessage(text=prompt))
         
         prompts_text = response.strip()
         
