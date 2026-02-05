@@ -47,7 +47,7 @@ async def register(user: UserCreate):
         "dob": user.dob,
         "mobile": user.mobile,
         "email": user.email.lower(),
-        "password": user.password,
+        "password": hash_password(user.password),  # Hash password
         "is_verified": False,
         "created_at": datetime.now(timezone.utc)
     }
