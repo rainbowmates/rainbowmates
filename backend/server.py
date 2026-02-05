@@ -36,19 +36,20 @@ load_dotenv(ROOT_DIR / '.env')
 
 # Set Google credentials environment variable
 os.environ['GOOGLE_APPLICATION_CREDENTIALS'] = str(ROOT_DIR / 'google_credentials.json')
-GOOGLE_CLOUD_PROJECT = os.environ.get('GOOGLE_CLOUD_PROJECT', '')
+GOOGLE_CLOUD_PROJECT = settings.GOOGLE_CLOUD_PROJECT
 
-# MongoDB connection
-mongo_url = os.environ['MONGO_URL']
-client = AsyncIOMotorClient(mongo_url)
-db = client[os.environ['DB_NAME']]
+# MongoDB connection (legacy - keeping for backward compatibility)
+# New code should use db_manager from config.database
+mongo_url = os.environ.get('MONGO_URL', '')
+client = AsyncIOMotorClient(mongo_url) if mongo_url else None
+db = client[os.environ.get('DB_NAME', 'rainbow_mates')] if client else None
 
-# API Keys
-EMERGENT_LLM_KEY = os.getenv('EMERGENT_LLM_KEY')
-STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
+# API Keys (using settings for new code)
+EMERGENT_LLM_KEY = settings.EMERGENT_LLM_KEY
+STRIPE_API_KEY = settings.STRIPE_API_KEY
 
 # Initialize ElevenLabs (user needs to provide their own key)
-ELEVENLABS_API_KEY = os.getenv('ELEVENLABS_API_KEY', '')
+ELEVENLABS_API_KEY = settings.ELEVENLABS_API_KEY
 
 # Outfit images directory
 OUTFITS_DIR = ROOT_DIR / 'outfits'
