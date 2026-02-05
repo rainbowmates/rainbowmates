@@ -101,21 +101,6 @@ export default function CreateBestie({ user }) {
         </div>
 
         <div className="card-soft p-6 space-y-6">
-          {/* Name */}
-          <div>
-            <label className="block text-sm font-medium text-dark-purple mb-2">
-              Bestie's Name
-            </label>
-            <input
-              data-testid="bestie-name"
-              type="text"
-              value={formData.name}
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter a fabulous name..."
-              className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
-            />
-          </div>
-
           {/* Image Selection */}
           <div>
             <label className="block text-sm font-medium text-dark-purple mb-2">
@@ -138,6 +123,21 @@ export default function CreateBestie({ user }) {
                 </div>
               ))}
             </div>
+          </div>
+
+          {/* Name */}
+          <div>
+            <label className="block text-sm font-medium text-dark-purple mb-2">
+              Bestie's Name
+            </label>
+            <input
+              data-testid="bestie-name"
+              type="text"
+              value={formData.name}
+              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+              placeholder="Enter a fabulous name..."
+              className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
+            />
           </div>
 
           {/* Personality */}
