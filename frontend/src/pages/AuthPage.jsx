@@ -242,6 +242,7 @@ export default function AuthPage({ onLogin }) {
     try {
       await axios.post(`${API}/auth/forgot-password`, { email: forgotData.email });
       toast.success('Reset OTP sent! (Use 123456 for testing)');
+      setForgotData({ ...forgotData, otp: '123456' });
       setStep('reset');
     } catch (error) {
       const detail = error.response?.data?.detail;
