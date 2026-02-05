@@ -81,7 +81,7 @@ async def generate_video_task(job_id: str, prompt: str, model: str, size: str, d
             video_jobs[job_id]["video_base64"] = video_b64
             
             # Store in database for persistence
-            if db:
+            if db is not None:
                 await db.generated_videos.insert_one({
                     "job_id": job_id,
                     "user_id": user_id,
