@@ -283,7 +283,7 @@ export default function DanceScreen({ user, bestie: propBestie }) {
             </div>
             
             <p className="text-center text-sm text-dark-purple/70">
-              You and {bestie?.name} dancing to &ldquo;{selectedSong}&rdquo;! 💃🕺
+              AI-generated dance video inspired by you and {bestie?.name} dancing to &ldquo;{selectedSong}&rdquo;! 💃🕺
             </p>
             
             <div className="flex gap-2">
