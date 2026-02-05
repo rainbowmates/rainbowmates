@@ -99,6 +99,10 @@ app.include_router(auth_router, prefix="/api")
 app.include_router(user_router, prefix="/api")
 app.include_router(bestie_router, prefix="/api")
 app.include_router(chat_router, prefix="/api")
+app.include_router(voice_router, prefix="/api")
+app.include_router(shopping_router, prefix="/api")
+app.include_router(subscription_router, prefix="/api")
+app.include_router(avatar_router, prefix="/api")
 
 # Add middleware (order matters - last added is first executed)
 app.add_middleware(
