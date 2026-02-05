@@ -6,6 +6,7 @@ from fastapi import APIRouter, HTTPException
 
 from models.schemas import UserUpdate
 from services.user_service import UserService
+from utils.errors import UserError
 
 logger = logging.getLogger(__name__)
 
@@ -28,7 +29,7 @@ async def get_user(user_id: str):
     user_doc = await user_service.get_by_id(user_id)
     
     if not user_doc:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise UserError.not_found()
     
     return user_doc
 
@@ -38,12 +39,10 @@ async def update_user(user_id: str, update_data: UserUpdate):
     """Update user profile."""
     user_service = UserService(db)
     
-    # Check if user exists
     user_doc = await user_service.get_by_id(user_id)
     if not user_doc:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise UserError.not_found()
     
-    # Update user
     update_dict = update_data.model_dump(exclude_unset=True)
     updated_user = await user_service.update(user_id, update_dict)
     
