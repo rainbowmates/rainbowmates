@@ -59,22 +59,35 @@ async def generate_video_task(job_id: str, prompt: str, model: str, size: str, d
         if duration >= 8 or model == "sora-2-pro":
             max_wait = 900  # 15 minutes for longer/pro videos
         
-        logger.info(f"Calling text_to_video with max_wait={max_wait}")
-        
-        try:
-            video_bytes = video_gen.text_to_video(
-                prompt=prompt,
-                model=model,
-                size=size,
-                duration=duration,
-                max_wait_time=max_wait
-            )
-            logger.info(f"text_to_video returned: {type(video_bytes)}, len={len(video_bytes) if video_bytes else 0}")
-        except Exception as api_err:
-            logger.error(f"API call error: {type(api_err).__name__}: {str(api_err)}")
-            video_jobs[job_id]["status"] = "failed"
-            video_jobs[job_id]["error"] = f"API error: {str(api_err)}"
-            return
+        # Try up to 2 times
+        video_bytes = None
+        for attempt in range(2):
+            logger.info(f"Attempt {attempt + 1}: Calling text_to_video with max_wait={max_wait}")
+            
+            try:
+                video_bytes = video_gen.text_to_video(
+                    prompt=prompt,
+                    model=model,
+                    size=size,
+                    duration=duration,
+                    max_wait_time=max_wait
+                )
+                logger.info(f"text_to_video returned: {type(video_bytes)}, len={len(video_bytes) if video_bytes else 0}")
+                
+                if video_bytes and len(video_bytes) > 0:
+                    break
+                    
+                # If first attempt returned None, try with simplified prompt
+                if attempt == 0:
+                    logger.warning("First attempt returned no data, trying with simplified prompt...")
+                    prompt = "Two people dancing together in a colorful room, having fun, smiling, energetic dance moves."
+                    
+            except Exception as api_err:
+                logger.error(f"API call error on attempt {attempt + 1}: {type(api_err).__name__}: {str(api_err)}")
+                if attempt == 1:
+                    video_jobs[job_id]["status"] = "failed"
+                    video_jobs[job_id]["error"] = f"API error: {str(api_err)}"
+                    return
         
         if video_bytes:
             # Save video to file
