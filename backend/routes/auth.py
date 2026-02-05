@@ -156,7 +156,14 @@ async def reset_password(request: ResetPasswordRequest):
 @router.post("/google/callback")
 async def google_auth_callback(data: GoogleAuthCallback):
     """Handle Google OAuth callback."""
+    global EmergentGoogleAuth
+    
     try:
+        # Lazy import
+        if EmergentGoogleAuth is None:
+            from emergentintegrations.auth.google import EmergentGoogleAuth as GoogleAuth
+            EmergentGoogleAuth = GoogleAuth
+        
         auth = EmergentGoogleAuth()
         google_user = auth.get_user_info(data.session_token)
         
