@@ -164,7 +164,7 @@ export default function AuthPage({ onLogin }) {
       console.log('Submitting registration:', submitData);
       await axios.post(`${API}/auth/register`, submitData);
       toast.success('Registration successful! Please verify OTP (use 123456)');
-      setOtpData({ ...otpData, identifier: registerData.email });
+      setOtpData({ identifier: registerData.email, otp: '123456' });
       setStep('otp');
       setErrors({});
     } catch (error) {
