@@ -31,6 +31,7 @@ from middleware.rate_limit import RateLimitMiddleware
 from routes.health import router as health_router
 from routes.video import router as video_router, init_db as init_video_db
 from routes.karaoke import router as karaoke_router, init_db as init_karaoke_db
+from routes.date_or_mate import router as date_or_mate_router, init_db as init_date_or_mate_db
 from utils.auth import create_access_token, create_refresh_token
 from utils.responses import ErrorMessages
 
