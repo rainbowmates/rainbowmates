@@ -49,33 +49,35 @@ def init_db(database):
 @router.post("/lyrics")
 async def get_lyrics(request: LyricsRequest):
     """
-    Get a song description for karaoke display.
-    Returns fun karaoke prompts for the bestie to sing along.
+    Get fun karaoke sing-along prompts for the bestie.
+    Returns energetic prompts that match the song's mood.
     """
     try:
         from emergentintegrations.llm.chat import LlmChat, UserMessage
+        import uuid
+        
+        session_id = str(uuid.uuid4())
+        system_msg = "You are a fun, energetic karaoke host who creates exciting sing-along prompts."
         
         chat = LlmChat(
             api_key=settings.EMERGENT_LLM_KEY,
-            model="claude-3-5-haiku-20241022"
-        )
+            session_id=session_id,
+            system_message=system_msg
+        ).with_model("anthropic", "claude-3-5-haiku-20241022")
         
-        prompt = f"""Create fun karaoke sing-along prompts for the song "{request.song_title}"{f' by {request.artist}' if request.artist else ''}.
+        prompt = f"""Create 12 fun, energetic karaoke prompts for someone singing "{request.song_title}"{f' by {request.artist}' if request.artist else ''}.
 
-Generate 10-15 short, fun lines that capture the spirit and emotion of this song. These should be:
-- Catchy phrases inspired by the song's theme
-- Encouraging singing prompts like "Here comes the chorus!" or "Sing it loud!"
-- Fun exclamations matching the song's mood
-- Short memorable phrases (4-8 words each)
+These should be:
+- Enthusiastic cheering phrases like "You got this!" or "Here we go!"
+- Energy boosters like "Feel the beat!" or "Let it out!"
+- Mood-matching exclamations for this song's vibe
+- Short and punchy (3-6 words each)
 
-Do NOT include actual song lyrics. Instead, create original prompts that match the song's energy.
-Format: One line per prompt, no numbers or bullets."""
+One prompt per line, no numbers or bullets. Make them fun and encouraging!"""
 
-        response = await chat.send_message_async(
-            message=UserMessage(content=prompt)
-        )
+        response = chat.send_message(UserMessage(content=prompt))
         
-        prompts_text = response.content.strip()
+        prompts_text = response.strip()
         
         # Parse into lines
         lines = []
@@ -92,7 +94,7 @@ Format: One line per prompt, no numbers or bullets."""
         }
         
     except Exception as e:
-        logger.error(f"Error getting lyrics: {str(e)}")
+        logger.error(f"Error getting prompts: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
