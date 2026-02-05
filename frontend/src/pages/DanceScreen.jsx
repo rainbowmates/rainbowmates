@@ -281,7 +281,7 @@ Professional video quality, smooth dance movements, cinematic style.`;
             </div>
             
             <p className="text-center text-sm text-dark-purple/70">
-              You and {bestie?.name} dancing to "{selectedSong}"! 💃🕺
+              You and {bestie?.name} dancing to &ldquo;{selectedSong}&rdquo;! 💃🕺
             </p>
             
             <div className="flex gap-2">
@@ -516,7 +516,7 @@ Professional video quality, smooth dance movements, cinematic style.`;
                 </div>
                 
                 <p className="text-base font-bold text-dark-purple mt-2">Dancing together! 💃🕺</p>
-                <p className="text-xs text-dark-purple/70">Click "Create AI Dance Video" to make a video of you two!</p>
+                <p className="text-xs text-dark-purple/70">Click &ldquo;Create AI Dance Video&rdquo; to make a video of you two!</p>
               </div>
             )}
 
@@ -529,7 +529,7 @@ Professional video quality, smooth dance movements, cinematic style.`;
                     Pick a Song to Create Dance Video
                   </span>
                 </h3>
-                <p className="text-xs text-dark-purple/50 mb-3">Select a song and we'll create an AI video of you and {bestie?.name || 'your bestie'} dancing!</p>
+                <p className="text-xs text-dark-purple/50 mb-3">Select a song and we&apos;ll create an AI video of you and {bestie?.name || 'your bestie'} dancing!</p>
                 <div className="space-y-2">
                   {[
                     { title: 'Levitating - Dua Lipa', id: 'TUVcZfQe-Kw' },
