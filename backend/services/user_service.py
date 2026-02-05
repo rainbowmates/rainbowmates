@@ -124,11 +124,23 @@ class UserService:
         return user is not None
     
     async def validate_credentials(self, identifier: str, password: str) -> Optional[Dict[str, Any]]:
-        """Validate user credentials."""
+        """Validate user credentials with hashed password."""
         user_doc = await self.db.users.find_one({
-            "$or": [{"email": identifier.lower()}, {"mobile": identifier}],
-            "password": password
+            "$or": [{"email": identifier.lower()}, {"mobile": identifier}]
         }, {"_id": 0})
-        if user_doc:
-            return parse_from_mongo(user_doc)
-        return None
+        
+        if not user_doc:
+            return None
+        
+        # Check password - support both hashed and plain text (for migration)
+        stored_password = user_doc.get("password", "")
+        if stored_password.startswith("$2"):
+            # Bcrypt hash
+            if not verify_password(password, stored_password):
+                return None
+        else:
+            # Plain text (legacy) - direct comparison
+            if stored_password != password:
+                return None
+        
+        return parse_from_mongo(user_doc)
