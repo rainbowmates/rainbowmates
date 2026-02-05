@@ -8,6 +8,11 @@ from .auth import (
     security
 )
 from .password import hash_password, verify_password
+from .errors import (
+    ErrorCode, AppException,
+    AuthError, UserError, BestieError, ChatError, VoiceError, SubscriptionError
+)
+from .cache import cache, cached, invalidate_cache, SimpleCache
 
 __all__ = [
     "success_response",
@@ -20,5 +25,17 @@ __all__ = [
     "require_auth",
     "security",
     "hash_password",
-    "verify_password"
+    "verify_password",
+    "ErrorCode",
+    "AppException",
+    "AuthError",
+    "UserError",
+    "BestieError",
+    "ChatError",
+    "VoiceError",
+    "SubscriptionError",
+    "cache",
+    "cached",
+    "invalidate_cache",
+    "SimpleCache"
 ]
