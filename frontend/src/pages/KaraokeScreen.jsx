@@ -50,12 +50,15 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
 
   // Cleanup on unmount
   useEffect(() => {
+    const currentAudioRef = audioRef.current;
+    const currentIntervalRef = lyricsIntervalRef.current;
+    
     return () => {
-      if (lyricsIntervalRef.current) {
-        clearInterval(lyricsIntervalRef.current);
+      if (currentIntervalRef) {
+        clearInterval(currentIntervalRef);
       }
-      if (audioRef.current) {
-        audioRef.current.pause();
+      if (currentAudioRef) {
+        currentAudioRef.pause();
       }
     };
   }, []);
