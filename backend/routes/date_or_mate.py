@@ -208,6 +208,12 @@ async def detect_person_name(user_id: str, message: str, response: str) -> Optio
         r"his name is (\w+)",
         r"her name is (\w+)",
         r"their name is (\w+)",
+        r"guy named (\w+)",
+        r"girl named (\w+)",
+        r"person named (\w+)",
+        r"woman named (\w+)",
+        r"man named (\w+)",
+        r"named (\w+)",
         r"name'?s? (\w+)",
         r"called (\w+)",
         r"meet (\w+)",
@@ -215,6 +221,8 @@ async def detect_person_name(user_id: str, message: str, response: str) -> Optio
         r"talking to (\w+)",
         r"seeing (\w+)",
         r"dating (\w+)",
+        r"crush on (\w+)",
+        r"like (\w+) from",
         r"about (\w+)[,.]",
     ]
     
@@ -224,7 +232,10 @@ async def detect_person_name(user_id: str, message: str, response: str) -> Optio
         if match:
             name = match.group(1).capitalize()
             # Filter out common words that aren't names
-            if name.lower() not in ['this', 'that', 'someone', 'anyone', 'him', 'her', 'them', 'guy', 'girl', 'person', 'about', 'more']:
+            excluded_words = ['this', 'that', 'someone', 'anyone', 'him', 'her', 'them', 
+                            'guy', 'girl', 'person', 'about', 'more', 'work', 'school',
+                            'gym', 'bar', 'club', 'party', 'online', 'app', 'tinder']
+            if name.lower() not in excluded_words and len(name) > 1:
                 # Save this person to the database
                 await save_person(user_id, name)
                 return name
