@@ -185,21 +185,15 @@ export default function CreateBestie({ user }) {
             </div>
           </div>
 
-          {/* Accent */}
+          {/* Accent - Currently British only */}
           <div>
             <label className="block text-sm font-medium text-dark-purple mb-2">
               Accent
             </label>
-            <select
-              data-testid="bestie-accent"
-              value={formData.accent}
-              onChange={(e) => setFormData({ ...formData, accent: e.target.value })}
-              className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
-            >
-              {ACCENTS.map((a, idx) => (
-                <option key={idx} value={a}>{a}</option>
-              ))}
-            </select>
+            <div className="px-4 py-3 rounded-2xl bg-muted text-dark-purple flex items-center justify-between">
+              <span>British</span>
+              <span className="text-xs text-dark-purple/50">🇬🇧</span>
+            </div>
           </div>
 
           {/* Create Button */}
