@@ -142,7 +142,16 @@ export default function VoiceScreen({ user }) {
       setRecording(true);
     } catch (error) {
       console.error('Mic error:', error);
-      toast.error('Microphone access denied');
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        toast.error(
+          'Microphone access denied. Click the lock icon 🔒 in your browser address bar to allow microphone access, then refresh the page.',
+          { duration: 8000 }
+        );
+      } else if (error.name === 'NotFoundError') {
+        toast.error('No microphone found. Please connect a microphone and try again.');
+      } else {
+        toast.error('Could not access microphone. Please check your browser settings.');
+      }
     }
   };
 
