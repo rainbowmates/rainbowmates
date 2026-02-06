@@ -44,12 +44,22 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     
     setSearching(true);
     try {
-      // Search specifically for free karaoke versions with lyrics
-      const response = await axios.get(`${API}/youtube/search?q=${encodeURIComponent(searchQuery + ' karaoke version with lyrics free')}`);
+      // Search for karaoke instrumental versions from dedicated karaoke channels
+      const response = await axios.get(`${API}/youtube/search?q=${encodeURIComponent(searchQuery + ' karaoke instrumental sing along lyrics on screen')}`);
       if (response.data.results && response.data.results.length > 0) {
-        setSearchResults(response.data.results);
+        // Filter results to prefer karaoke-specific content
+        const filteredResults = response.data.results.filter(r => {
+          const title = r.title.toLowerCase();
+          return title.includes('karaoke') || 
+                 title.includes('instrumental') || 
+                 title.includes('sing along') ||
+                 title.includes('lyrics');
+        });
+        
+        // Use filtered results if available, otherwise show all
+        setSearchResults(filteredResults.length > 0 ? filteredResults : response.data.results);
       } else {
-        toast.info('No karaoke videos found. Try a different song.');
+        toast.info('No karaoke songs found. Try a different song.');
         setSearchResults([]);
       }
     } catch (error) {
