@@ -144,10 +144,6 @@ function App() {
             element={user ? <VoiceScreen user={user} /> : <Navigate to="/auth" />}
           />
           <Route
-            path="/karaoke"
-            element={user ? <KaraokeScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
-          />
-          <Route
             path="/dance"
             element={user ? <DanceScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
           />
