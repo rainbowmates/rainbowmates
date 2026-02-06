@@ -196,16 +196,12 @@ export default function ShoppingScreen({ user }) {
     toast.success('Shopping conversation cleared');
   };
 
-  const openInIframe = (url) => {
-    console.log('Opening iframe:', url);
-    setIframeUrl(url);
+  // Open link in new tab
+  const openLink = (url) => {
+    window.open(url, '_blank', 'noopener,noreferrer');
   };
 
-  const closeIframe = () => {
-    setIframeUrl(null);
-  };
-
-  // Parse links and make them clickable with iframe option
+  // Parse links and make them clickable - opens in new tab
   const renderMessageWithLinks = (text, msgIdx) => {
     return text.split('\n').map((line, idx) => {
       const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
@@ -220,30 +216,21 @@ export default function ShoppingScreen({ user }) {
         const linkText = match[1];
         const linkUrl = match[2];
         parts.push(
-          <span key={`${msgIdx}-${idx}-${match.index}`} className="inline-flex items-center gap-1 flex-wrap">
-            <button
-              type="button"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                openInIframe(linkUrl);
-              }}
-              className="text-neon-pink hover:text-[#D670D7] underline font-medium cursor-pointer"
-              data-testid={`shopping-link-${msgIdx}-${idx}`}
-            >
-              {linkText}
-            </button>
-            <a
-              href={linkUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              onClick={(e) => e.stopPropagation()}
-              className="text-dark-purple/40 hover:text-neon-pink"
-              title="Open in new tab"
-            >
-              <ExternalLink className="w-3 h-3" />
-            </a>
-          </span>
+          <a
+            key={`${msgIdx}-${idx}-${match.index}`}
+            href={linkUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            onClick={(e) => {
+              e.preventDefault();
+              openLink(linkUrl);
+            }}
+            className="inline-flex items-center gap-1 text-neon-pink hover:text-[#D670D7] underline font-medium cursor-pointer"
+            data-testid={`shopping-link-${msgIdx}-${idx}`}
+          >
+            {linkText}
+            <ExternalLink className="w-3 h-3" />
+          </a>
         );
         lastIndex = match.index + match[0].length;
       }
