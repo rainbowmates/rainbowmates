@@ -19,7 +19,6 @@ export default function ShoppingScreen({ user }) {
   const [isReplyRecording, setIsReplyRecording] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
-  const [iframeUrl, setIframeUrl] = useState(null);
   const conversationEndRef = useRef(null);
 
   useEffect(() => {
