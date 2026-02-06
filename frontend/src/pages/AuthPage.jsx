@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import { Mail, Phone, Lock, ArrowLeft } from 'lucide-react';
 
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbowpals/artifacts/ebo2v4zr_logo.png";
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/rlkesgfm_logo.png";
 import { toast } from 'sonner';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;

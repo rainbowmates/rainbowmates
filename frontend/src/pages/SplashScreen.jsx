@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbowpals/artifacts/ebo2v4zr_logo.png";
+const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/rlkesgfm_logo.png";
 
 export default function SplashScreen() {
   return (
