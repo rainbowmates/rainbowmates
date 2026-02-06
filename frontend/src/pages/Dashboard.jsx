@@ -49,7 +49,11 @@ export default function Dashboard({ user, onLogout }) {
   };
 
   const handleLetsPlay = () => {
-    if (subscription?.has_subscription && subscription?.subscription?.is_active) {
+    // Check for free pilot subscription
+    const freeSubscription = localStorage.getItem('rainbow_mates_free_subscription');
+    const hasFreeSubscription = freeSubscription && JSON.parse(freeSubscription).is_active;
+    
+    if (hasFreeSubscription || (subscription?.has_subscription && subscription?.subscription?.is_active)) {
       navigate('/play');
     } else {
       navigate('/subscription');
