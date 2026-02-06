@@ -239,7 +239,7 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
           </button>
           <div className="flex-1">
             <h1 className="text-xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-              Date or Mate?
+              Date or Just Mates?
             </h1>
             <p className="text-xs text-dark-purple/70">
               {currentPerson ? `Discussing: ${currentPerson}` : 'Let\'s figure it out together!'}
