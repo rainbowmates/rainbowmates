@@ -248,11 +248,11 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
               <h3 className="text-sm font-bold text-dark-purple mb-2">
                 <span className="flex items-center gap-2">
                   <Mic className="w-4 h-4 text-neon-pink" />
-                  Popular Karaoke Songs
+                  Popular Free Karaoke Songs
                 </span>
               </h3>
               <p className="text-xs text-dark-purple/50 mb-3">
-                Lyrics appear on the video - just sing along!
+                Free karaoke videos with lyrics on screen!
               </p>
               <div className="space-y-2">
                 {popularKaraokeSongs.map((song, idx) => (
