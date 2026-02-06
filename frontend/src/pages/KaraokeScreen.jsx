@@ -252,7 +252,7 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
                 </span>
               </h3>
               <p className="text-xs text-dark-purple/50 mb-3">
-                Instrumental tracks with lyrics on screen - you sing!
+                From Sing King Karaoke - instrumental with lyrics!
               </p>
               <div className="space-y-2">
                 {popularKaraokeSongs.map((song, idx) => (
