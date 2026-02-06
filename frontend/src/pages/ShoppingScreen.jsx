@@ -109,7 +109,11 @@ export default function ShoppingScreen({ user }) {
       setMediaRecorder(recorder);
       setIsReplyRecording(true);
     } catch (error) {
-      toast.error('Microphone access denied');
+      if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
+        toast.error('Microphone access denied. Click the lock icon 🔒 in your browser address bar to allow access.', { duration: 8000 });
+      } else {
+        toast.error('Could not access microphone');
+      }
     }
   };
 
