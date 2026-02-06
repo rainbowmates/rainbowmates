@@ -72,13 +72,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular FREE karaoke instrumentals with lyrics on screen (from karaoke channels)
+  // Popular karaoke songs from Sing King Karaoke channel (@singkingkaraoke)
   const popularKaraokeSongs = [
-    { title: 'Someone Like You - Adele (Karaoke with Lyrics)', id: 'hLQl3WQQoQ0' },
-    { title: 'Perfect - Ed Sheeran (Karaoke with Lyrics)', id: '2Vv-BfVoq4g' },
-    { title: 'Shallow - Lady Gaga (Karaoke with Lyrics)', id: 'JPJjwHAIny4' },
-    { title: 'All of Me - John Legend (Karaoke with Lyrics)', id: '450p7goxZqg' },
-    { title: 'Rolling in the Deep - Adele (Karaoke with Lyrics)', id: 'rYEDA3JcQqw' }
+    { title: 'Someone Like You - Adele (Sing King Karaoke)', id: 'hLQl3WQQoQ0' },
+    { title: 'Shallow - Lady Gaga (Sing King Karaoke)', id: 'JPJjwHAIny4' },
+    { title: 'Perfect - Ed Sheeran (Sing King Karaoke)', id: '2Vv-BfVoq4g' },
+    { title: 'All Of Me - John Legend (Sing King Karaoke)', id: '450p7goxZqg' },
+    { title: 'Let It Go - Frozen (Sing King Karaoke)', id: 'L0MK7qz13bU' }
   ];
 
   // Greeting message from bestie
