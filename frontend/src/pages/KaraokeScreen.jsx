@@ -262,7 +262,7 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
                 </span>
               </h3>
               <p className="text-xs text-dark-purple/50 mb-3">
-                Free karaoke videos with lyrics on screen!
+                Instrumental tracks with lyrics on screen - you sing!
               </p>
               <div className="space-y-2">
                 {popularKaraokeSongs.map((song, idx) => (
