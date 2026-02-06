@@ -82,13 +82,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular FREE karaoke songs on YouTube with lyrics
+  // Popular FREE karaoke instrumentals with lyrics on screen (from karaoke channels)
   const popularKaraokeSongs = [
-    { title: 'Shallow - Lady Gaga & Bradley Cooper (Karaoke)', id: 'bo_efYhYU2A' },
-    { title: 'Someone Like You - Adele (Karaoke)', id: '720FLdlNc7g' },
-    { title: 'Perfect - Ed Sheeran (Karaoke)', id: 'iKzRIweSBLA' },
-    { title: 'All of Me - John Legend (Karaoke)', id: 'Pi9MJcSQsZ0' },
-    { title: 'Thinking Out Loud - Ed Sheeran (Karaoke)', id: 'LN6dnamGlOE' }
+    { title: 'Someone Like You - Adele (Karaoke with Lyrics)', id: 'hLQl3WQQoQ0' },
+    { title: 'Perfect - Ed Sheeran (Karaoke with Lyrics)', id: '2Vv-BfVoq4g' },
+    { title: 'Shallow - Lady Gaga (Karaoke with Lyrics)', id: 'JPJjwHAIny4' },
+    { title: 'All of Me - John Legend (Karaoke with Lyrics)', id: '450p7goxZqg' },
+    { title: 'Rolling in the Deep - Adele (Karaoke with Lyrics)', id: 'rYEDA3JcQqw' }
   ];
 
   // Greeting message from bestie
