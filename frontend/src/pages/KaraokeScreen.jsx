@@ -72,13 +72,13 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     setCurrentSong('');
   };
 
-  // Popular karaoke songs with lyrics on screen
+  // Popular FREE karaoke songs on YouTube with lyrics
   const popularKaraokeSongs = [
-    { title: 'Sweet Caroline - Neil Diamond', id: 'NsLyI1_R01M' },
-    { title: 'Wonderwall - Oasis', id: 'Gvfgut8nAgw' },
-    { title: 'Happy - Pharrell Williams', id: 'C7dPqrmDWxs' },
-    { title: 'Shallow - Lady Gaga', id: 'bo_efYhYU2A' },
-    { title: 'Someone Like You - Adele', id: '720FLdlNc7g' }
+    { title: 'Shallow - Lady Gaga & Bradley Cooper (Karaoke)', id: 'bo_efYhYU2A' },
+    { title: 'Someone Like You - Adele (Karaoke)', id: '720FLdlNc7g' },
+    { title: 'Perfect - Ed Sheeran (Karaoke)', id: 'iKzRIweSBLA' },
+    { title: 'All of Me - John Legend (Karaoke)', id: 'Pi9MJcSQsZ0' },
+    { title: 'Thinking Out Loud - Ed Sheeran (Karaoke)', id: 'LN6dnamGlOE' }
   ];
 
   // Greeting message from bestie
