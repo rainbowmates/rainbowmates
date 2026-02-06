@@ -184,7 +184,7 @@ export default function VoiceScreen({ user }) {
       };
       setConversation(prev => [...prev, userMessage]);
 
-      // Get bestie response
+      // Get bestie response (start both chat and prepare for TTS in parallel mindset)
       const chatResponse = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
         bestie_id: bestie.id,
         content: transcribedText
@@ -192,14 +192,13 @@ export default function VoiceScreen({ user }) {
 
       const bestieResponse = chatResponse.data.message;
       
-      // Add bestie message to conversation
+      // Prepare the bestie message but DON'T show it yet
       const bestieMessage = {
         id: (Date.now() + 1).toString(),
         role: 'bestie',
         text: bestieResponse,
         timestamp: new Date().toISOString()
       };
-      setConversation(prev => [...prev, bestieMessage]);
 
       // Convert bestie response to speech
       setSpeaking(true);
@@ -208,10 +207,16 @@ export default function VoiceScreen({ user }) {
       if (ttsResponse.data.audio_url) {
         setLastAudioUrl(ttsResponse.data.audio_url);
         
+        // Function to show message after audio ends
+        const showMessageAfterAudio = () => {
+          setConversation(prev => [...prev, bestieMessage]);
+          setSpeaking(false);
+        };
+        
         try {
           const { source, ctx } = await playAudioFromBase64(ttsResponse.data.audio_url);
           audioSourceRef.current = source;
-          source.onended = () => setSpeaking(false);
+          source.onended = showMessageAfterAudio;
           source.start(0);
         } catch (audioError) {
           console.error('Web Audio failed, falling back to HTML5:', audioError);
@@ -219,11 +224,20 @@ export default function VoiceScreen({ user }) {
           const audio = new Audio(ttsResponse.data.audio_url);
           audio.volume = 1.0;
           audioRef.current = audio;
-          audio.onended = () => setSpeaking(false);
-          audio.onerror = () => setSpeaking(false);
-          audio.play().catch(() => setSpeaking(false));
+          audio.onended = showMessageAfterAudio;
+          audio.onerror = () => {
+            // Still show message even if audio fails
+            setConversation(prev => [...prev, bestieMessage]);
+            setSpeaking(false);
+          };
+          audio.play().catch(() => {
+            setConversation(prev => [...prev, bestieMessage]);
+            setSpeaking(false);
+          });
         }
       } else {
+        // No audio - show message immediately
+        setConversation(prev => [...prev, bestieMessage]);
         toast.error('No audio received from server');
         setSpeaking(false);
       }
