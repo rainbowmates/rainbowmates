@@ -1,9 +1,18 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, MessageCircle, Mic, Music, ShoppingBag, Heart } from 'lucide-react';
+import { ArrowLeft, MessageCircle, Mic, Music, ShoppingBag, Heart, Gift } from 'lucide-react';
 
 export default function PlayScreen({ user }) {
   const navigate = useNavigate();
+  const [freeSubscription, setFreeSubscription] = useState(null);
+
+  useEffect(() => {
+    // Check for free pilot subscription
+    const savedFreeSub = localStorage.getItem('rainbow_mates_free_subscription');
+    if (savedFreeSub) {
+      setFreeSubscription(JSON.parse(savedFreeSub));
+    }
+  }, []);
 
   const features = [
     { icon: MessageCircle, title: 'Chat', description: 'Text with your bestie', path: '/chat', color: 'from-neon-pink to-purple-400' },
@@ -30,11 +39,19 @@ export default function PlayScreen({ user }) {
           </h1>
         </div>
 
+        {/* Free Subscription Badge */}
+        {freeSubscription?.is_active && (
+          <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-green-100 border border-green-300">
+            <Gift className="w-4 h-4 text-green-600" />
+            <span className="text-sm font-semibold text-green-700">Free Pilot Subscription Active</span>
+          </div>
+        )}
+
         <div className="space-y-4">
           {features.map((feature, idx) => (
             <button
               key={idx}
-              data-testid={`play-${feature.title.toLowerCase().replace(' ', '-')}`}
+              data-testid={`play-${feature.title.toLowerCase().replace(/ /g, '-')}`}
               onClick={() => navigate(feature.path)}
               className="w-full card-soft p-6 hover:scale-[1.02] transition-all cursor-pointer"
             >
