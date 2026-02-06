@@ -1120,10 +1120,11 @@ async def text_to_speech(bestie_id: str, text: str):
         
         client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
         
+        # Use eleven_turbo_v2_5 for faster response times
         audio_generator = client.text_to_speech.convert(
             text=text,
             voice_id=voice_id,
-            model_id="eleven_multilingual_v2",
+            model_id="eleven_turbo_v2_5",  # Faster model for lower latency
             voice_settings=VoiceSettings(
                 stability=0.5,  # Lower stability for more expressive, dynamic delivery
                 similarity_boost=0.9,  # Higher for louder, clearer voice
