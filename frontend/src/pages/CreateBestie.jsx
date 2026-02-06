@@ -21,7 +21,6 @@ const BESTIE_IMAGES = [
 
 const PERSONALITIES = ['Funny', 'Chatty', 'Serious', 'Gossipy', 'Sympathetic', 'Attentive', 'Intellectual', 'Bitchy'];
 const INTERESTS = ['Fashion', 'Food', 'Going out', 'Relationships'];
-const ACCENTS = ['American', 'British', 'Australian', 'Southern', 'New York', 'Valley Girl'];
 
 export default function CreateBestie({ user }) {
   const navigate = useNavigate();
@@ -30,7 +29,7 @@ export default function CreateBestie({ user }) {
     image_url: BESTIE_IMAGES[0].url,
     personality: [],
     interests: [],
-    accent: 'American'
+    accent: 'British'
   });
   const [generating, setGenerating] = useState(false);
 
