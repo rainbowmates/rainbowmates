@@ -44,7 +44,8 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     
     setSearching(true);
     try {
-      const response = await axios.get(`${API}/youtube/search?q=${encodeURIComponent(searchQuery + ' karaoke lyrics on screen')}`);
+      // Search specifically for free karaoke versions with lyrics
+      const response = await axios.get(`${API}/youtube/search?q=${encodeURIComponent(searchQuery + ' karaoke version with lyrics free')}`);
       if (response.data.results && response.data.results.length > 0) {
         setSearchResults(response.data.results);
       } else {
