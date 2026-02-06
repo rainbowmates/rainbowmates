@@ -44,10 +44,22 @@ export default function KaraokeScreen({ user, bestie: propBestie }) {
     
     setSearching(true);
     try {
-      // Search specifically from Sing King Karaoke channel
+      // Search from Sing King Karaoke channel only
       const response = await axios.get(`${API}/youtube/search?q=${encodeURIComponent(searchQuery + ' Sing King Karaoke')}`);
       if (response.data.results && response.data.results.length > 0) {
-        setSearchResults(response.data.results);
+        // Filter to ONLY show Sing King Karaoke results
+        const singKingResults = response.data.results.filter(r => {
+          const title = (r.title || '').toLowerCase();
+          const channel = (r.channelTitle || '').toLowerCase();
+          return channel.includes('sing king') || title.includes('sing king');
+        });
+        
+        if (singKingResults.length > 0) {
+          setSearchResults(singKingResults);
+        } else {
+          toast.info('No Sing King karaoke found for this song. Try another!');
+          setSearchResults([]);
+        }
       } else {
         toast.info('No karaoke songs found. Try a different song.');
         setSearchResults([]);
