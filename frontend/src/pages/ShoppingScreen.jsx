@@ -255,38 +255,6 @@ export default function ShoppingScreen({ user }) {
 
   return (
     <div className="app-container gradient-mesh min-h-screen overflow-y-auto">
-      {/* Iframe Modal for Shopping */}
-      {iframeUrl && (
-        <div className="fixed inset-0 bg-black/80 z-50 flex flex-col">
-          <div className="flex items-center justify-between p-3 bg-white border-b">
-            <span className="text-sm text-dark-purple truncate flex-1 mr-2">{iframeUrl}</span>
-            <div className="flex items-center gap-2">
-              <a
-                href={iframeUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="p-2 rounded-full hover:bg-muted transition-all"
-                title="Open in new tab"
-              >
-                <ExternalLink className="w-5 h-5 text-dark-purple" />
-              </a>
-              <button
-                onClick={closeIframe}
-                className="p-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-          <iframe
-            src={iframeUrl}
-            className="flex-1 w-full bg-white"
-            title="Shopping"
-            sandbox="allow-same-origin allow-scripts allow-popups allow-forms"
-          />
-        </div>
-      )}
-
       {/* Clear Confirmation Modal */}
       {showClearConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
