@@ -368,6 +368,18 @@ export default function AuthPage({ onLogin, onBack }) {
   return (
     <div className="app-container gradient-mesh flex items-center justify-center p-6 overflow-y-auto">
       <div className="w-full max-w-md">
+        {/* Back to Intro Button */}
+        {onBack && (
+          <button
+            data-testid="back-to-intro"
+            onClick={onBack}
+            className="flex items-center gap-2 text-dark-purple/70 hover:text-dark-purple mb-4"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Back
+          </button>
+        )}
+
         <div className="text-center mb-6">
           <img 
             src={LOGO_URL} 
