@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "@/App.css";
 import SplashScreen from "./pages/SplashScreen";
+import IntroScreen from "./pages/IntroScreen";
 import AuthPage from "./pages/AuthPage";
 import AuthCallback from "./pages/AuthCallback";
 import Dashboard from "./pages/Dashboard";
@@ -21,6 +22,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [bestie, setBestie] = useState(null);
   const [showSplash, setShowSplash] = useState(true);
+  const [showIntro, setShowIntro] = useState(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -36,15 +38,26 @@ function App() {
       setBestie(JSON.parse(savedBestie));
     }
     
+    // Check if intro has been seen before
+    const hasSeenIntro = localStorage.getItem("rainbow_mates_intro_seen");
+    
     setLoading(false);
 
-    // Show splash for 3 seconds
+    // Show splash for 3 seconds, then show intro if not seen
     const timer = setTimeout(() => {
       setShowSplash(false);
+      if (!hasSeenIntro && !savedUser) {
+        setShowIntro(true);
+      }
     }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleIntroComplete = () => {
+    localStorage.setItem("rainbow_mates_intro_seen", "true");
+    setShowIntro(false);
+  };
 
   // Refresh user data from localStorage periodically (for avatar updates)
   useEffect(() => {
