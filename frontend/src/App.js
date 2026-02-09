@@ -95,6 +95,7 @@ function App() {
     return <SplashScreen />;
   }
 
+  // Always show intro screen after splash (every time app opens)
   if (showIntro) {
     return <IntroScreen onNext={handleIntroComplete} />;
   }
