@@ -23,18 +23,16 @@ const INTRO_IMAGES = [
 
 function BouncingImage({ image, index, containerRef }) {
   const [position, setPosition] = useState({ x: 0, y: 0 });
-  const [velocity, setVelocity] = useState({ x: 0, y: 0 });
+  const velocityRef = useRef({ x: 0, y: 0 });
   const imageSize = 140;
 
   useEffect(() => {
-    // Initialize with random position and velocity
     const container = containerRef.current;
     if (!container) return;
 
     const maxX = container.clientWidth - imageSize;
-    const maxY = container.clientHeight - imageSize - 30; // Account for label
+    const maxY = container.clientHeight - imageSize - 30;
 
-    // Different starting positions for each image
     const startPositions = [
       { x: 20, y: 20 },
       { x: maxX - 20, y: 20 },
@@ -48,14 +46,13 @@ function BouncingImage({ image, index, containerRef }) {
       y: Math.min(Math.max(startPos.y, 0), maxY)
     });
 
-    // Different velocities for variety
     const speeds = [
       { x: 1.5, y: 1.2 },
       { x: -1.3, y: 1.4 },
       { x: 1.4, y: -1.3 },
       { x: -1.2, y: -1.5 }
     ];
-    setVelocity(speeds[index % 4]);
+    velocityRef.current = speeds[index % 4];
   }, [index, containerRef]);
 
   useEffect(() => {
@@ -67,48 +64,33 @@ function BouncingImage({ image, index, containerRef }) {
         const maxX = container.clientWidth - imageSize;
         const maxY = container.clientHeight - imageSize - 30;
 
-        let newX = prev.x + velocity.x;
-        let newY = prev.y + velocity.y;
-        let newVelX = velocity.x;
-        let newVelY = velocity.y;
+        let newX = prev.x + velocityRef.current.x;
+        let newY = prev.y + velocityRef.current.y;
 
-        // Bounce off walls
         if (newX <= 0 || newX >= maxX) {
-          newVelX = -velocity.x;
+          velocityRef.current.x = -velocityRef.current.x;
           newX = newX <= 0 ? 0 : maxX;
         }
         if (newY <= 0 || newY >= maxY) {
-          newVelY = -velocity.y;
+          velocityRef.current.y = -velocityRef.current.y;
           newY = newY <= 0 ? 0 : maxY;
-        }
-
-        if (newVelX !== velocity.x || newVelY !== velocity.y) {
-          setVelocity({ x: newVelX, y: newVelY });
         }
 
         return { x: newX, y: newY };
       });
     };
 
-    const intervalId = setInterval(animate, 16); // ~60fps
+    const intervalId = setInterval(animate, 16);
     return () => clearInterval(intervalId);
-  }, [velocity, containerRef]);
+  }, [containerRef]);
 
   return (
     <div
       className="absolute flex flex-col items-center"
-      style={{
-        left: position.x,
-        top: position.y,
-        transition: 'none'
-      }}
+      style={{ left: position.x, top: position.y }}
     >
       <div className="w-32 h-32 rounded-2xl overflow-hidden shadow-lg border-2 border-white/50">
-        <img 
-          src={image.url} 
-          alt={image.label}
-          className="w-full h-full object-cover"
-        />
+        <img src={image.url} alt={image.label} className="w-full h-full object-cover" />
       </div>
       <span className="mt-2 text-sm font-semibold text-dark-purple bg-white/80 px-3 py-1 rounded-full shadow-sm">
         {image.label}
@@ -122,46 +104,22 @@ export default function IntroScreen({ onNext }) {
 
   return (
     <div className="app-container gradient-mesh min-h-screen flex flex-col">
-      {/* Header with Logo */}
       <div className="text-center pt-8 pb-4 px-6">
-        <img 
-          src={LOGO_URL} 
-          alt="Rainbow Mates" 
-          className="w-20 h-20 mx-auto object-contain mb-2"
-          style={{ background: 'transparent' }}
-        />
-        <h1 
-          className="text-2xl font-bold text-dark-purple"
-          style={{ fontFamily: 'Nunito, sans-serif' }}
-        >
+        <img src={LOGO_URL} alt="Rainbow Mates" className="w-20 h-20 mx-auto object-contain mb-2" style={{ background: 'transparent' }} />
+        <h1 className="text-2xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
           Introducing Rainbow Mates
         </h1>
         <p className="text-dark-purple/70 text-sm mt-1">Your virtual bestie awaits!</p>
       </div>
 
-      {/* Bouncing Images Container */}
-      <div 
-        ref={containerRef}
-        className="flex-1 relative overflow-hidden mx-4 rounded-3xl bg-white/30 backdrop-blur-sm border border-white/50"
-        style={{ minHeight: '400px' }}
-      >
+      <div ref={containerRef} className="flex-1 relative overflow-hidden mx-4 rounded-3xl bg-white/30 backdrop-blur-sm border border-white/50" style={{ minHeight: '400px' }}>
         {INTRO_IMAGES.map((image, index) => (
-          <BouncingImage 
-            key={index}
-            image={image}
-            index={index}
-            containerRef={containerRef}
-          />
+          <BouncingImage key={index} image={image} index={index} containerRef={containerRef} />
         ))}
       </div>
 
-      {/* Next Button */}
       <div className="p-6">
-        <button
-          data-testid="intro-next-button"
-          onClick={onNext}
-          className="w-full py-4 rounded-full bg-neon-pink text-white font-bold text-lg hover:bg-[#D670D7] transition-all shadow-lg"
-        >
+        <button data-testid="intro-next-button" onClick={onNext} className="w-full py-4 rounded-full bg-neon-pink text-white font-bold text-lg hover:bg-[#D670D7] transition-all shadow-lg">
           Next
         </button>
       </div>
