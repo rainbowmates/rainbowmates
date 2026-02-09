@@ -22,7 +22,7 @@ function App() {
   const [user, setUser] = useState(null);
   const [bestie, setBestie] = useState(null);
   const [showSplash, setShowSplash] = useState(true);
-  const [showIntro, setShowIntro] = useState(false);
+  const [showIntro, setShowIntro] = useState(true); // Always show intro after splash
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -40,10 +40,9 @@ function App() {
     
     setLoading(false);
 
-    // Show splash for 3 seconds, then always show intro
+    // Show splash for 3 seconds
     const timer = setTimeout(() => {
       setShowSplash(false);
-      setShowIntro(true);
     }, 3000);
 
     return () => clearTimeout(timer);
