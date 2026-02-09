@@ -102,6 +102,10 @@ function App() {
     return <SplashScreen />;
   }
 
+  if (showIntro) {
+    return <IntroScreen onNext={handleIntroComplete} />;
+  }
+
   return (
     <div className="App">
       <BrowserRouter>
