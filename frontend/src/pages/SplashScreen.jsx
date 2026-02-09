@@ -10,7 +10,8 @@ export default function SplashScreen() {
           <img 
             src={LOGO_URL} 
             alt="Rainbow Mates Logo" 
-            className="w-32 h-32 mx-auto animate-pulse-glow object-contain"
+            className="w-32 h-32 mx-auto object-contain"
+            style={{ background: 'transparent' }}
           />
         </div>
         <h1 className="text-5xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
