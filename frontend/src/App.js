@@ -116,7 +116,7 @@ function App() {
               user ? (
                 <Navigate to="/dashboard" />
               ) : (
-                <AuthPage onLogin={handleLogin} />
+                <AuthPage onLogin={handleLogin} onBack={() => setShowIntro(true)} />
               )
             }
           />
