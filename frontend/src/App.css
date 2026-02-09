@@ -16,6 +16,18 @@
   background: #FFFFFF;
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-image: linear-gradient(
+    180deg,
+    #FF0000 0%,
+    #FF7F00 16.67%,
+    #FFFF00 33.33%,
+    #00FF00 50%,
+    #0000FF 66.67%,
+    #4B0082 83.33%,
+    #9400D3 100%
+  ) 1;
 }
 
 .gradient-mesh {
