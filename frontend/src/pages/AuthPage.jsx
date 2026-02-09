@@ -34,7 +34,7 @@ const COUNTRY_CODES = [
   { code: 'TR', name: 'Turkey', isd: '+90', flag: '🇹🇷', digits: 10 },
 ];
 
-export default function AuthPage({ onLogin }) {
+export default function AuthPage({ onLogin, onBack }) {
   const [mode, setMode] = useState('login');
   const [step, setStep] = useState('auth'); // auth, otp, forgot, reset
   const [errors, setErrors] = useState({});
