@@ -38,24 +38,18 @@ function App() {
       setBestie(JSON.parse(savedBestie));
     }
     
-    // Check if intro has been seen before
-    const hasSeenIntro = localStorage.getItem("rainbow_mates_intro_seen");
-    
     setLoading(false);
 
-    // Show splash for 3 seconds, then show intro if not seen
+    // Show splash for 3 seconds, then always show intro
     const timer = setTimeout(() => {
       setShowSplash(false);
-      if (!hasSeenIntro && !savedUser) {
-        setShowIntro(true);
-      }
+      setShowIntro(true);
     }, 3000);
 
     return () => clearTimeout(timer);
   }, []);
 
   const handleIntroComplete = () => {
-    localStorage.setItem("rainbow_mates_intro_seen", "true");
     setShowIntro(false);
   };
 
