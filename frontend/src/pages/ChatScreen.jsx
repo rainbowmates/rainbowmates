@@ -43,15 +43,31 @@ export default function ChatScreen({ user }) {
 
       const messagesRes = await axios.get(`${API}/chat/history/${user.id}/${bestieRes.data.id}`);
       
-      // If no messages, add a greeting from bestie
+      // If no messages, get a conversation starter from the AI
       if (!messagesRes.data || messagesRes.data.length === 0) {
-        const greetingMessage = {
-          id: 'greeting',
-          role: 'bestie',
-          content: `Hey babe! 💕 It's so good to see you! How are you feeling today? I'm all ears and ready to chat about whatever's on your mind!`,
-          timestamp: new Date().toISOString()
-        };
-        setMessages([greetingMessage]);
+        try {
+          setShowTyping(true);
+          const starterRes = await axios.post(`${API}/chat/starter?user_id=${user.id}&bestie_id=${bestieRes.data.id}`);
+          setShowTyping(false);
+          
+          const starterMessage = {
+            id: starterRes.data.message_id || 'starter',
+            role: 'bestie',
+            content: starterRes.data.message,
+            timestamp: new Date().toISOString()
+          };
+          setMessages([starterMessage]);
+        } catch (starterError) {
+          setShowTyping(false);
+          // Fallback to simple greeting if API fails
+          const fallbackMessage = {
+            id: 'greeting',
+            role: 'bestie',
+            content: `Hey babe! 💕 How are you doing today?`,
+            timestamp: new Date().toISOString()
+          };
+          setMessages([fallbackMessage]);
+        }
       } else {
         setMessages(messagesRes.data);
       }
