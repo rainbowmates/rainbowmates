@@ -41,6 +41,7 @@ const Home = () => {
 function App() {
   return (
     <div className="App">
+      <DesktopWarningModal />
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Home />}>
