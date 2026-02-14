@@ -525,83 +525,9 @@ export default function AuthPage({ onLogin, onBack }) {
           {/* Main Auth Step (Login/Register) */}
           {step === 'auth' && (
             <>
-              <div className="flex gap-2 mb-6">
-                <button
-                  data-testid="login-tab"
-                  onClick={() => handleModeSwitch('login')}
-                  className={`flex-1 py-2 px-4 rounded-full font-semibold transition-all ${
-                    mode === 'login' ? 'bg-neon-pink text-white neon-glow' : 'bg-muted text-dark-purple'
-                  }`}
-                >
-                  Login
-                </button>
-                <button
-                  data-testid="register-tab"
-                  onClick={() => handleModeSwitch('register')}
-                  className={`flex-1 py-2 px-4 rounded-full font-semibold transition-all ${
-                    mode === 'register' ? 'bg-neon-pink text-white neon-glow' : 'bg-muted text-dark-purple'
-                  }`}
-                >
-                  Register
-                </button>
-              </div>
-
-              {mode === 'login' ? (
+              {mode === 'register' ? (
                 <div className="space-y-4">
-                  <form onSubmit={handleLogin} className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-dark-purple mb-2">Email or Mobile</label>
-                      <div className="relative">
-                        <Mail className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
-                        <input
-                          data-testid="login-identifier"
-                          type="text"
-                          value={loginData.identifier}
-                          onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
-                          placeholder="your@email.com"
-                          className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${errors.identifier ? 'border-red-500' : 'border-transparent'} focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
-                          required
-                        />
-                      </div>
-                      {errors.identifier && <p className="text-red-500 text-xs mt-1">{errors.identifier}</p>}
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-dark-purple mb-2">Password</label>
-                      <div className="relative">
-                        <Lock className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
-                        <input
-                          data-testid="login-password"
-                          type="password"
-                          value={loginData.password}
-                          onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
-                          placeholder="Enter password"
-                          className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${errors.password ? 'border-red-500' : 'border-transparent'} focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
-                          required
-                        />
-                      </div>
-                      {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
-                    </div>
-                    
-                    <div className="text-right">
-                      <button
-                        type="button"
-                        data-testid="forgot-password-link"
-                        onClick={() => setStep('forgot')}
-                        className="text-sm text-neon-pink hover:underline"
-                      >
-                        Forgot password?
-                      </button>
-                    </div>
-                    
-                    <button data-testid="login-button" type="submit" className="w-full neon-button">
-                      Login
-                    </button>
-                  </form>
-                  
-                  <SocialLoginButtons />
-                </div>
-              ) : (
-                <div className="space-y-4">
+                  <h2 className="text-xl font-bold text-dark-purple text-center mb-4">Create Account</h2>
                   <form onSubmit={handleRegister} className="space-y-3">
                     <div className="grid grid-cols-2 gap-3">
                       <div>
@@ -730,6 +656,89 @@ export default function AuthPage({ onLogin, onBack }) {
                       Register
                     </button>
                   </form>
+                  
+                  <div className="text-center pt-2">
+                    <p className="text-dark-purple/70 text-sm">
+                      Already have an account?{' '}
+                      <button
+                        data-testid="switch-to-login"
+                        type="button"
+                        onClick={() => handleModeSwitch('login')}
+                        className="text-neon-pink font-semibold hover:underline"
+                      >
+                        Sign in
+                      </button>
+                    </p>
+                  </div>
+                  
+                  <SocialLoginButtons />
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <h2 className="text-xl font-bold text-dark-purple text-center mb-4">Sign In</h2>
+                  <form onSubmit={handleLogin} className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-dark-purple mb-2">Email or Mobile</label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
+                        <input
+                          data-testid="login-identifier"
+                          type="text"
+                          value={loginData.identifier}
+                          onChange={(e) => setLoginData({ ...loginData, identifier: e.target.value })}
+                          placeholder="your@email.com"
+                          className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${errors.identifier ? 'border-red-500' : 'border-transparent'} focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
+                          required
+                        />
+                      </div>
+                      {errors.identifier && <p className="text-red-500 text-xs mt-1">{errors.identifier}</p>}
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-dark-purple mb-2">Password</label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-3 w-5 h-5 text-dark-purple/40" />
+                        <input
+                          data-testid="login-password"
+                          type="password"
+                          value={loginData.password}
+                          onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                          placeholder="Enter password"
+                          className={`w-full pl-10 pr-4 py-3 rounded-2xl bg-muted border-2 ${errors.password ? 'border-red-500' : 'border-transparent'} focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none`}
+                          required
+                        />
+                      </div>
+                      {errors.password && <p className="text-red-500 text-xs mt-1">{errors.password}</p>}
+                    </div>
+                    
+                    <div className="text-right">
+                      <button
+                        type="button"
+                        data-testid="forgot-password-link"
+                        onClick={() => setStep('forgot')}
+                        className="text-sm text-neon-pink hover:underline"
+                      >
+                        Forgot password?
+                      </button>
+                    </div>
+                    
+                    <button data-testid="login-button" type="submit" className="w-full neon-button">
+                      Sign In
+                    </button>
+                  </form>
+                  
+                  <div className="text-center pt-2">
+                    <p className="text-dark-purple/70 text-sm">
+                      Don't have an account?{' '}
+                      <button
+                        data-testid="switch-to-register"
+                        type="button"
+                        onClick={() => handleModeSwitch('register')}
+                        className="text-neon-pink font-semibold hover:underline"
+                      >
+                        Register
+                      </button>
+                    </p>
+                  </div>
                   
                   <SocialLoginButtons />
                 </div>
