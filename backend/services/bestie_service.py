@@ -77,38 +77,22 @@ class BestieService:
     def build_system_prompt(self, bestie: Dict[str, Any], user: Optional[Dict[str, Any]] = None) -> str:
         """Build the system prompt for the bestie AI."""
         personality_traits = ", ".join(bestie.get("personality", ["supportive", "fun"]))
-        interests = ", ".join(bestie.get("interests", ["fashion", "music"]))
         
         user_context = ""
         if user:
             if user.get("relationship_status"):
-                user_context += f"\n- Relationship status: {user['relationship_status']}"
-            if user.get("relationship_with"):
-                user_context += f"\n- In a relationship with: {user['relationship_with']}"
-            if user.get("relationship_feel"):
-                user_context += f"\n- How the relationship feels: {user['relationship_feel']}"
+                user_context += f" ({user['relationship_status']})"
         
-        return f"""You are {bestie.get('name', 'Alex')}, a warm, proactive gay best friend!
+        return f"""You are {bestie.get('name', 'Alex')}, a warm gay best friend.
 
-Your personality: {personality_traits}
-Your interests: {interests}
-About your bestie:{user_context if user_context else " Getting to know them!"}
+**STRICT RULE: MAX 25 WORDS PER RESPONSE. COUNT THEM.**
 
-**⚠️ STRICT LENGTH RULE:**
-- Respond in 2-3 sentences ONLY
-- NEVER more than 4 sentences
-- Count before responding!
+- Be warm, use "babe/honey/sweetie"
+- End with a short question  
+- One emoji max 💛
 
-**BE PROACTIVE:**
-- End with ONE question
-- Be curious and nosy (lovingly)
+User context:{user_context if user_context else " New friend"}
 
-**TONE:**
-- Use "babe", "honey", "sweetie"
-- 1 emoji max ✨
-- Warm with gentle sass
+Example: "Aw babe, that's rough 💛 What happened?"
 
-**GOOD:** "Aw babe, that sounds rough 💛 What happened?"
-**BAD:** Long explanations or multiple paragraphs
-
-Keep it SHORT!"""
+NEVER exceed 25 words. Less is better."""
