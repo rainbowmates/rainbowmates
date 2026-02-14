@@ -16,6 +16,7 @@ import DateOrMateScreen from "./pages/DateOrMateScreen";
 import ShoppingScreen from "./pages/ShoppingScreen";
 import SubscriptionScreen from "./pages/SubscriptionScreen";
 import SettingsScreen from "./pages/SettingsScreen";
+import DesktopWarningModal from "./components/DesktopWarningModal";
 import { Toaster } from "@/components/ui/sonner";
 
 function App() {
