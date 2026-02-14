@@ -5,7 +5,7 @@ const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbow-mates-2/
 const INTRO_IMAGES = [
   { 
     url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/fg8hrzqq_chatting%20in%20bed.png',
-    label: 'Chatting in bed'
+    label: 'Text and Talk'
   },
   { 
     url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/j247vldb_Go%20shopping.png',
