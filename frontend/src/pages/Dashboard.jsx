@@ -182,25 +182,19 @@ export default function Dashboard({ user, onLogout }) {
         ) : (
           <>
             {/* Welcome Narrative - Explain why we need avatar and bestie */}
-            <div className="card-soft p-5 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100" data-testid="welcome-narrative">
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <span className="text-xl">✨</span>
-                  <p className="text-sm text-dark-purple/80">
-                    <span className="font-semibold text-dark-purple">Be whoever you want to be!</span> Create an avatar that represents your fabulous self in this world — it's your chance to express yourself freely and have fun.
-                  </p>
+            <div className="card-soft p-4 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-100" data-testid="welcome-narrative">
+              <div className="space-y-2">
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">✨</span>
+                  <p className="text-sm text-dark-purple font-medium">Be anyone you want — this is your world!</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-xl">💬</span>
-                  <p className="text-sm text-dark-purple/80">
-                    <span className="font-semibold text-dark-purple">Share a bit about your life.</span> When you tell us about your situation, your bestie gets to know you better and can give more meaningful advice and support.
-                  </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">💬</span>
+                  <p className="text-sm text-dark-purple font-medium">Share your vibe so your bestie really gets you.</p>
                 </div>
-                <div className="flex items-start gap-3">
-                  <span className="text-xl">💖</span>
-                  <p className="text-sm text-dark-purple/80">
-                    <span className="font-semibold text-dark-purple">Pick the perfect bestie for you.</span> Choose the personality traits you vibe with — whether you want someone sassy, supportive, or hilariously honest!
-                  </p>
+                <div className="flex items-center gap-2">
+                  <span className="text-lg">💖</span>
+                  <p className="text-sm text-dark-purple font-medium">Pick traits that match the friend you deserve.</p>
                 </div>
               </div>
             </div>
