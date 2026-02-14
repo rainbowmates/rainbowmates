@@ -19,17 +19,9 @@ const DesktopWarningModal = () => {
 
   useEffect(() => {
     const checkIfDesktop = () => {
-      // Check screen width
+      // Check screen width - anything 768px or wider is considered desktop
       const isWideScreen = window.innerWidth >= DESKTOP_BREAKPOINT;
-      
-      // Also check if it's a touch device (mobile/tablet usually have touch)
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-      
-      // Consider it desktop if wide screen AND not a touch device
-      // Or if it's a very wide screen (likely desktop even with touch)
-      const desktop = isWideScreen && (!isTouchDevice || window.innerWidth >= 1024);
-      
-      setIsDesktop(desktop);
+      setIsDesktop(isWideScreen);
     };
 
     // Check on mount
