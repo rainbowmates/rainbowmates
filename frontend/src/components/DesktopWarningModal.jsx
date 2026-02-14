@@ -86,10 +86,20 @@ const DesktopWarningModal = () => {
         
         <div className="flex flex-col gap-3 mt-4">
           <div className="bg-slate-800/50 rounded-lg p-4 border border-slate-700">
-            <p className="text-sm text-slate-400 text-center">
-              Scan the QR code or open this URL on your mobile device
+            <p className="text-sm text-slate-400 text-center mb-4">
+              Scan this QR code with your phone to open on mobile
             </p>
-            <p className="text-xs text-slate-500 text-center mt-2 font-mono break-all">
+            <div className="flex justify-center">
+              <div className="bg-white p-3 rounded-lg">
+                <QRCodeSVG 
+                  value={typeof window !== 'undefined' ? window.location.href : ''}
+                  size={140}
+                  level="M"
+                  data-testid="desktop-warning-qr-code"
+                />
+              </div>
+            </div>
+            <p className="text-xs text-slate-500 text-center mt-3 font-mono break-all">
               {typeof window !== 'undefined' ? window.location.href : ''}
             </p>
           </div>
