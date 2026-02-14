@@ -437,7 +437,7 @@ export default function CreateAvatar({ user }) {
               </div>
             )}
 
-            {/* Relationship Feel - Image Selector */}
+            {/* Relationship Feel - Multi-select Checkboxes */}
             <div>
               <label className="block text-sm font-medium text-dark-purple mb-2">
                 How does the relationship feel?
@@ -448,21 +448,23 @@ export default function CreateAvatar({ user }) {
                 className="w-full px-4 py-3 rounded-2xl bg-muted border-2 border-transparent hover:border-neon-pink focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none flex items-center justify-between transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={feelOptions.find(o => o.id === formData.relationship_feel)?.image || feelOptions[0].image} 
-                    alt={formData.relationship_feel}
-                    className="w-8 h-8 object-contain"
-                  />
-                  <span className="text-dark-purple">{formData.relationship_feel}</span>
+                  <div className="w-8 h-8 rounded-full bg-neon-pink/20 flex items-center justify-center">
+                    <Heart className="w-4 h-4 text-neon-pink" />
+                  </div>
+                  <span className="text-dark-purple text-sm">
+                    {formData.relationship_feel.length > 0 
+                      ? formData.relationship_feel.slice(0, 2).join(', ') + (formData.relationship_feel.length > 2 ? ` +${formData.relationship_feel.length - 2}` : '')
+                      : 'Select feelings'}
+                  </span>
                 </div>
                 <ChevronRight className="w-5 h-5 text-dark-purple/50" />
               </button>
             </div>
 
-            {/* Relationship Feel Popup */}
+            {/* Relationship Feel Popup - Multi-select */}
             {showFeelPopup && (
               <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4" onClick={() => setShowFeelPopup(false)}>
-                <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4" onClick={(e) => e.stopPropagation()}>
+                <div className="bg-white rounded-3xl p-6 w-full max-w-sm space-y-4 max-h-[85vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-bold text-dark-purple">How does the relationship feel?</h3>
                     <button 
@@ -473,26 +475,90 @@ export default function CreateAvatar({ user }) {
                     </button>
                   </div>
                   
-                  <div className="grid grid-cols-2 gap-3">
-                    {feelOptions.map((option) => (
-                      <button
-                        key={option.id}
-                        data-testid={`feel-option-${option.id.toLowerCase().replace(/\s+/g, '-')}`}
-                        onClick={() => {
-                          setFormData({ ...formData, relationship_feel: option.id });
-                          setShowFeelPopup(false);
-                        }}
-                        className={`p-4 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
-                          formData.relationship_feel === option.id 
-                            ? 'border-neon-pink bg-neon-pink/10' 
-                            : 'border-border hover:border-neon-pink/50'
-                        }`}
-                      >
-                        <img src={option.image} alt={option.label} className="w-14 h-14 object-contain" />
-                        <span className="text-xs font-medium text-dark-purple text-center">{option.label}</span>
-                      </button>
-                    ))}
+                  <p className="text-xs text-dark-purple/60">Select all that apply</p>
+                  
+                  <div className="space-y-2">
+                    {feelOptions.map((option) => {
+                      const isChecked = formData.relationship_feel.includes(option.id);
+                      return (
+                        <label
+                          key={option.id}
+                          data-testid={`feel-option-${option.id.toLowerCase()}`}
+                          className={`flex items-center gap-3 p-3 rounded-xl border-2 cursor-pointer transition-all ${
+                            isChecked 
+                              ? 'border-neon-pink bg-neon-pink/10' 
+                              : 'border-border hover:border-neon-pink/50'
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={isChecked}
+                            onChange={() => {
+                              if (isChecked) {
+                                setFormData({
+                                  ...formData,
+                                  relationship_feel: formData.relationship_feel.filter(f => f !== option.id)
+                                });
+                              } else {
+                                setFormData({
+                                  ...formData,
+                                  relationship_feel: [...formData.relationship_feel, option.id]
+                                });
+                              }
+                            }}
+                            className="w-5 h-5 rounded border-2 border-neon-pink text-neon-pink focus:ring-neon-pink accent-[#E989EA]"
+                          />
+                          <span className="text-sm font-medium text-dark-purple">{option.label}</span>
+                        </label>
+                      );
+                    })}
+                    
+                    {/* Other option with text input */}
+                    <div className={`p-3 rounded-xl border-2 transition-all ${
+                      formData.relationship_feel.includes('Other') 
+                        ? 'border-neon-pink bg-neon-pink/10' 
+                        : 'border-border'
+                    }`}>
+                      <label className="flex items-center gap-3 cursor-pointer">
+                        <input
+                          type="checkbox"
+                          checked={formData.relationship_feel.includes('Other')}
+                          onChange={() => {
+                            if (formData.relationship_feel.includes('Other')) {
+                              setFormData({
+                                ...formData,
+                                relationship_feel: formData.relationship_feel.filter(f => f !== 'Other')
+                              });
+                            } else {
+                              setFormData({
+                                ...formData,
+                                relationship_feel: [...formData.relationship_feel, 'Other']
+                              });
+                            }
+                          }}
+                          className="w-5 h-5 rounded border-2 border-neon-pink text-neon-pink focus:ring-neon-pink accent-[#E989EA]"
+                        />
+                        <span className="text-sm font-medium text-dark-purple">Other (specify)</span>
+                      </label>
+                      {formData.relationship_feel.includes('Other') && (
+                        <input
+                          type="text"
+                          value={otherFeelText}
+                          onChange={(e) => setOtherFeelText(e.target.value)}
+                          placeholder="Please specify..."
+                          className="mt-2 w-full px-3 py-2 rounded-lg bg-white border-2 border-neon-pink/30 focus:border-neon-pink outline-none text-sm"
+                          data-testid="other-feel-input"
+                        />
+                      )}
+                    </div>
                   </div>
+                  
+                  <button
+                    onClick={() => setShowFeelPopup(false)}
+                    className="w-full py-3 rounded-full bg-neon-pink text-white font-semibold hover:bg-[#D670D7] transition-all"
+                  >
+                    Done
+                  </button>
                 </div>
               </div>
             )}
