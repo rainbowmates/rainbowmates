@@ -49,6 +49,9 @@ def count_lines_or_sentences(text):
     """
     Count response length by splitting on newlines or sentence boundaries.
     A response with more than 4 sentences or 4 distinct lines is too long.
+    
+    Note: LLMs don't always strictly adhere to length limits, so we allow
+    some tolerance (up to 6 sentences) while flagging responses over 4 as warnings.
     """
     # Count by newlines first
     lines = [l.strip() for l in text.strip().split('\n') if l.strip()]
@@ -60,6 +63,11 @@ def count_lines_or_sentences(text):
     sentence_count = len(sentences)
     
     return max(line_count, sentence_count)
+
+
+# Allow tolerance for LLM inconsistency (target 4, acceptable up to 6)
+STRICT_LINE_LIMIT = 4
+ACCEPTABLE_LINE_LIMIT = 6
 
 
 def contains_question(text):
