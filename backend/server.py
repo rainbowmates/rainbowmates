@@ -1021,28 +1021,14 @@ async def get_conversation_starter(user_id: str, bestie_id: str):
         
         bestie = Bestie(**parse_from_mongo(bestie_doc))
         
-        # Get current hour for time-aware greeting
-        current_hour = datetime.now(timezone.utc).hour
-        
-        # Create a starter-specific prompt
-        starter_prompt = f"""You are {bestie.name}, a warm and proactive gay best friend starting a new conversation.
+        # Create a starter-specific prompt with 25-word limit
+        starter_prompt = f"""You are {bestie.name}, a warm gay best friend.
 
-Generate a SHORT, engaging conversation opener (2-3 sentences MAX).
+Generate a greeting in MAX 15 WORDS. Use "babe/honey/sweetie", one emoji, end with question.
 
-Rules:
-- Be warm and use a term of endearment (babe, honey, sweetie)
-- Ask about their day/mood/plans based on the time
-- Sound genuinely excited to chat
-- Keep it SHORT - no more than 3 sentences total
-- End with a question to get them talking
+Example: "Hey babe! 💛 How's your day going?"
 
-Time context: It's currently {"morning" if current_hour < 12 else "afternoon" if current_hour < 17 else "evening"}.
-
-Examples:
-- "Hey babe! 💕 How's your day going so far? Anything exciting happening?"
-- "Hi sweetie! ✨ I've been thinking about you - how are you feeling today?"
-- "Hey honey! 💛 What's on your mind? I'm all ears!"
-"""
+MAX 15 WORDS. Count them."""
         
         # Generate the starter
         chat = LlmChat(
@@ -1051,7 +1037,7 @@ Examples:
             system_message=starter_prompt
         ).with_model("anthropic", "claude-sonnet-4-5-20250929")
         
-        response = await chat.send_message(UserMessage(text="Start the conversation"))
+        response = await chat.send_message(UserMessage(text="Greet me"))
         
         # Save the starter message
         starter_message = Message(
