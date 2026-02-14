@@ -17,7 +17,7 @@ export default function SplashScreen() {
         <h1 className="text-5xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
           Rainbow Mates
         </h1>
-        <p className="text-xl text-dark-purple/70">Your Virtual Best Friend</p>
+        <p className="text-xl text-dark-purple/70">Your Virtual Gay Bestie</p>
       </div>
     </div>
   );
