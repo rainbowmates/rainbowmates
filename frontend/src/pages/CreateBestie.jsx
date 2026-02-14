@@ -39,7 +39,7 @@ export default function CreateBestie({ user }) {
     image_url: BESTIE_IMAGES[0].url,
     personality: [],
     interests: [],
-    accent: 'British'
+    voice_id: 'Daniel' // ElevenLabs voice ID
   });
   const [generating, setGenerating] = useState(false);
 
