@@ -1083,6 +1083,65 @@ async def delete_single_message(user_id: str, bestie_id: str, message_id: str):
     return {"deleted": result.deleted_count > 0}
 
 
+@api_router.post("/chat/starter")
+async def get_conversation_starter(user_id: str, bestie_id: str):
+    """Generate a proactive conversation starter from the Bestie"""
+    try:
+        # Get bestie details
+        bestie_doc = await db.besties.find_one({"id": bestie_id}, {"_id": 0})
+        if not bestie_doc:
+            raise HTTPException(status_code=404, detail="Bestie not found")
+        
+        bestie = Bestie(**parse_from_mongo(bestie_doc))
+        
+        # Get current hour for time-aware greeting
+        current_hour = datetime.now(timezone.utc).hour
+        
+        # Create a starter-specific prompt
+        starter_prompt = f"""You are {bestie.name}, a warm and proactive gay best friend starting a new conversation.
+
+Generate a SHORT, engaging conversation opener (2-3 sentences MAX).
+
+Rules:
+- Be warm and use a term of endearment (babe, honey, sweetie)
+- Ask about their day/mood/plans based on the time
+- Sound genuinely excited to chat
+- Keep it SHORT - no more than 3 sentences total
+- End with a question to get them talking
+
+Time context: It's currently {"morning" if current_hour < 12 else "afternoon" if current_hour < 17 else "evening"}.
+
+Examples:
+- "Hey babe! 💕 How's your day going so far? Anything exciting happening?"
+- "Hi sweetie! ✨ I've been thinking about you - how are you feeling today?"
+- "Hey honey! 💛 What's on your mind? I'm all ears!"
+"""
+        
+        # Generate the starter
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            session_id=f"starter_{user_id}_{bestie_id}",
+            system_message=starter_prompt
+        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        
+        response = await chat.send_message(UserMessage(text="Start the conversation"))
+        
+        # Save the starter message
+        starter_message = Message(
+            user_id=user_id,
+            bestie_id=bestie_id,
+            role="bestie",
+            content=response
+        )
+        await db.messages.insert_one(prepare_for_mongo(starter_message.model_dump()))
+        
+        return {"message": response, "message_id": starter_message.id}
+        
+    except Exception as e:
+        logger.error(f"Error generating conversation starter: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 # ============= VOICE ROUTES =============
 
 # ElevenLabs voice mapping - Bestie voices (gay best friend character)
