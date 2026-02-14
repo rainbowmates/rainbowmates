@@ -54,7 +54,12 @@ export default function IntroScreen({ onNext }) {
       </div>
 
       <div className="p-6">
-        <button data-testid="intro-next-button" onClick={onNext} className="w-full py-4 rounded-full bg-neon-pink text-white font-bold text-lg hover:bg-[#D670D7] transition-all shadow-lg">
+        <button 
+          data-testid="intro-next-button" 
+          onClick={onNext} 
+          className="w-full py-4 rounded-full text-white font-bold text-lg transition-all shadow-lg"
+          style={{ backgroundColor: '#E989EA' }}
+        >
           Next
         </button>
       </div>
