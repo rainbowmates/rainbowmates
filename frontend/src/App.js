@@ -89,16 +89,31 @@ function App() {
   };
 
   if (loading) {
-    return <div className="min-h-screen bg-white" />;
+    return (
+      <>
+        <DesktopWarningModal />
+        <div className="min-h-screen bg-white" />
+      </>
+    );
   }
 
   if (showSplash) {
-    return <SplashScreen />;
+    return (
+      <>
+        <DesktopWarningModal />
+        <SplashScreen />
+      </>
+    );
   }
 
   // Always show intro screen after splash (every time app opens)
   if (showIntro) {
-    return <IntroScreen onNext={handleIntroComplete} />;
+    return (
+      <>
+        <DesktopWarningModal />
+        <IntroScreen onNext={handleIntroComplete} />
+      </>
+    );
   }
 
   return (
