@@ -109,7 +109,7 @@ export default function CreateAvatar({ user }) {
     { id: 'In a relationship', label: 'In a relationship', icon: HeartHandshake, color: 'text-red-500' },
     { id: 'Dating', label: 'Dating', icon: Users, color: 'text-purple-500' },
     { id: 'Engaged', label: 'Engaged', icon: Gem, color: 'text-blue-500' },
-    { id: 'Married', label: 'Married', icon: Ring, color: 'text-yellow-500' },
+    { id: 'Married', label: 'Married', icon: CircleDot, color: 'text-yellow-600' },
     { id: 'Separated', label: 'Separated', icon: HeartCrack, color: 'text-orange-500' },
     { id: 'Divorced', label: 'Divorced', icon: Unlink, color: 'text-gray-500' },
     { id: 'Widowed', label: 'Widowed', icon: Flower2, color: 'text-indigo-500' }
