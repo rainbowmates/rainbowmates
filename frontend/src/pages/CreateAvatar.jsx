@@ -86,8 +86,9 @@ export default function CreateAvatar({ user }) {
   const [formData, setFormData] = useState({
     relationship_status: 'Single',
     relationship_with: 'Men',
-    relationship_feel: 'Happy'
+    relationship_feel: [] // Now an array for multi-select
   });
+  const [otherFeelText, setOtherFeelText] = useState(''); // For "Other" option
   const [selectedAvatar, setSelectedAvatar] = useState(null);
   const [step, setStep] = useState(1); // 1: avatar selection, 2: relationship details
   const [generating, setGenerating] = useState(false);
