@@ -1417,7 +1417,7 @@ async def create_subscription(user_id: str, subscription_data: SubscriptionCreat
             request_base_url = f"{parsed.scheme}://{parsed.netloc}"
         else:
             # Fallback to APP_URL environment variable
-            request_base_url = os.environ.get('APP_URL', 'https://rainbow-mates-2.preview.emergentagent.com')
+            request_base_url = os.environ.get('APP_URL', 'https://mates-mobile-build.preview.emergentagent.com')
         
         webhook_url = f"{request_base_url}/api/webhook/stripe"
         stripe_checkout = StripeCheckout(api_key=STRIPE_API_KEY, webhook_url=webhook_url)
