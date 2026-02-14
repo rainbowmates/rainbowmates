@@ -109,7 +109,7 @@ export default function IntroScreen({ onNext }) {
         <h1 className="text-2xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
           Introducing Rainbow Mates
         </h1>
-        <p className="text-dark-purple/70 text-sm mt-1">Your virtual bestie awaits!</p>
+        <p className="text-dark-purple/70 text-sm mt-1">Girls, Make Your Gay Best Mate here</p>
       </div>
 
       <div ref={containerRef} className="flex-1 relative overflow-hidden mx-4 rounded-3xl bg-white/30 backdrop-blur-sm border border-white/50" style={{ minHeight: '400px' }}>
