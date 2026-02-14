@@ -273,7 +273,8 @@ class Bestie(BaseModel):
     image_url: str
     personality: List[str]
     interests: List[str]
-    accent: str
+    accent: str = "British"  # Legacy field
+    voice_id: str = "Daniel"  # ElevenLabs voice selection
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     avatar_url: Optional[str] = None
 
@@ -282,7 +283,8 @@ class BestieCreate(BaseModel):
     image_url: str
     personality: List[str]
     interests: List[str]
-    accent: str
+    accent: str = "British"  # Legacy field
+    voice_id: str = "Daniel"  # ElevenLabs voice selection
 
 class Message(BaseModel):
     model_config = ConfigDict(extra="ignore")
