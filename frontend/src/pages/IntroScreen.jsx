@@ -9,15 +9,15 @@ const INTRO_IMAGES = [
   },
   { 
     url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/j247vldb_Go%20shopping.png',
-    label: 'Go shopping'
+    label: 'Shopping advice'
   },
   { 
     url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/1j3c6xv8_Sing-a-long.png',
-    label: 'Sing-a-long'
+    label: 'Chill time'
   },
   { 
     url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/guxu8us3_Have%20a%20laugh.png',
-    label: 'Have a laugh'
+    label: 'Relationship advice'
   }
 ];
 
