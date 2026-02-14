@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Smartphone } from "lucide-react";
+import { QRCodeSVG } from "qrcode.react";
 
 const DESKTOP_BREAKPOINT = 768; // pixels - anything wider is considered desktop
 
