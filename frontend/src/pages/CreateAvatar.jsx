@@ -103,13 +103,16 @@ export default function CreateAvatar({ user }) {
     { id: 'Bisexual', label: 'Bisexual', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/0y5dym4o_bisexual.svg' }
   ];
   
-  // Relationship status options with images
+  // Relationship status options with icons
   const statusOptions = [
-    { id: 'Single', label: 'Single', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/97wsk969_single.png' },
-    { id: 'Married', label: 'Married', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/bmsha55i_married.png' },
-    { id: 'Separated or Divorced', label: 'Separated or Divorced', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/26x3fll1_separated%20or%20divorced.png' },
-    { id: 'Open Relationship with Men', label: 'Open Relationship with Men', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/ojopnmvx_open%20relationship%20with%20men.png' },
-    { id: 'Open Relationship with Men & Women', label: 'Open Relationship with Men & Women', image: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/zlinwd8t_open%20relationship%20with%20men%20%26%20women.png' }
+    { id: 'Single', label: 'Single', icon: Heart, color: 'text-pink-500' },
+    { id: 'In a relationship', label: 'In a relationship', icon: HeartHandshake, color: 'text-red-500' },
+    { id: 'Dating', label: 'Dating', icon: Users, color: 'text-purple-500' },
+    { id: 'Engaged', label: 'Engaged', icon: Gem, color: 'text-blue-500' },
+    { id: 'Married', label: 'Married', icon: Ring, color: 'text-yellow-500' },
+    { id: 'Separated', label: 'Separated', icon: HeartCrack, color: 'text-orange-500' },
+    { id: 'Divorced', label: 'Divorced', icon: Unlink, color: 'text-gray-500' },
+    { id: 'Widowed', label: 'Widowed', icon: Flower2, color: 'text-indigo-500' }
   ];
 
   // Relationship feel options with images
