@@ -194,7 +194,8 @@ export default function CreateAvatar({ user }) {
         avatar_url: selectedAvatar?.image,
         relationship_status: formData.relationship_status,
         relationship_with: formData.relationship_with,
-        relationship_feel: formData.relationship_feel
+        relationship_feel: formData.relationship_feel,
+        other_feel_text: otherFeelText
       });
 
       // Update localStorage with avatar_url included
@@ -203,7 +204,8 @@ export default function CreateAvatar({ user }) {
         avatar_url: selectedAvatar?.image,
         relationship_status: formData.relationship_status,
         relationship_with: formData.relationship_with,
-        relationship_feel: formData.relationship_feel
+        relationship_feel: formData.relationship_feel,
+        other_feel_text: otherFeelText
       };
       localStorage.setItem('rainbow_mates_user', JSON.stringify(updatedUser));
 
