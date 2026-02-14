@@ -103,6 +103,7 @@ function App() {
 
   return (
     <div className="App">
+      <DesktopWarningModal />
       <BrowserRouter>
         <Routes>
           <Route
