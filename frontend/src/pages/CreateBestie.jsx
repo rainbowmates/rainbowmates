@@ -204,14 +204,40 @@ export default function CreateBestie({ user }) {
             </div>
           </div>
 
-          {/* Accent - Currently British only */}
+          {/* Voice Selection */}
           <div>
             <label className="block text-sm font-medium text-dark-purple mb-2">
-              Accent
+              Voice
+              <span className="text-dark-purple/50 text-xs ml-2">(select one)</span>
             </label>
-            <div className="px-4 py-3 rounded-2xl bg-muted text-dark-purple flex items-center justify-between">
-              <span>British</span>
-              <span className="text-xs text-dark-purple/50">🇬🇧</span>
+            <div className="grid grid-cols-1 gap-2">
+              {VOICE_OPTIONS.map((voice) => {
+                const isSelected = formData.voice_id === voice.id;
+                return (
+                  <label
+                    key={voice.id}
+                    data-testid={`voice-${voice.id.toLowerCase()}`}
+                    className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all ${
+                      isSelected
+                        ? 'border-neon-pink bg-neon-pink/10'
+                        : 'border-border hover:border-neon-pink/50'
+                    }`}
+                  >
+                    <input
+                      type="radio"
+                      name="voice"
+                      checked={isSelected}
+                      onChange={() => setFormData({ ...formData, voice_id: voice.id })}
+                      className="w-4 h-4 border-2 border-neon-pink text-neon-pink focus:ring-neon-pink accent-[#E989EA]"
+                    />
+                    <span className="text-lg">{voice.flag}</span>
+                    <div className="flex-1">
+                      <span className="text-sm font-medium text-dark-purple">{voice.label}</span>
+                      <span className="text-xs text-dark-purple/50 ml-2">• {voice.description}</span>
+                    </div>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
