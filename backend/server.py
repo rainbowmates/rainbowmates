@@ -1092,16 +1092,29 @@ async def delete_single_message(user_id: str, bestie_id: str, message_id: str):
 # ============= VOICE ROUTES =============
 
 # ElevenLabs voice mapping - Bestie voices (gay best friend character)
-# Young, friendly, energetic voice to match the bestie persona
+# Voice IDs mapped to specific ElevenLabs voices for the gay bestie persona
 VOICE_MAP = {
-    "British": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
-    "American": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
-    "Australian": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
-    "Southern": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
-    "New York": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
-    "Valley Girl": "qxjGnozOAtD4eqNuXms4",  # User-selected young friendly voice
-    "default": "qxjGnozOAtD4eqNuXms4"  # User-selected young friendly voice
+    # British voices
+    "Daniel": "onwK4e9ZLuTAKqWW03F9",    # British (25-35) - Clear, expressive
+    "James": "ZQe5CZNOzWyzPSCn5a3c",      # British (30-45) - Polished, smooth
+    "Arthur": "IKne3meq5aSn9XLyUdCD",     # British (35-50) - Refined, calm
+    # American voices
+    "Adam": "pNInz6obpgDQGcFmaJgB",       # American (25-35) - Conversational, friendly
+    "Josh": "TxGEqnHWrfWFTfGW9XjX",       # American (30-40) - Warm, smooth
+    "Antoni": "ErXwobaYiN019PkySvjV",     # American (25-40) - Soft, empathetic
+    "default": "onwK4e9ZLuTAKqWW03F9"     # Default to Daniel
 }
+
+# Empathetic Gay Bestie voice settings
+BESTIE_VOICE_SETTINGS = {
+    "stability": 0.52,           # 0.45-0.60 range for emotional expressiveness
+    "similarity_boost": 0.85,    # Good voice clarity
+    "style": 0.68,               # 0.6-0.75 range for tonal nuance
+    "use_speaker_boost": True    # Clearer sound
+}
+
+# System prompt for bestie voice tone
+BESTIE_VOICE_PROMPT = "Speak warmly, like you're comforting your best friend after a long day. Gentle, emotionally intelligent, slightly playful softness."
 
 @api_router.post("/voice/tts")
 async def text_to_speech(bestie_id: str, text: str):
@@ -1110,13 +1123,14 @@ async def text_to_speech(bestie_id: str, text: str):
         raise HTTPException(status_code=500, detail="ElevenLabs API key not configured")
     
     try:
-        # Get bestie to determine voice based on accent
+        # Get bestie to determine voice based on voice_id selection
         bestie_doc = await db.besties.find_one({"id": bestie_id}, {"_id": 0})
         voice_id = VOICE_MAP.get("default")
         
         if bestie_doc:
-            accent = bestie_doc.get("accent", "British")
-            voice_id = VOICE_MAP.get(accent, VOICE_MAP["default"])
+            # Use the voice_id directly if available, otherwise fall back to accent
+            selected_voice = bestie_doc.get("voice_id", bestie_doc.get("accent", "Daniel"))
+            voice_id = VOICE_MAP.get(selected_voice, VOICE_MAP["default"])
         
         client = ElevenLabs(api_key=ELEVENLABS_API_KEY)
         
@@ -1126,10 +1140,10 @@ async def text_to_speech(bestie_id: str, text: str):
             voice_id=voice_id,
             model_id="eleven_turbo_v2_5",  # Faster model for lower latency
             voice_settings=VoiceSettings(
-                stability=0.5,  # Lower stability for more expressive, dynamic delivery
-                similarity_boost=0.9,  # Higher for louder, clearer voice
-                style=0.5,  # More style for energetic delivery
-                use_speaker_boost=True  # Enable for louder, clearer sound
+                stability=BESTIE_VOICE_SETTINGS["stability"],
+                similarity_boost=BESTIE_VOICE_SETTINGS["similarity_boost"],
+                style=BESTIE_VOICE_SETTINGS["style"],
+                use_speaker_boost=BESTIE_VOICE_SETTINGS["use_speaker_boost"]
             )
         )
         
