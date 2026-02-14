@@ -116,12 +116,18 @@ export default function CreateAvatar({ user }) {
     { id: 'Widowed', label: 'Widowed', icon: Flower2, color: 'text-indigo-500' }
   ];
 
-  // Relationship feel options with images
+  // Relationship feel options - multi-select checkboxes
   const feelOptions = [
-    { id: 'Happy', label: 'Happy', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/rmpuswos_happy.svg' },
-    { id: 'Bored', label: 'Bored', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/dlhl26lg_bored.svg' },
-    { id: 'Angry', label: 'Angry', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/dbohhbyy_angry.svg' },
-    { id: 'Coming to an end', label: 'Coming to an end', image: 'https://customer-assets.emergentagent.com/job_virtual-bff/artifacts/cjuy81zi_coming%20to%20an%20end.png' }
+    { id: 'Loved', label: 'Loved' },
+    { id: 'Secure', label: 'Secure' },
+    { id: 'Happy', label: 'Happy' },
+    { id: 'Excited', label: 'Excited' },
+    { id: 'Lonely', label: 'Lonely' },
+    { id: 'Neglected', label: 'Neglected' },
+    { id: 'Frustrated', label: 'Frustrated' },
+    { id: 'Anxious', label: 'Anxious' },
+    { id: 'Overwhelmed', label: 'Overwhelmed' },
+    { id: 'Unappreciated', label: 'Unappreciated' }
   ];
 
   useEffect(() => {
