@@ -147,8 +147,11 @@ export default function CreateAvatar({ user }) {
         setFormData({
           relationship_status: user.relationship_status || 'Single',
           relationship_with: user.relationship_with || 'Men',
-          relationship_feel: user.relationship_feel || 'Fun'
+          relationship_feel: Array.isArray(user.relationship_feel) ? user.relationship_feel : []
         });
+        if (user.other_feel_text) {
+          setOtherFeelText(user.other_feel_text);
+        }
       }
     }
   }, [user]);
