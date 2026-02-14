@@ -139,26 +139,35 @@ export default function CreateBestie({ user }) {
             />
           </div>
 
-          {/* Personality */}
+          {/* Personality - Multi-select Checkboxes */}
           <div>
             <label className="block text-sm font-medium text-dark-purple mb-2">
-              Personality (swipe to select)
+              Personality Traits
+              <span className="text-dark-purple/50 text-xs ml-2">(select all that apply)</span>
             </label>
-            <div className="flex gap-2 overflow-x-auto pb-2">
-              {PERSONALITIES.map((p, idx) => (
-                <button
-                  key={idx}
-                  data-testid={`personality-${p.toLowerCase()}`}
-                  onClick={() => togglePersonality(p)}
-                  className={`px-4 py-2 rounded-full font-semibold whitespace-nowrap transition-all ${
-                    formData.personality.includes(p)
-                      ? 'bg-neon-pink text-white neon-glow'
-                      : 'bg-muted text-dark-purple'
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
+            <div className="grid grid-cols-2 gap-2">
+              {PERSONALITIES.map((p, idx) => {
+                const isChecked = formData.personality.includes(p);
+                return (
+                  <label
+                    key={idx}
+                    data-testid={`personality-${p.toLowerCase()}`}
+                    className={`flex items-center gap-2 px-3 py-2.5 rounded-xl border-2 cursor-pointer transition-all ${
+                      isChecked
+                        ? 'border-neon-pink bg-neon-pink/10'
+                        : 'border-border hover:border-neon-pink/50'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={isChecked}
+                      onChange={() => togglePersonality(p)}
+                      className="w-4 h-4 rounded border-2 border-neon-pink text-neon-pink focus:ring-neon-pink accent-[#E989EA]"
+                    />
+                    <span className="text-sm font-medium text-dark-purple">{p}</span>
+                  </label>
+                );
+              })}
             </div>
           </div>
 
