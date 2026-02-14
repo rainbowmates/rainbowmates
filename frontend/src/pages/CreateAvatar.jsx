@@ -294,7 +294,7 @@ export default function CreateAvatar({ user }) {
               <p className="text-dark-purple/70">Tell us a bit about yourself to personalize your experience</p>
             </div>
 
-            {/* Relationship Status - Image Selector */}
+            {/* Relationship Status - Icon Selector */}
             <div>
               <label className="block text-sm font-medium text-dark-purple mb-2">
                 Relationship Status
@@ -305,12 +305,18 @@ export default function CreateAvatar({ user }) {
                 className="w-full px-4 py-3 rounded-2xl bg-muted border-2 border-transparent hover:border-neon-pink focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none flex items-center justify-between transition-all"
               >
                 <div className="flex items-center gap-3">
-                  <img 
-                    src={statusOptions.find(o => o.id === formData.relationship_status)?.image || statusOptions[0].image} 
-                    alt={formData.relationship_status}
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span className="text-dark-purple">{formData.relationship_status}</span>
+                  {(() => {
+                    const status = statusOptions.find(o => o.id === formData.relationship_status) || statusOptions[0];
+                    const IconComponent = status.icon;
+                    return (
+                      <>
+                        <div className={`w-8 h-8 rounded-full bg-white border-2 border-current flex items-center justify-center ${status.color}`}>
+                          <IconComponent className="w-4 h-4" />
+                        </div>
+                        <span className="text-dark-purple">{formData.relationship_status}</span>
+                      </>
+                    );
+                  })()}
                 </div>
                 <ChevronRight className="w-5 h-5 text-dark-purple/50" />
               </button>
@@ -331,24 +337,29 @@ export default function CreateAvatar({ user }) {
                   </div>
                   
                   <div className="grid grid-cols-2 gap-3">
-                    {statusOptions.map((option) => (
-                      <button
-                        key={option.id}
-                        data-testid={`status-option-${option.id.toLowerCase().replace(/\s+/g, '-')}`}
-                        onClick={() => {
-                          setFormData({ ...formData, relationship_status: option.id });
-                          setShowStatusPopup(false);
-                        }}
-                        className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
-                          formData.relationship_status === option.id 
-                            ? 'border-neon-pink bg-neon-pink/10' 
-                            : 'border-border hover:border-neon-pink/50'
-                        }`}
-                      >
-                        <img src={option.image} alt={option.label} className="w-14 h-14 rounded-full object-cover" />
-                        <span className="text-xs font-medium text-dark-purple text-center leading-tight">{option.label}</span>
-                      </button>
-                    ))}
+                    {statusOptions.map((option) => {
+                      const IconComponent = option.icon;
+                      return (
+                        <button
+                          key={option.id}
+                          data-testid={`status-option-${option.id.toLowerCase().replace(/\s+/g, '-')}`}
+                          onClick={() => {
+                            setFormData({ ...formData, relationship_status: option.id });
+                            setShowStatusPopup(false);
+                          }}
+                          className={`p-3 rounded-2xl border-2 transition-all flex flex-col items-center gap-2 ${
+                            formData.relationship_status === option.id 
+                              ? 'border-neon-pink bg-neon-pink/10' 
+                              : 'border-border hover:border-neon-pink/50'
+                          }`}
+                        >
+                          <div className={`w-12 h-12 rounded-full bg-white border-2 border-current flex items-center justify-center ${option.color}`}>
+                            <IconComponent className="w-6 h-6" />
+                          </div>
+                          <span className="text-xs font-medium text-dark-purple text-center leading-tight">{option.label}</span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
               </div>
