@@ -1,34 +1,84 @@
-.App-logo {
-    height: 40vmin;
-    pointer-events: none;
+.App {
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  background: #FFFFFF;
+  width: 100%;
+  overflow-x: hidden;
+  overflow-y: auto;
 }
 
-@media (prefers-reduced-motion: no-preference) {
-    .App-logo {
-        animation: App-logo-spin infinite 20s linear;
-    }
+.app-container {
+  max-width: 28rem;
+  margin: 0 auto;
+  min-height: 100vh;
+  min-height: 100dvh;
+  position: relative;
+  background: #FFFFFF;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-image: linear-gradient(
+    180deg,
+    #FF0000 0%,
+    #FF7F00 16.67%,
+    #FFFF00 33.33%,
+    #00FF00 50%,
+    #0000FF 66.67%,
+    #4B0082 83.33%,
+    #9400D3 100%
+  ) 1;
 }
 
-.App-header {
-    background-color: #0f0f10;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    font-size: calc(10px + 2vmin);
-    color: white;
+.gradient-mesh {
+  background: radial-gradient(at 0% 0%, hsla(301,70%,73%,0.2) 0px, transparent 50%),
+              radial-gradient(at 100% 100%, hsla(190,100%,85%,0.2) 0px, transparent 50%);
 }
 
-.App-link {
-    color: #61dafb;
+.neon-button {
+  background: #E989EA;
+  color: white;
+  border-radius: 9999px;
+  font-weight: 700;
+  padding: 0.75rem 2rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 15px rgba(233, 137, 234, 0.5);
+  transition: all 0.3s ease;
 }
 
-@keyframes App-logo-spin {
-    from {
-        transform: rotate(0deg);
-    }
-    to {
-        transform: rotate(360deg);
-    }
+.neon-button:hover {
+  background: #D670D7;
+  box-shadow: 0 0 25px rgba(233, 137, 234, 0.8);
+  transform: translateY(-2px);
+}
+
+.card-soft {
+  background: white;
+  border-radius: 1.5rem;
+  border: 1px solid #F3E5F5;
+  box-shadow: 0 10px 40px -10px rgba(233, 137, 234, 0.15);
+  transition: all 0.3s ease;
+}
+
+.card-soft:hover {
+  box-shadow: 0 20px 50px -10px rgba(233, 137, 234, 0.25);
+  transform: translateY(-2px);
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-20px); }
+}
+
+.animate-float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 15px rgba(233, 137, 234, 0.4); }
+  50% { box-shadow: 0 0 30px rgba(233, 137, 234, 0.8); }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
 }
