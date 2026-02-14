@@ -22,6 +22,16 @@ const BESTIE_IMAGES = [
 const PERSONALITIES = ['Witty', 'Sassy', 'Loyal', 'Supportive', 'Confident', 'Empathetic', 'Outspoken', 'Stylish', 'Adventurous', 'Protective'];
 const INTERESTS = ['Fashion', 'Food', 'Going out', 'Relationships'];
 
+// Voice options for ElevenLabs - display shows country and age only
+const VOICE_OPTIONS = [
+  { id: 'Daniel', label: 'British (25-35)', flag: '🇬🇧', description: 'Clear, expressive' },
+  { id: 'James', label: 'British (30-45)', flag: '🇬🇧', description: 'Polished, smooth' },
+  { id: 'Arthur', label: 'British (35-50)', flag: '🇬🇧', description: 'Refined, calm' },
+  { id: 'Adam', label: 'American (25-35)', flag: '🇺🇸', description: 'Conversational, friendly' },
+  { id: 'Josh', label: 'American (30-40)', flag: '🇺🇸', description: 'Warm, smooth' },
+  { id: 'Antoni', label: 'American (25-40)', flag: '🇺🇸', description: 'Soft, empathetic' }
+];
+
 export default function CreateBestie({ user }) {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
