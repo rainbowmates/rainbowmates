@@ -19,7 +19,7 @@ const BESTIE_IMAGES = [
   { url: 'https://customer-assets.emergentagent.com/job_59b3b69e-a28f-44fd-a869-c7d33149fa88/artifacts/mpppkgxg_gay%204%20-%202.png', description: 'Test bestie' }
 ];
 
-const PERSONALITIES = ['Funny', 'Chatty', 'Serious', 'Gossipy', 'Sympathetic', 'Attentive', 'Intellectual', 'Bitchy'];
+const PERSONALITIES = ['Witty', 'Sassy', 'Loyal', 'Supportive', 'Confident', 'Empathetic', 'Outspoken', 'Stylish', 'Adventurous', 'Protective'];
 const INTERESTS = ['Fashion', 'Food', 'Going out', 'Relationships'];
 
 export default function CreateBestie({ user }) {
