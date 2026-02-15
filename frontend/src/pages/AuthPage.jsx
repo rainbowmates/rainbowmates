@@ -36,6 +36,7 @@ const COUNTRY_CODES = [
 ];
 
 export default function AuthPage({ onLogin, onBack }) {
+  const { t } = useLanguage();
   const [mode, setMode] = useState('register'); // Default to register
   const [step, setStep] = useState('auth'); // auth, otp, forgot, reset
   const [errors, setErrors] = useState({});
