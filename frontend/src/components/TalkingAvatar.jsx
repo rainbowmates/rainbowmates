@@ -242,10 +242,13 @@ const TalkingAvatar = ({
     }
   }, []);
 
-  // Animate mouth based on audio amplitude
+  // Animate mouth based on audio amplitude (fallback when no viseme data)
   const animateMouth = useCallback(() => {
-    if (!analyserRef.current || !isSpeaking) {
-      setMouthOpenness(0);
+    if (!analyserRef.current || !isSpeaking || useVisemeLipSync) {
+      if (!useVisemeLipSync) {
+        setMouthOpenness(0);
+        setMouthWidth(0);
+      }
       return;
     }
 
@@ -264,7 +267,37 @@ const TalkingAvatar = ({
     setMouthOpenness(prev => prev + (normalized - prev) * 0.3);
 
     animationFrameRef.current = requestAnimationFrame(animateMouth);
-  }, [isSpeaking]);
+  }, [isSpeaking, useVisemeLipSync]);
+
+  // Viseme-based lip sync animation (precise timing from backend)
+  const animateWithVisemes = useCallback(() => {
+    if (!visemeTimingData || visemeTimingData.length === 0 || !audioStartTimeRef.current) {
+      return;
+    }
+
+    const currentTime = Date.now() - audioStartTimeRef.current;
+    
+    // Find current viseme based on timing
+    let currentViseme = 0;
+    for (let i = 0; i < visemeTimingData.length; i++) {
+      const viseme = visemeTimingData[i];
+      if (currentTime >= viseme.time && currentTime < viseme.time + viseme.duration) {
+        currentViseme = viseme.viseme;
+        break;
+      }
+    }
+    
+    // Get mouth shape for this viseme
+    const shape = VISEME_MOUTH_SHAPES[currentViseme] || VISEME_MOUTH_SHAPES[0];
+    
+    // Apply with smooth interpolation
+    setMouthOpenness(prev => prev + (shape.openness - prev) * 0.4);
+    setMouthWidth(prev => prev + (shape.width - prev) * 0.4);
+
+    if (isSpeaking) {
+      animationFrameRef.current = requestAnimationFrame(animateWithVisemes);
+    }
+  }, [visemeTimingData, isSpeaking]);
 
   // Handle audio playback
   useEffect(() => {
