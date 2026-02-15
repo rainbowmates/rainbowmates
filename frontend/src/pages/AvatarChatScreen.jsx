@@ -363,6 +363,7 @@ export default function AvatarChatScreen({ user }) {
               isPlaying={isAvatarSpeaking}
               onAudioEnd={handleAudioEnd}
               emotionState={emotionState}
+              expressionConfig={expressionConfig}
               className="mb-6"
             />
             
