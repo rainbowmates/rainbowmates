@@ -378,20 +378,20 @@ export default function AuthPage({ onLogin, onBack }) {
             className="flex items-center gap-2 text-dark-purple/70 hover:text-dark-purple mb-4"
           >
             <ArrowLeft className="w-4 h-4" />
-            Back
+            {t('back')}
           </button>
         )}
 
         <div className="text-center mb-6">
           <img 
             src={LOGO_URL} 
-            alt="Rainbow Mates Logo" 
+            alt={t('appName')} 
             className="w-20 h-20 mx-auto mb-3 object-contain"
           />
           <h1 className="text-3xl font-bold text-dark-purple mb-1" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            Rainbow Mates
+            {t('appName')}
           </h1>
-          <p className="text-dark-purple/70 text-sm">Your fabulous virtual bestie awaits!</p>
+          <p className="text-dark-purple/70 text-sm">{t('tagline')}</p>
         </div>
 
         <div className="card-soft p-6">
