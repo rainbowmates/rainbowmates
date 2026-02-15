@@ -349,7 +349,7 @@ export default function AvatarChatScreen({ user }) {
                 style={{ width: `${(usageStats.used / usageStats.limit) * 100}%` }}
               />
             </div>
-            <span>{usageStats.remaining} replies left</span>
+            <span>{usageStats.remaining} {t('repliesLeft')}</span>
           </div>
         )}
       </div>
