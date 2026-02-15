@@ -188,15 +188,15 @@ export default function Dashboard({ user, onLogout }) {
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
                   <span className="text-lg">✨</span>
-                  <p className="text-sm text-dark-purple font-medium">Be anyone you want — this is your world!</p>
+                  <p className="text-sm text-dark-purple font-medium">{t('beAnyoneYouWant')}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-lg">💬</span>
-                  <p className="text-sm text-dark-purple font-medium">Share your vibe so your bestie really gets you.</p>
+                  <p className="text-sm text-dark-purple font-medium">{t('shareYourVibe')}</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <span className="text-lg">💖</span>
-                  <p className="text-sm text-dark-purple font-medium">Pick traits that match the friend you deserve.</p>
+                  <p className="text-sm text-dark-purple font-medium">{t('pickTraits')}</p>
                 </div>
               </div>
             </div>
