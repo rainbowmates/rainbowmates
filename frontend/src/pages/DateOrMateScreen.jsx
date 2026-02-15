@@ -3,12 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, Send, Heart, Users, Loader2, ChevronDown, Plus, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { useLanguage } from '../context/LanguageContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 export default function DateOrMateScreen({ user, bestie: propBestie }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [bestie, setBestie] = useState(propBestie || null);
   const [messages, setMessages] = useState([]);
   const [inputText, setInputText] = useState('');
