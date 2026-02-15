@@ -128,7 +128,53 @@ export const translations = {
     tryAgain: "Try again",
     micAccessDenied: "Microphone access denied. Click the lock icon in your browser to allow access.",
     couldNotAccessMic: "Could not access microphone",
-    voiceProcessingFailed: "Voice processing failed"
+    voiceProcessingFailed: "Voice processing failed",
+    
+    // Dashboard
+    you: "You",
+    premiumActive: "Premium Active",
+    subscribeToPlay: "Subscribe to Play",
+    unlockFeatures: "Unlock chat, voice, dance & more!",
+    beAnyoneYouWant: "Be anyone you want — this is your world!",
+    shareYourVibe: "Share your vibe so your bestie really gets you.",
+    pickTraits: "Pick traits that match the friend you deserve.",
+    chooseBestieFirst: "Choose your bestie first to play together!",
+    createAvatarFirst: "Create your avatar first to continue!",
+    
+    // Avatar Chat
+    loadingTom: "Loading Tom...",
+    tom: "Tom",
+    repliesLeft: "replies left",
+    tomIsThinking: "Tom is thinking...",
+    talkToTom: "Talk to Tom...",
+    
+    // Subscription
+    processingPayment: "Processing payment...",
+    unlockAllFeatures: "Unlock all features and endless fun!",
+    freeSubscription: "Free Subscription",
+    comingSoon: "Coming Soon",
+    
+    // Create Bestie
+    enterFabulousName: "Enter a fabulous name...",
+    
+    // Settings
+    days: "days",
+    dominantMood: "Dominant mood",
+    noMoodDataYet: "No mood data yet. Start chatting to track your mood!",
+    deleteAccount: "Delete Account?",
+    
+    // Auth
+    signingYouIn: "Signing you in...",
+    pleaseWaitLogin: "Please wait while we complete your login",
+    useForTesting: "Use 123456 for testing",
+    enterToVerify: "Enter 123456 to verify",
+    
+    // Date or Mate
+    previousDiscussions: "Previous Discussions",
+    newPerson: "New Person",
+    
+    // Play Screen
+    freePilotActive: "Free Pilot Subscription Active"
   },
   
   fr: {
