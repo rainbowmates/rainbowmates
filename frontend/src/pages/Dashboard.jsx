@@ -160,7 +160,7 @@ export default function Dashboard({ user, onLogout }) {
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   <div>
-                    <p className="font-semibold text-green-800">Premium Active</p>
+                    <p className="font-semibold text-green-800">{t('premiumActive')}</p>
                     <p className="text-xs text-green-600">
                       {subscription.subscription.plan.replace('_', ' ')} plan
                     </p>
@@ -174,8 +174,8 @@ export default function Dashboard({ user, onLogout }) {
                     <Sparkles className="w-5 h-5 text-white" />
                   </div>
                   <div className="flex-1">
-                    <p className="font-semibold text-amber-800">Subscribe to Play</p>
-                    <p className="text-xs text-amber-600">Unlock chat, voice, dance & more!</p>
+                    <p className="font-semibold text-amber-800">{t('subscribeToPlay')}</p>
+                    <p className="text-xs text-amber-600">{t('unlockFeatures')}</p>
                   </div>
                 </div>
               </div>
