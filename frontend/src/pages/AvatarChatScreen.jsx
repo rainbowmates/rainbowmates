@@ -4,6 +4,7 @@ import axios from 'axios';
 import { ArrowLeft, Send, Mic, StopCircle, Settings, MessageCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import TalkingAvatar from '../components/TalkingAvatar';
+import { useLanguage } from '../context/LanguageContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -13,6 +14,7 @@ const TOM_IMAGE = 'https://customer-assets.emergentagent.com/job_d78d511c-01b3-4
 
 export default function AvatarChatScreen({ user }) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   
   // Core state
   const [bestie, setBestie] = useState(null);
