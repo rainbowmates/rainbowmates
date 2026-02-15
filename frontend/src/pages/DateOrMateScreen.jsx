@@ -1,11 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Send, Heart, Users, Loader2, ChevronDown, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Send, Heart, Users, Loader2, Plus, Trash2, Mic, StopCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
+
+// Tom's image URL
+const TOM_IMAGE = 'https://customer-assets.emergentagent.com/job_d78d511c-01b3-4716-b2c4-6339dea946bb/artifacts/dmzb8405_tom.png';
 
 export default function DateOrMateScreen({ user, bestie: propBestie }) {
   const navigate = useNavigate();
@@ -18,6 +21,12 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
   const [showPeopleList, setShowPeopleList] = useState(false);
   const [currentPerson, setCurrentPerson] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
+  
+  // Voice recording state
+  const [recording, setRecording] = useState(false);
+  const [mediaRecorder, setMediaRecorder] = useState(null);
+  const audioChunksRef = useRef([]);
+  
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
 
