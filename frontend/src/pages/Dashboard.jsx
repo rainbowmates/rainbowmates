@@ -149,7 +149,7 @@ export default function Dashboard({ user, onLogout }) {
               className="w-full py-4 rounded-2xl bg-gradient-to-r from-neon-pink via-purple-500 to-soft-blue text-white font-bold text-lg shadow-lg hover:shadow-xl transition-all flex items-center justify-center gap-3"
             >
               <Play className="w-6 h-6 fill-white" />
-              Let's Play!
+              {t('letsPlay')}
             </button>
 
             {/* Subscription Status */}
