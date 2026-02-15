@@ -912,15 +912,11 @@ async def send_message(user_id: str, message_data: MessageCreate):
             {"_id": 0}
         ).sort("timestamp", 1).limit(20).to_list(20)
         
-        # Get current hour for time-aware responses
-        current_hour = datetime.now(timezone.utc).hour
-        
         # Create comprehensive Bestie system prompt
         system_message = get_bestie_system_prompt(
             bestie_name=bestie.name,
             personality=bestie.personality,
-            interests=bestie.interests,
-            current_hour=current_hour
+            interests=bestie.interests
         )
         
         # Initialize Claude chat
