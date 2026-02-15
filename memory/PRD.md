@@ -5,6 +5,21 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - Multi-lingual TTS (COMPLETE)
+**Tom now speaks in the user's selected language:**
+- English (en) - uses `eleven_turbo_v2_5` (faster model)
+- French (fr) - uses `eleven_multilingual_v2`
+- Italian (it) - uses `eleven_multilingual_v2`
+- German (de) - uses `eleven_multilingual_v2`
+- Spanish (es) - uses `eleven_multilingual_v2`
+- Portuguese (pt) - uses `eleven_multilingual_v2`
+
+**Technical Implementation:**
+- Added `language` parameter to `/api/avatar/speak` endpoint
+- Updated `StreamingTTSService.generate_speech()` to select model based on language
+- Frontend passes current language from `useLanguage()` context
+- Same Daniel voice speaks in all languages (ElevenLabs multilingual capability)
+
 ### Feb 15, 2026 - AI Safety Guardrails (COMPLETE)
 **Implemented behavioral guardrails to ensure responsible AI behavior:**
 1. **No Inappropriate Content**: AI politely refuses sexual or explicit conversation requests
