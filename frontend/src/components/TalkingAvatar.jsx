@@ -443,6 +443,7 @@ const TalkingAvatar = ({
             '--mouth-open': mouthOpenness + (expression.mouthOpen || 0),
             '--mouth-curve': expression.mouthCurve || 0,
             '--mouth-asymmetry': expression.mouthAsymmetry || 0,
+            '--mouth-width': mouthWidth,  // Viseme-based width
           }}
         >
           <div className="mouth-shape" />
