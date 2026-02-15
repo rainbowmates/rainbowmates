@@ -1,15 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, User, Heart, Lock, Trash2, LogOut } from 'lucide-react';
+import { ArrowLeft, User, Heart, Lock, Trash2, LogOut, Globe, BarChart2 } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../context/LanguageContext';
+import LanguageSelector from '../components/LanguageSelector';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 export default function SettingsScreen({ user, onLogout }) {
   const navigate = useNavigate();
+  const { t, language } = useLanguage();
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [showLanguageSelector, setShowLanguageSelector] = useState(false);
+  const [showMoodHistory, setShowMoodHistory] = useState(false);
+  const [moodData, setMoodData] = useState(null);
 
   const handleLogout = () => {
     onLogout();
@@ -27,7 +33,54 @@ export default function SettingsScreen({ user, onLogout }) {
     }
   };
 
+  const fetchMoodHistory = async () => {
+    try {
+      const res = await axios.get(`${API}/mood/summary/${user.id}?days=7`);
+      setMoodData(res.data);
+      setShowMoodHistory(true);
+    } catch (error) {
+      toast.error('Failed to load mood history');
+    }
+  };
+
+  const getMoodEmoji = (mood) => {
+    const moodEmojis = {
+      happy: '😊',
+      sad: '😢',
+      anxious: '😰',
+      excited: '🤩',
+      neutral: '😐',
+      stressed: '😫',
+      calm: '😌',
+      angry: '😠'
+    };
+    return moodEmojis[mood] || '😐';
+  };
+
+  const languageFlags = {
+    en: '🇬🇧',
+    fr: '🇫🇷',
+    it: '🇮🇹',
+    de: '🇩🇪',
+    es: '🇪🇸',
+    pt: '🇵🇹'
+  };
+
   const settings = [
+    {
+      icon: Globe,
+      title: t('language'),
+      description: `${languageFlags[language]} ${t(language)}`,
+      action: () => setShowLanguageSelector(true),
+      testId: 'change-language'
+    },
+    {
+      icon: BarChart2,
+      title: t('moodHistory'),
+      description: t('currentMood'),
+      action: fetchMoodHistory,
+      testId: 'mood-history'
+    },
     {
       icon: User,
       title: 'Edit User Avatar',
@@ -79,7 +132,7 @@ export default function SettingsScreen({ user, onLogout }) {
             <ArrowLeft className="w-6 h-6 text-dark-purple" />
           </button>
           <h1 className="text-3xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            Settings
+            {t('settings')}
           </h1>
         </div>
 
@@ -123,6 +176,66 @@ export default function SettingsScreen({ user, onLogout }) {
         </div>
       </div>
 
+      {/* Language Selector Modal */}
+      {showLanguageSelector && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+          <div className="card-soft p-6 max-w-sm w-full max-h-[80vh] overflow-y-auto" data-testid="language-selector-modal">
+            <LanguageSelector onClose={() => setShowLanguageSelector(false)} />
+            <button
+              onClick={() => setShowLanguageSelector(false)}
+              className="w-full mt-4 py-3 px-4 rounded-full bg-muted text-dark-purple font-semibold hover:bg-border transition-all"
+            >
+              {t('done')}
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Mood History Modal */}
+      {showMoodHistory && moodData && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
+          <div className="card-soft p-6 max-w-sm w-full" data-testid="mood-history-modal">
+            <h3 className="text-xl font-bold text-dark-purple mb-4">{t('moodHistory')} (7 days)</h3>
+            
+            {moodData.total_entries > 0 ? (
+              <>
+                <div className="text-center mb-4">
+                  <span className="text-4xl">{getMoodEmoji(moodData.dominant_mood)}</span>
+                  <p className="text-sm text-dark-purple/70 mt-1">
+                    Dominant mood: <span className="font-semibold capitalize">{t(moodData.dominant_mood)}</span>
+                  </p>
+                </div>
+                
+                <div className="space-y-2">
+                  {Object.entries(moodData.mood_counts).map(([mood, count]) => (
+                    <div key={mood} className="flex items-center justify-between p-2 bg-muted rounded-lg">
+                      <div className="flex items-center gap-2">
+                        <span>{getMoodEmoji(mood)}</span>
+                        <span className="capitalize text-dark-purple">{t(mood)}</span>
+                      </div>
+                      <span className="text-dark-purple/70">{count}x</span>
+                    </div>
+                  ))}
+                </div>
+                
+                <p className="text-xs text-dark-purple/50 mt-4 text-center">
+                  {moodData.total_entries} mood entries in the last 7 days
+                </p>
+              </>
+            ) : (
+              <p className="text-center text-dark-purple/70">No mood data yet. Start chatting to track your mood!</p>
+            )}
+            
+            <button
+              onClick={() => setShowMoodHistory(false)}
+              className="w-full mt-4 py-3 px-4 rounded-full bg-neon-pink text-white font-semibold hover:bg-[#D670D7] transition-all"
+            >
+              {t('done')}
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Delete Confirmation Modal */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
@@ -137,7 +250,7 @@ export default function SettingsScreen({ user, onLogout }) {
                 onClick={() => setShowDeleteConfirm(false)}
                 className="flex-1 py-3 px-4 rounded-full bg-muted text-dark-purple font-semibold hover:bg-border transition-all"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 data-testid="confirm-delete"
