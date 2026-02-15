@@ -1010,6 +1010,93 @@ async def delete_single_message(user_id: str, bestie_id: str, message_id: str):
     return {"deleted": result.deleted_count > 0}
 
 
+# ============= MOOD TRACKING =============
+
+MOOD_CATEGORIES = ["happy", "sad", "anxious", "excited", "neutral", "stressed", "calm", "angry"]
+
+@api_router.post("/mood/analyze")
+async def analyze_mood(user_id: str, message: str):
+    """Analyze the mood of a user message using AI"""
+    try:
+        mood_prompt = """Analyze the emotional tone of this message and respond with ONLY ONE word from this list:
+happy, sad, anxious, excited, neutral, stressed, calm, angry
+
+Message: """ + message
+        
+        chat = LlmChat(
+            api_key=EMERGENT_LLM_KEY,
+            system_message="You are a mood analyzer. Respond with exactly one mood word."
+        ).with_model("anthropic", "claude-sonnet-4-5-20250929")
+        
+        response = await chat.send_message(UserMessage(text=mood_prompt))
+        mood = response.strip().lower()
+        
+        # Validate mood is in our list
+        if mood not in MOOD_CATEGORIES:
+            mood = "neutral"
+        
+        # Save mood entry
+        mood_entry = {
+            "id": str(uuid.uuid4()),
+            "user_id": user_id,
+            "mood": mood,
+            "message_snippet": message[:100],
+            "timestamp": datetime.now(timezone.utc).isoformat()
+        }
+        await db.mood_history.insert_one(mood_entry)
+        
+        return {"mood": mood, "id": mood_entry["id"]}
+        
+    except Exception as e:
+        logger.error(f"Error analyzing mood: {str(e)}")
+        return {"mood": "neutral", "error": str(e)}
+
+
+@api_router.get("/mood/history/{user_id}")
+async def get_mood_history(user_id: str, limit: int = 50):
+    """Get mood history for a user"""
+    cursor = db.mood_history.find(
+        {"user_id": user_id},
+        {"_id": 0}
+    ).sort("timestamp", -1).limit(limit)
+    
+    history = await cursor.to_list(length=limit)
+    return {"history": history}
+
+
+@api_router.get("/mood/summary/{user_id}")
+async def get_mood_summary(user_id: str, days: int = 7):
+    """Get mood summary for the past N days"""
+    from datetime import timedelta
+    
+    cutoff = (datetime.now(timezone.utc) - timedelta(days=days)).isoformat()
+    
+    cursor = db.mood_history.find(
+        {"user_id": user_id, "timestamp": {"$gte": cutoff}},
+        {"_id": 0}
+    )
+    
+    entries = await cursor.to_list(length=500)
+    
+    # Count moods
+    mood_counts = {}
+    for entry in entries:
+        mood = entry.get("mood", "neutral")
+        mood_counts[mood] = mood_counts.get(mood, 0) + 1
+    
+    # Find dominant mood
+    dominant_mood = "neutral"
+    if mood_counts:
+        dominant_mood = max(mood_counts, key=mood_counts.get)
+    
+    return {
+        "total_entries": len(entries),
+        "mood_counts": mood_counts,
+        "dominant_mood": dominant_mood,
+        "days": days
+    }
+
+
 @api_router.post("/chat/starter")
 async def get_conversation_starter(user_id: str, bestie_id: str):
     """Generate a proactive conversation starter from the Bestie"""
