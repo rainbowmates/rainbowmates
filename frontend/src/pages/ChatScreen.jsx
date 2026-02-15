@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Send, Mic, StopCircle, Volume2, Trash2, X, ArrowUp } from 'lucide-react';
+import { ArrowLeft, Send, Mic, StopCircle, Volume2, VolumeX, Trash2, X, ArrowUp, Play, Pause, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useLanguage } from '../context/LanguageContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -17,33 +18,9 @@ const getAudioContext = () => {
   return audioContext;
 };
 
-const playAudioFromBase64 = async (base64DataUrl) => {
-  const ctx = getAudioContext();
-  
-  if (ctx.state === 'suspended') {
-    await ctx.resume();
-  }
-  
-  const base64 = base64DataUrl.split(',')[1];
-  const binaryString = atob(base64);
-  const bytes = new Uint8Array(binaryString.length);
-  for (let i = 0; i < binaryString.length; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-  
-  const audioBuffer = await ctx.decodeAudioData(bytes.buffer);
-  const source = ctx.createBufferSource();
-  const gainNode = ctx.createGain();
-  gainNode.gain.value = 1.5;
-  source.buffer = audioBuffer;
-  source.connect(gainNode);
-  gainNode.connect(ctx.destination);
-  
-  return { source, ctx };
-};
-
 export default function ChatScreen({ user }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [bestie, setBestie] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
@@ -56,17 +33,33 @@ export default function ChatScreen({ user }) {
   const [processing, setProcessing] = useState(false);
   const [speaking, setSpeaking] = useState(false);
   const [mediaRecorder, setMediaRecorder] = useState(null);
-  const [lastAudioUrl, setLastAudioUrl] = useState(null);
+  const [currentPlayingId, setCurrentPlayingId] = useState(null);
+  const [isPaused, setIsPaused] = useState(false);
+  
+  // Audio storage for each message
+  const [messageAudios, setMessageAudios] = useState({});
+  
+  // Mood tracking
+  const [currentMood, setCurrentMood] = useState(null);
   
   const messagesEndRef = useRef(null);
   const typingTimeoutRef = useRef(null);
-  const audioSourceRef = useRef(null);
+  const audioElementRef = useRef(null);
+  const audioContextRef = useRef(null);
+  const sourceNodeRef = useRef(null);
+  const gainNodeRef = useRef(null);
+  const startTimeRef = useRef(0);
+  const pauseTimeRef = useRef(0);
 
   useEffect(() => {
     fetchBestieAndMessages();
     return () => {
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
+      }
+      // Cleanup audio
+      if (audioElementRef.current) {
+        audioElementRef.current.pause();
       }
     };
   }, []);
@@ -112,9 +105,32 @@ export default function ChatScreen({ user }) {
       } else {
         setMessages(messagesRes.data);
       }
+      
+      // Get current mood
+      fetchMoodSummary();
     } catch (error) {
-      toast.error('Failed to load chat');
+      toast.error(t('failedToLoad'));
       navigate('/dashboard');
+    }
+  };
+
+  const fetchMoodSummary = async () => {
+    try {
+      const res = await axios.get(`${API}/mood/summary/${user.id}?days=1`);
+      if (res.data.dominant_mood) {
+        setCurrentMood(res.data.dominant_mood);
+      }
+    } catch (e) {
+      // Ignore mood errors
+    }
+  };
+
+  const analyzeMood = async (message) => {
+    try {
+      const res = await axios.post(`${API}/mood/analyze?user_id=${user.id}&message=${encodeURIComponent(message)}`);
+      setCurrentMood(res.data.mood);
+    } catch (e) {
+      // Ignore mood errors
     }
   };
 
@@ -127,6 +143,9 @@ export default function ChatScreen({ user }) {
     setInput('');
     setMessages(prev => [...prev, userMessage]);
     setLoading(true);
+    
+    // Analyze mood in background
+    analyzeMood(content);
     
     typingTimeoutRef.current = setTimeout(() => {
       setShowTyping(true);
@@ -144,7 +163,7 @@ export default function ChatScreen({ user }) {
       setShowTyping(false);
 
       const bestieMessage = {
-        id: (Date.now() + 1).toString(),
+        id: response.data.message_id || (Date.now() + 1).toString(),
         role: 'bestie',
         content: response.data.message,
         timestamp: new Date().toISOString()
@@ -153,7 +172,7 @@ export default function ChatScreen({ user }) {
       
       return response.data.message;
     } catch (error) {
-      toast.error('Failed to send message');
+      toast.error(t('failedToSend'));
       if (typingTimeoutRef.current) {
         clearTimeout(typingTimeoutRef.current);
       }
@@ -192,9 +211,9 @@ export default function ChatScreen({ user }) {
     } catch (error) {
       console.error('Mic error:', error);
       if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-        toast.error('Microphone access denied. Click the lock icon in your browser to allow access.', { duration: 6000 });
+        toast.error(t('micAccessDenied'), { duration: 6000 });
       } else {
-        toast.error('Could not access microphone');
+        toast.error(t('couldNotAccessMic'));
       }
     }
   };
@@ -227,6 +246,9 @@ export default function ChatScreen({ user }) {
         timestamp: new Date().toISOString()
       };
       setMessages(prev => [...prev, userMessage]);
+      
+      // Analyze mood
+      analyzeMood(transcribedText);
 
       // Get AI response
       const chatResponse = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
@@ -235,71 +257,143 @@ export default function ChatScreen({ user }) {
       });
 
       const bestieResponse = chatResponse.data.message;
+      const bestieMessageId = chatResponse.data.message_id || (Date.now() + 1).toString();
       
-      // Convert to speech and play
+      // Convert to speech
       setSpeaking(true);
+      setCurrentPlayingId(bestieMessageId);
+      
       const ttsResponse = await axios.post(`${API}/voice/tts?bestie_id=${bestie.id}&text=${encodeURIComponent(bestieResponse)}`);
 
-      if (ttsResponse.data.audio_url) {
-        setLastAudioUrl(ttsResponse.data.audio_url);
-        
-        const bestieMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'bestie',
-          content: bestieResponse,
-          timestamp: new Date().toISOString()
-        };
+      const bestieMessage = {
+        id: bestieMessageId,
+        role: 'bestie',
+        content: bestieResponse,
+        timestamp: new Date().toISOString()
+      };
 
-        const showMessageAfterAudio = () => {
-          setMessages(prev => [...prev, bestieMessage]);
-          setSpeaking(false);
-        };
+      if (ttsResponse.data.audio_url) {
+        // Store audio URL for this message
+        setMessageAudios(prev => ({
+          ...prev,
+          [bestieMessageId]: ttsResponse.data.audio_url
+        }));
         
-        try {
-          const { source } = await playAudioFromBase64(ttsResponse.data.audio_url);
-          audioSourceRef.current = source;
-          source.onended = showMessageAfterAudio;
-          source.start(0);
-        } catch (audioError) {
-          // Fallback - show message without audio
+        // Play audio
+        await playAudio(ttsResponse.data.audio_url, bestieMessageId, () => {
           setMessages(prev => [...prev, bestieMessage]);
           setSpeaking(false);
-        }
+          setCurrentPlayingId(null);
+        });
       } else {
-        const bestieMessage = {
-          id: (Date.now() + 1).toString(),
-          role: 'bestie',
-          content: bestieResponse,
-          timestamp: new Date().toISOString()
-        };
         setMessages(prev => [...prev, bestieMessage]);
         setSpeaking(false);
+        setCurrentPlayingId(null);
       }
     } catch (error) {
-      toast.error(error.response?.data?.detail || 'Voice processing failed');
+      toast.error(t('voiceProcessingFailed'));
       setSpeaking(false);
+      setCurrentPlayingId(null);
     } finally {
       setProcessing(false);
     }
   };
 
-  const replayLastAudio = async () => {
-    if (!lastAudioUrl) return;
-    
-    setSpeaking(true);
+  // Audio playback functions
+  const playAudio = async (audioUrl, messageId, onEnd) => {
     try {
-      const { source } = await playAudioFromBase64(lastAudioUrl);
-      audioSourceRef.current = source;
-      source.onended = () => setSpeaking(false);
-      source.start(0);
+      // Stop any currently playing audio
+      stopCurrentAudio();
+      
+      // Create new audio element
+      const audio = new Audio(audioUrl);
+      audio.volume = 1.0;
+      audioElementRef.current = audio;
+      
+      setCurrentPlayingId(messageId);
+      setIsPaused(false);
+      
+      audio.onended = () => {
+        setCurrentPlayingId(null);
+        setIsPaused(false);
+        if (onEnd) onEnd();
+      };
+      
+      audio.onerror = () => {
+        setCurrentPlayingId(null);
+        setIsPaused(false);
+        if (onEnd) onEnd();
+      };
+      
+      await audio.play();
     } catch (error) {
-      setSpeaking(false);
+      console.error('Audio playback error:', error);
+      setCurrentPlayingId(null);
+      if (onEnd) onEnd();
+    }
+  };
+
+  const stopCurrentAudio = () => {
+    if (audioElementRef.current) {
+      audioElementRef.current.pause();
+      audioElementRef.current.currentTime = 0;
+      audioElementRef.current = null;
+    }
+    setCurrentPlayingId(null);
+    setIsPaused(false);
+  };
+
+  const togglePlayPause = (messageId) => {
+    if (!audioElementRef.current) return;
+    
+    if (currentPlayingId === messageId && !isPaused) {
+      // Pause
+      audioElementRef.current.pause();
+      setIsPaused(true);
+    } else if (currentPlayingId === messageId && isPaused) {
+      // Resume
+      audioElementRef.current.play();
+      setIsPaused(false);
+    }
+  };
+
+  const listenAgain = async (messageId) => {
+    const audioUrl = messageAudios[messageId];
+    if (!audioUrl) {
+      // Generate TTS for this message
+      const message = messages.find(m => m.id === messageId);
+      if (!message || message.role !== 'bestie') return;
+      
+      try {
+        setSpeaking(true);
+        const ttsResponse = await axios.post(`${API}/voice/tts?bestie_id=${bestie.id}&text=${encodeURIComponent(message.content)}`);
+        
+        if (ttsResponse.data.audio_url) {
+          setMessageAudios(prev => ({
+            ...prev,
+            [messageId]: ttsResponse.data.audio_url
+          }));
+          
+          await playAudio(ttsResponse.data.audio_url, messageId, () => {
+            setSpeaking(false);
+          });
+        } else {
+          setSpeaking(false);
+        }
+      } catch (error) {
+        toast.error(t('voiceProcessingFailed'));
+        setSpeaking(false);
+      }
+    } else {
+      await playAudio(audioUrl, messageId, () => {
+        setSpeaking(false);
+      });
     }
   };
 
   const deleteMessage = async (messageId, index) => {
     setMessages(prev => prev.filter((_, idx) => idx !== index));
-    toast.success('Message deleted');
+    toast.success(t('messageDeleted'));
     
     try {
       await axios.delete(`${API}/chat/message/${user.id}/${bestie.id}/${messageId}`);
@@ -312,14 +406,29 @@ export default function ChatScreen({ user }) {
     try {
       await axios.delete(`${API}/chat/history/${user.id}/${bestie.id}?timeframe=all`);
       setMessages([]);
+      setMessageAudios({});
       setShowClearConfirm(false);
-      toast.success('Chat history cleared');
+      toast.success(t('chatHistoryCleared'));
     } catch (error) {
-      toast.error('Failed to clear history');
+      toast.error(t('failedToLoad'));
     }
   };
 
-  if (!bestie) return <div className="app-container min-h-screen flex items-center justify-center">Loading...</div>;
+  const getMoodEmoji = (mood) => {
+    const moodEmojis = {
+      happy: '😊',
+      sad: '😢',
+      anxious: '😰',
+      excited: '🤩',
+      neutral: '😐',
+      stressed: '😫',
+      calm: '😌',
+      angry: '😠'
+    };
+    return moodEmojis[mood] || '😐';
+  };
+
+  if (!bestie) return <div className="app-container min-h-screen flex items-center justify-center">{t('loading')}</div>;
 
   return (
     <div className="app-container min-h-screen flex flex-col">
@@ -327,22 +436,20 @@ export default function ChatScreen({ user }) {
       {showClearConfirm && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
           <div className="bg-white rounded-2xl p-6 max-w-sm w-full shadow-xl">
-            <h3 className="text-lg font-bold text-dark-purple mb-2">Clear All Messages?</h3>
-            <p className="text-dark-purple/70 mb-6">
-              Delete all chat history with {bestie.name}? This cannot be undone.
-            </p>
+            <h3 className="text-lg font-bold text-dark-purple mb-2">{t('clearAllMessages')}</h3>
+            <p className="text-dark-purple/70 mb-6">{t('clearAllConfirm')}</p>
             <div className="flex gap-3">
               <button
                 onClick={() => setShowClearConfirm(false)}
                 className="flex-1 px-4 py-2 rounded-full border border-border text-dark-purple hover:bg-muted transition-all"
               >
-                Cancel
+                {t('cancel')}
               </button>
               <button
                 onClick={clearAllHistory}
                 className="flex-1 px-4 py-2 rounded-full bg-red-500 text-white hover:bg-red-600 transition-all"
               >
-                Clear All
+                {t('clearAll')}
               </button>
             </div>
           </div>
@@ -369,27 +476,22 @@ export default function ChatScreen({ user }) {
           <div>
             <h2 className="font-bold text-dark-purple">{bestie.name}</h2>
             <p className="text-xs text-dark-purple/60">
-              {speaking ? 'Speaking...' : recording ? 'Listening...' : processing ? 'Processing...' : 'Online'}
+              {speaking ? t('speaking') : recording ? t('listening') : processing ? t('processing') : t('online')}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2">
-          {lastAudioUrl && !recording && !processing && (
-            <button
-              data-testid="replay-audio-button"
-              onClick={replayLastAudio}
-              disabled={speaking}
-              className="p-2 rounded-full hover:bg-muted transition-all disabled:opacity-50"
-              title="Replay last voice"
-            >
-              <Volume2 className="w-5 h-5 text-neon-pink" />
-            </button>
+          {/* Mood indicator */}
+          {currentMood && (
+            <div className="flex items-center gap-1 px-2 py-1 bg-muted rounded-full" title={t('currentMood')}>
+              <span className="text-sm">{getMoodEmoji(currentMood)}</span>
+            </div>
           )}
           <button
             data-testid="clear-history-button"
             onClick={() => setShowClearConfirm(true)}
             className="p-2 rounded-full hover:bg-muted transition-all"
-            title="Clear all messages"
+            title={t('clearAll')}
           >
             <Trash2 className="w-5 h-5 text-dark-purple" />
           </button>
@@ -397,7 +499,7 @@ export default function ChatScreen({ user }) {
       </div>
 
       {/* Speaking indicator */}
-      {speaking && (
+      {speaking && currentPlayingId && (
         <div className="bg-neon-pink/10 px-4 py-2 flex items-center justify-center gap-2">
           <Volume2 className="w-4 h-4 text-neon-pink" />
           <div className="flex gap-1">
@@ -405,7 +507,19 @@ export default function ChatScreen({ user }) {
             <span className="w-1 h-4 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
             <span className="w-1 h-3 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
           </div>
-          <span className="text-sm text-neon-pink font-medium">{bestie.name} is speaking</span>
+          <span className="text-sm text-neon-pink font-medium">{bestie.name} {t('isSpeaking')}</span>
+          <button
+            onClick={() => togglePlayPause(currentPlayingId)}
+            className="ml-2 p-1 rounded-full bg-neon-pink/20 hover:bg-neon-pink/30"
+          >
+            {isPaused ? <Play className="w-4 h-4 text-neon-pink" /> : <Pause className="w-4 h-4 text-neon-pink" />}
+          </button>
+          <button
+            onClick={stopCurrentAudio}
+            className="p-1 rounded-full bg-neon-pink/20 hover:bg-neon-pink/30"
+          >
+            <VolumeX className="w-4 h-4 text-neon-pink" />
+          </button>
         </div>
       )}
 
@@ -431,20 +545,61 @@ export default function ChatScreen({ user }) {
               </button>
             )}
             
-            <div
-              className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-                msg.role === 'user'
-                  ? 'bg-neon-pink text-white rounded-br-sm'
-                  : 'bg-muted text-dark-purple rounded-bl-sm'
-              }`}
-            >
-              <p className="text-sm">{msg.content}</p>
+            <div className={`max-w-[80%] ${msg.role === 'user' ? '' : ''}`}>
+              <div
+                className={`rounded-2xl px-4 py-3 ${
+                  msg.role === 'user'
+                    ? 'bg-neon-pink text-white rounded-br-sm'
+                    : 'bg-muted text-dark-purple rounded-bl-sm'
+                }`}
+              >
+                <p className="text-sm">{msg.content}</p>
+              </div>
+              
+              {/* Listen again button for bestie messages */}
+              {msg.role === 'bestie' && (
+                <div className="flex items-center gap-2 mt-1 ml-1">
+                  <button
+                    onClick={() => listenAgain(msg.id)}
+                    disabled={speaking && currentPlayingId !== msg.id}
+                    className="flex items-center gap-1 text-xs text-dark-purple/50 hover:text-neon-pink transition-all disabled:opacity-30"
+                    data-testid={`listen-again-${msg.id}`}
+                  >
+                    {currentPlayingId === msg.id ? (
+                      isPaused ? (
+                        <>
+                          <Play className="w-3 h-3" />
+                          <span>{t('play')}</span>
+                        </>
+                      ) : (
+                        <>
+                          <Pause className="w-3 h-3" />
+                          <span>{t('pause')}</span>
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <RotateCcw className="w-3 h-3" />
+                        <span>{t('listenAgain')}</span>
+                      </>
+                    )}
+                  </button>
+                  {currentPlayingId === msg.id && (
+                    <button
+                      onClick={stopCurrentAudio}
+                      className="text-xs text-dark-purple/50 hover:text-red-500"
+                    >
+                      <VolumeX className="w-3 h-3" />
+                    </button>
+                  )}
+                </div>
+              )}
             </div>
 
             {msg.role === 'bestie' && (
               <button
                 onClick={() => deleteMessage(msg.id, idx)}
-                className="opacity-0 group-hover:opacity-100 p-1 ml-2 self-center text-dark-purple/40 hover:text-red-500 transition-all"
+                className="opacity-0 group-hover:opacity-100 p-1 ml-2 self-start text-dark-purple/40 hover:text-red-500 transition-all"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -474,12 +629,11 @@ export default function ChatScreen({ user }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Type or tap mic to talk..."
+            placeholder={t('typeOrTalk')}
             disabled={recording || processing || speaking}
             className="flex-1 px-4 py-3 rounded-full bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none disabled:opacity-50"
           />
           
-          {/* Show mic button when no text, send button when there's text */}
           {!input.trim() ? (
             !recording ? (
               <button
@@ -513,7 +667,7 @@ export default function ChatScreen({ user }) {
         
         {recording && (
           <p className="text-center text-sm text-neon-pink mt-2 animate-pulse">
-            Listening... Tap stop when done
+            {t('tapStopWhenDone')}
           </p>
         )}
       </div>
