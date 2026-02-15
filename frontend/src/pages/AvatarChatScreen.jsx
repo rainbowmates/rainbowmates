@@ -290,7 +290,7 @@ export default function AvatarChatScreen({ user }) {
   if (!bestie) {
     return (
       <div className="app-container gradient-mesh min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-dark-purple">Loading Tom...</div>
+        <div className="animate-pulse text-dark-purple">{t('loadingTom')}</div>
       </div>
     );
   }
