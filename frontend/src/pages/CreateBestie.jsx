@@ -16,7 +16,8 @@ const BESTIE_IMAGES = [
   { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/hzbdtvjr_gay%2036.png', description: 'All Black' },
   { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/5ta5p4v7_gay%204.png', description: 'Sunny Vibes' },
   { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/qiajp76h_gay%201.png', description: 'Summer Scarf' },
-  { url: 'https://customer-assets.emergentagent.com/job_59b3b69e-a28f-44fd-a869-c7d33149fa88/artifacts/mpppkgxg_gay%204%20-%202.png', description: 'Test bestie' }
+  { url: 'https://customer-assets.emergentagent.com/job_59b3b69e-a28f-44fd-a869-c7d33149fa88/artifacts/mpppkgxg_gay%204%20-%202.png', description: 'Test bestie' },
+  { url: 'https://customer-assets.emergentagent.com/job_56bc6b4d-97f6-4647-8eee-09ac0beb6611/artifacts/928gl340_1.png', description: 'Freckled Charm' }
 ];
 
 const PERSONALITIES = ['Witty', 'Sassy', 'Loyal', 'Supportive', 'Confident', 'Empathetic', 'Outspoken', 'Stylish', 'Adventurous', 'Protective'];
