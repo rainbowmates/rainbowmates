@@ -10,60 +10,64 @@ PRODUCT REQUIREMENTS:
     *   Strictly limit response length to a maximum of 25 words.
     *   Add personality traits: remember past chats, use inside jokes, evolve relationship warmth, have a distinct style with quirks, and occasionally tease or disagree.
     *   Implement an advanced  to make the AI stateful, emotionally adaptive, and consistent.
+    *   **Add safety guardrails:** The AI must refuse to discuss sexual/inappropriate topics and must not give advice on major life decisions.
 4.  **Chat Functionality:**
     *   Merge separate text and voice chat screens into a single, unified interface.
     *   Add voice message playback controls (pause/resume, listen again).
 5.  **New Features:**
     *   Implement a relationship scoring engine to dynamically track and evolve values like warmth, trust, and playfulness.
     *   Implement a talking avatar (Tom) with real-time lip-sync using ElevenLabs streaming TTS.
+    *   **Add dynamic avatar expressions** (e.g., smirks, wide eyes) based on the AI's response tone.
     *   Implement conversation mood tracking.
-    *   Add multi-language support for English, French, Italian, German, Spanish, and Portuguese.
+    *   **Add multi-language support:**
+        *   Translate the entire UI into English, French, Italian, German, Spanish, and Portuguese.
+        *   Enable the AI to respond (text-only) in the user's selected language.
 6.  **Bug Fixes:** Address invisible buttons and a broken registration flow.
 7.  **Refactoring:** Consolidate duplicate AI system prompts into a single source of truth.
 
 **User's preferred language**: English
 
 **what currently exists?**
-The Rainbow Mates application (React frontend, FastAPI backend) is a functional proof-of-concept. It features a proactive, stateful AI Bestie with an evolving personality, managed by a relationship scoring engine. The core user experience is a chat screen with a 2.5D talking avatar (Tom) that features real-time lip-sync powered by ElevenLabs streaming TTS and the Web Audio API. The backend has been refactored to centralize AI prompts, and a multi-language framework is in place (though translations are placeholders). The initial bug fixes and UI enhancements are complete.
+The Rainbow Mates application features a proactive, stateful AI Bestie named Tom with a talking 2.5D avatar. The avatar has real-time lip-sync (via ElevenLabs TTS and Web Audio API) and dynamic facial expressions that change based on the AI's response. The backend includes a relationship scoring engine to evolve the AI's personality. The full application UI has been translated into six languages (EN, FR, IT, DE, ES, PT), and the AI can conduct text-based conversations in the user's selected language. Safety guardrails have been added to the AI's core prompt.
 
 **Last working item**:
-    - Last item agent was working: The user requested to add dynamic avatar expressions (eyebrow raises, smirks, wide eyes) that change based on the content and tone of what the AI Tom is saying.
-    - Status: NOT STARTED
+    - Last item agent was working: The agent added safety guardrails to the AI's core prompt in . These rules instruct the AI to politely refuse inappropriate sexual conversations and to avoid giving advice on major life decisions. The agent was just about to test if these new boundaries work correctly.
+    - Status: IN PROGRESS
     - Agent Testing Done: N
-    - Which testing method agent to use? both
+    - Which testing method agent to use? backend testing agent
     - User Testing Done: N
 
 **All Pending/In progress Issue list**:
-There are no pending issues.
+  - Issue 1:  (Verify AI Safety Guardrails, P0)
+
+  Issues Detail:
+  - Issue 1: 
+     - **Description**: The agent added rules to the AI prompt to prevent inappropriate conversations and the giving of critical advice. This needs to be verified to ensure the AI responds as expected.
+     - **Attempted fixes**: The prompt in  was updated with the new rules. No testing has been performed yet.
+     - **Next debug checklist**: 
+       1.  Send a  request to the  endpoint with a test prompt that triggers the inappropriate content boundary (e.g., asking a sexual question).
+       2.  Verify the AI response is a polite refusal.
+       3.  Send a  request that triggers the life advice boundary (e.g., Should I quit my job?).
+       4.  Verify the AI response is a polite refusal that suggests seeking advice from friends, family, or professionals.
+     - **Why fix this issue and what will be achieved with the fix?**: To ensure the AI assistant behaves responsibly and safely, preventing it from engaging in harmful or inappropriate conversations.
+     - **Status**:  TESTING PENDING
+     - **Is recurring issue?**: N
+     - **Should Test frontend/backend/both after fix?**: backend
+     - **Blocked on other issue**: None
 
 **In progress Task List**:
-  - Task 1: Add dynamic avatar expressions based on response content (P0)
-
- Task Detail:
-  - Task 1: 
-     - Where to resume: The agent needs to devise a strategy to link AI response content/tone to visual states of the avatar. This will likely involve:
-        1.  Modifying the AI prompt in  to include expression signals in its response (e.g., ).
-        2.  Updating the  endpoint in  to parse these signals and pass them to the frontend.
-        3.  Enhancing the  to receive these signals and apply corresponding CSS classes or styles to animate the avatar's facial features.
-     - What will be achieved with this? The avatar will feel more alive and emotionally responsive, significantly enhancing user immersion.
-     - Status: NOT STARTED
-     - Should Test frontend/backend/both after fix? both
-     - Blocked on something: No
+There are no other tasks in progress.
 
 **Upcoming and Future Tasks**
 Future Tasks:
-- Translate all UI text for the implemented languages (French, Italian, German, Spanish, Portuguese). The framework is in place, but the translations are currently placeholders.
+- **P1: Multi-lingual AI Speech (TTS):** Make the Tom avatar not only respond in the user's selected language but also *speak* in that language. This will require integrating different ElevenLabs voices for each language and updating the  endpoint.
+- **P2: Language Selection for TTS:** If multi-lingual TTS is implemented, allow the user to select a preferred voice for each language.
 
 **Completed work in this session**
-- **AI Prompt Refactoring:** Consolidated duplicate AI system prompts into a single source of truth at , resolving a key technical debt item.
-- **Enhanced AI Personality:** Integrated a complex CORE IDENTITY BLUEPRINT into the main chat prompt, adding layers for emotional memory, relationship state (warmth, trust), and behavioral rules.
-- **Relationship Scoring Engine:** Implemented a backend engine () to dynamically track and evolve relationship scores (warmth, trust, playfulness, attachment) in a new  MongoDB collection. These scores are now injected into the AI prompt for every chat message.
-- **Talking Avatar Implementation:**
-    - Replaced the previous bestie selection with a single, canonical avatar named Tom.
-    - Created a new backend streaming endpoint () that uses the ElevenLabs API to generate and stream audio.
-    - Built a new frontend UI () featuring a 2.5D avatar with real-time lip-sync achieved by analyzing the streaming audio's amplitude with the Web Audio API.
-    - Configured the user-provided ElevenLabs API key in the backend environment.
-- **API Endpoints:** Added  to fetch user-specific relationship scores.
+- **Dynamic Avatar Expressions:** Implemented 8 different facial expressions for the avatar, driven by  tags from the AI's response. This involved backend logic to parse tags and frontend work to animate the avatar.
+- **UI Internationalization (i18n):** Replaced all hardcoded English text in the UI with a translation system (). All components now use the  function, and translations for 6 languages are complete in . Fixed a bug where the  was not wrapping the entire app.
+- **Multi-lingual AI Responses (Text-only):** Modified the AI prompt and backend endpoints to accept a  parameter, enabling the AI to chat in the user's selected language.
+- **AI Safety Guardrails:** Added rules to the core AI prompt to prevent inappropriate conversations and the giving of life-altering advice.
 
 **Earlier issues found/mentioned but not fixed**
 None.
@@ -77,7 +81,7 @@ None.
 
 
 **Key Technical Concepts**
-- **Frontend:** React, Tailwind CSS, Web Audio API (for lip-sync), , .
+- **Frontend:** React, Tailwind CSS, Web Audio API, ,  (for translations).
 - **Backend:** FastAPI, Pydantic.
 - **Database:** MongoDB.
 - **3rd Party Integrations:** ElevenLabs (TTS), Emergent LLM Key.
@@ -86,63 +90,62 @@ None.
   - **users:** Stores user authentication and profile data.
   - **besties:** Stores the configuration for a user's selected bestie.
   - **moods:** Stores mood data per session.
-  - **relationships_v2:** (New) Stores evolving relationship metrics per user. 
+  - **relationships_v2:** Stores evolving relationship metrics per user. 
 
 **changes in tech stack**
-- No changes to the core stack, but heavy reliance on the  Python SDK and the browser's native .
+- No changes to the core stack.
 
 **All files of reference**
-- : The single source of truth for all AI personality and behavior prompts.
-- : The logic for calculating and updating the AI's relationship scores with the user.
-- : Handles the interaction with the ElevenLabs API for streaming audio.
-- : The new primary chat interface, containing the logic for rendering the avatar and performing real-time lip-sync.
-- : Modified significantly to integrate the relationship engine and the new avatar TTS endpoint.
-- : Updated to include the .
+- : The single source of truth for AI personality, updated with expression instructions, multi-language support, and safety guardrails.
+- : Endpoints updated to handle  and return .
+- : New file containing the function to parse expression tags from AI responses.
+- : New component that renders the avatar and its dynamic facial expressions.
+- : Updated to manage and pass  and  data.
+- : The central file for all UI text, now fully populated for 6 languages.
+- : Modified to correctly scope the  over the entire application.
+- , , : Major files refactored to remove hardcoded text and use the  translation function.
 
 **Areas that need refactoring**:
-- The major refactoring task (prompt duplication) was completed in this session. No new critical refactoring is needed.
+None.
 
 **key api endpoints**
-- : Main conversational endpoint, now enriched with relationship scores.
-- : (New) Streams TTS audio from ElevenLabs for the talking avatar.
-- : (New) Retrieves the current relationship scores for a user.
-- : Handles new user registration.
-- : Handles user login.
+- : Updated to accept a  query param and return an  field in the response.
+- : Updated to accept a  query param and return an  field in the response.
+- : Streams TTS audio from ElevenLabs.
 
 **Critical Info for New Agent**
-- **AI Prompt is Centralized:** All AI personality and behavior modifications should be made in .
-- **Avatar is Hardcoded:** The app now has a single, non-selectable bestie named Tom. The UI for choosing a bestie is no longer used in the main flow.
-- **Lip-Sync is Amplitude-Based:** The lip-sync is not based on true visemes but on the real-time volume (amplitude) of the incoming audio stream, analyzed via the Web Audio API. This is a simpler but effective approach.
-- **ElevenLabs is Key:** The talking avatar feature is entirely dependent on the ElevenLabs API. The key is stored in .
+- **Safety Guardrails Need Testing:** The last action was adding safety rules to . Your first task is to test them.
+- **Expressions are AI-Driven:** Avatar expressions are controlled by tags like  in the AI's response. The logic is in .
+- **Language is Param-Driven:** Both UI and AI language are now dynamic. The AI language is controlled by a  query parameter on chat endpoints (e.g., ).
+- **UI Translations are Complete:** Do not look for hardcoded text. All UI strings come from  via the  function.
 
 **documents and test reports created in this job**
 - /app/memory/PRD.md
-- /app/test_reports/iteration_5.json (Note: Assumed from agent's successful test run, previous was 4)
-- /app/artifacts/jcip1xkp_Rainbowmates_Emergent_Engineer_Command_Brief.docx
-- /app/artifacts/4ti58yak_Rainbowmates_Talking_Bestie_Architecture_Spec.docx
+- /app/test_reports/iteration_6.json
+-  (user-provided artifact for avatar expressions)
 
 **Last 10 User Messages and any pending HUMAN messages** 
- - 1. User requested to add dynamic avatar expressions. (New Task, In Progress)
- - 2. User asked to build the scoring engine to make relationship values dynamic. (Completed)
- - 3. User provided the CORE IDENTITY BLUEPRINT to enhance the AI prompt. (Completed)
- - 4. User asked to see the full, updated AI prompt content. (Handled)
- - 5. User asked to see the file where the consolidated prompt is located. (Handled)
- - 6. User requested to resolve the AI prompt duplication. (Completed)
- - 7. User asked to see the content of the AI bestie prompt from the code. (Handled)
- - 8. User had a question about git conflicts when saving to GitHub. (Handled)
- - 9. User asked for a URL to download the AI prompt. (Handled)
- - 10. User requested to implement the talking avatar based on two provided documents. (Completed)
+ - 10. User provided missing safety instructions for the AI prompt. (In Progress)
+ - 9.  User asked for the preview URL. (Handled)
+ - 8.  User confirmed to implement text-only multi-lingual AI responses. (Completed)
+ - 7.  User asked to proceed with UI translations only for now. (Completed)
+ - 6.  User asked for clarification on whether translations included the AI's speech. (Handled)
+ - 5.  User uploaded a document defining the avatar expression states. (Completed)
+ - 4.  The agent completed the dynamic avatar expressions feature.
+ - 3.  The agent completed the UI translation feature.
+ - 2.  The agent completed the multi-lingual text response feature.
+ - 1.  Agent was adding the final safety guardrails to the AI prompt.
 
 **Project Health Check:**
 - **Broken:** None.
-- **Mocked:** Multi-language translations in  are still English placeholders.
+- **Mocked:** None. The UI translations are fully implemented.
 
 **3rd Party Integrations**
-- **ElevenLabs (TTS):** Used for generating the talking avatar's voice. Requires a user-provided API key, which is now configured.
+- **ElevenLabs (TTS):** Used for generating the talking avatar's voice (currently English only). Requires a user-provided API key.
 - **Emergent LLM Key:** Used via  library for the core chat LLM.
 
 **Testing status**
-  - Testing agent used after significant changes: YES (to verify the talking avatar feature)
+  - Testing agent used after significant changes: YES (For the dynamic avatar expressions feature).
   - Troubleshoot agent used after agent stuck in loop: NO
   - Test files created: None
   - Known regressions: None
@@ -151,4 +154,4 @@ None.
 New users can be created via the registration form on the application's auth page.
 
 **What agent forgot to execute**
-The agent has followed all user requests. The only pending task is the most recent one, which is to add dynamic expressions to the avatar.</analysis>
+The agent was in the middle of a task (testing the new AI safety guardrails) when the session ended. It did not forget or miss any user requests.</analysis>
