@@ -92,8 +92,14 @@ export default function AvatarChatScreen({ user }) {
       };
       setMessages([starterMessage]);
       
+      // Set expression from API response
+      if (res.data.expression) {
+        setEmotionState(res.data.expression.tag || 'curious');
+        setExpressionConfig(res.data.expression.config || null);
+      }
+      
       // Speak the starter
-      await speakMessage(res.data.message, 'friendly');
+      await speakMessage(res.data.message, res.data.expression?.tag || 'curious');
     } catch (error) {
       console.error('Failed to get starter:', error);
     }
