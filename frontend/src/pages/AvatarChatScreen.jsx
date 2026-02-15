@@ -343,16 +343,18 @@ export default function AvatarChatScreen({ user }) {
           </button>
         </div>
         
-        {/* Usage indicator */}
+        {/* Usage indicator - 750/month hard cap */}
         {usageStats && (
           <div className="mt-2 flex items-center gap-2 text-xs text-dark-purple/60">
-            <div className="flex-1 h-1 bg-muted rounded-full overflow-hidden">
+            <div className="flex-1 h-1.5 bg-muted rounded-full overflow-hidden">
               <div 
-                className="h-full bg-neon-pink transition-all"
-                style={{ width: `${(usageStats.used / usageStats.limit) * 100}%` }}
+                className={`h-full transition-all ${usageStats.remaining < 50 ? 'bg-red-400' : 'bg-neon-pink'}`}
+                style={{ width: `${Math.min(100, (usageStats.used / usageStats.limit) * 100)}%` }}
               />
             </div>
-            <span>{usageStats.remaining} replies left</span>
+            <span className={usageStats.remaining < 50 ? 'text-red-500 font-medium' : ''}>
+              {usageStats.remaining}/{usageStats.limit} this month
+            </span>
           </div>
         )}
       </div>
