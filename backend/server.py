@@ -889,7 +889,7 @@ async def update_bestie(bestie_id: str, bestie_data: BestieCreate):
 # ============= CHAT ROUTES =============
 
 @api_router.post("/chat/message")
-async def send_message(user_id: str, message_data: MessageCreate):
+async def send_message(user_id: str, message_data: MessageCreate, language: str = "en"):
     """Send a message to bestie with dynamic relationship scoring"""
     try:
         # Get bestie details
@@ -922,7 +922,7 @@ async def send_message(user_id: str, message_data: MessageCreate):
             {"_id": 0}
         ).sort("timestamp", 1).limit(20).to_list(20)
         
-        # Create comprehensive Bestie system prompt with dynamic scores
+        # Create comprehensive Bestie system prompt with dynamic scores and language
         system_message = get_bestie_system_prompt(
             bestie_name=bestie.name,
             personality=bestie.personality,
@@ -932,7 +932,8 @@ async def send_message(user_id: str, message_data: MessageCreate):
             playfulness_score=relationship_data.get("playfulness_score", 0.6),
             attachment_score=relationship_data.get("attachment_score", 0.3),
             user_mood=relationship_data.get("user_mood", "neutral"),
-            bestie_mood=relationship_data.get("bestie_mood", "friendly")
+            bestie_mood=relationship_data.get("bestie_mood", "friendly"),
+            language=language
         )
         
         # Initialize Claude chat
