@@ -584,7 +584,53 @@ export const translations = {
     tryAgain: "Erneut versuchen",
     micAccessDenied: "Mikrofonzugriff verweigert. Klicke auf das Schloss-Symbol um Zugriff zu erlauben.",
     couldNotAccessMic: "Konnte nicht auf Mikrofon zugreifen",
-    voiceProcessingFailed: "Sprachverarbeitung fehlgeschlagen"
+    voiceProcessingFailed: "Sprachverarbeitung fehlgeschlagen",
+    
+    // Dashboard
+    you: "Du",
+    premiumActive: "Premium Aktiv",
+    subscribeToPlay: "Abonnieren zum Spielen",
+    unlockFeatures: "Schalte Chat, Stimme, Tanz & mehr frei!",
+    beAnyoneYouWant: "Sei wer du willst — das ist deine Welt!",
+    shareYourVibe: "Teile deine Stimmung, damit dein Bestie dich wirklich versteht.",
+    pickTraits: "Wähle Eigenschaften, die zu dem Freund passen, den du verdienst.",
+    chooseBestieFirst: "Wähle zuerst deinen Bestie um zusammen zu spielen!",
+    createAvatarFirst: "Erstelle zuerst deinen Avatar um fortzufahren!",
+    
+    // Avatar Chat
+    loadingTom: "Tom wird geladen...",
+    tom: "Tom",
+    repliesLeft: "Antworten übrig",
+    tomIsThinking: "Tom denkt nach...",
+    talkToTom: "Sprich mit Tom...",
+    
+    // Subscription
+    processingPayment: "Zahlung wird verarbeitet...",
+    unlockAllFeatures: "Schalte alle Funktionen frei und hab endlosen Spaß!",
+    freeSubscription: "Kostenloses Abonnement",
+    comingSoon: "Demnächst",
+    
+    // Create Bestie
+    enterFabulousName: "Gib einen fabelhaften Namen ein...",
+    
+    // Settings
+    days: "Tage",
+    dominantMood: "Dominante Stimmung",
+    noMoodDataYet: "Noch keine Stimmungsdaten. Fang an zu chatten um deine Stimmung zu verfolgen!",
+    deleteAccount: "Konto Löschen?",
+    
+    // Auth
+    signingYouIn: "Anmeldung läuft...",
+    pleaseWaitLogin: "Bitte warten Sie, während wir Ihre Anmeldung abschließen",
+    useForTesting: "Verwende 123456 zum Testen",
+    enterToVerify: "Gib 123456 zur Verifizierung ein",
+    
+    // Date or Mate
+    previousDiscussions: "Vorherige Gespräche",
+    newPerson: "Neue Person",
+    
+    // Play Screen
+    freePilotActive: "Kostenloses Pilot-Abonnement Aktiv"
   },
   
   es: {
