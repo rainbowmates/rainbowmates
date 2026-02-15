@@ -890,7 +890,10 @@ async def update_bestie(bestie_id: str, bestie_data: BestieCreate):
 
 @api_router.post("/chat/message")
 async def send_message(user_id: str, message_data: MessageCreate, language: str = "en"):
-    """Send a message to bestie with dynamic relationship scoring"""
+    """
+    Send a message to bestie with dynamic relationship scoring.
+    Uses compressed memory instead of full chat history (per architecture spec).
+    """
     try:
         # Get bestie details
         bestie_doc = await db.besties.find_one({"id": message_data.bestie_id}, {"_id": 0})
@@ -916,11 +919,11 @@ async def send_message(user_id: str, message_data: MessageCreate, language: str 
         )
         await db.messages.insert_one(prepare_for_mongo(user_message.model_dump()))
         
-        # Get conversation history for context
-        history = await db.messages.find(
-            {"user_id": user_id, "bestie_id": message_data.bestie_id},
-            {"_id": 0}
-        ).sort("timestamp", 1).limit(20).to_list(20)
+        # Get compressed memory context (NOT full history per architecture spec)
+        from services.memory_service import get_memory_service
+        memory_service = get_memory_service(db)
+        memory_context = await memory_service.get_memory_context(user_id, message_data.bestie_id)
+        compressed_context = memory_service.build_context_for_llm(memory_context)
         
         # Create comprehensive Bestie system prompt with dynamic scores and language
         system_message = get_bestie_system_prompt(
@@ -933,10 +936,11 @@ async def send_message(user_id: str, message_data: MessageCreate, language: str 
             attachment_score=relationship_data.get("attachment_score", 0.3),
             user_mood=relationship_data.get("user_mood", "neutral"),
             bestie_mood=relationship_data.get("bestie_mood", "friendly"),
-            language=language
+            language=language,
+            user_context=compressed_context  # Pass compressed memory
         )
         
-        # Initialize Claude chat
+        # Initialize Claude chat (mid-tier model as default per spec)
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
             session_id=f"{user_id}_{message_data.bestie_id}",
@@ -958,6 +962,15 @@ async def send_message(user_id: str, message_data: MessageCreate, language: str 
             content=clean_response
         )
         await db.messages.insert_one(prepare_for_mongo(bestie_message.model_dump()))
+        
+        # Update memory with new exchange (compressed, not full messages)
+        await memory_service.update_memory(
+            user_id=user_id,
+            bestie_id=message_data.bestie_id,
+            user_message=message_data.content,
+            bestie_response=clean_response,
+            detected_mood=relationship_data.get("user_mood", "neutral")
+        )
         
         return {
             "message": clean_response, 
