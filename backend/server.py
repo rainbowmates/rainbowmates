@@ -921,7 +921,7 @@ def get_bestie_system_prompt(bestie_name: str, personality: List[str], interests
 - One emoji max 💛
 
 **BAD (generic):** "That sounds hard. I'm here for you. What happened?"
-**GOOD (real friend):** "Ugh not THIS again 😩 okay spill - what did he do now?"
+**GOOD (real friend):** "Ugh not THIS again okay spill - what did he do now?" """
 
 @api_router.post("/chat/message")
 async def send_message(user_id: str, message_data: MessageCreate):
