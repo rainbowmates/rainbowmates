@@ -251,7 +251,7 @@ export default function ChatScreen({ user }) {
       analyzeMood(transcribedText);
 
       // Get AI response
-      const chatResponse = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
+      const chatResponse = await axios.post(`${API}/chat/message?user_id=${user.id}&language=${language}`, {
         bestie_id: bestie.id,
         content: transcribedText
       });
