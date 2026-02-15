@@ -240,7 +240,8 @@ class StreamingTTSService:
         warmth = relationship_scores.get("warmth_score", 0.5)
         playfulness = relationship_scores.get("playfulness_score", 0.5)
         attachment = relationship_scores.get("attachment_score", 0.3)
-        trust = relationship_scores.get("trust_score", 0.4)
+        # Trust affects emotional openness
+        _trust = relationship_scores.get("trust_score", 0.4)
         
         # Determine expression parameters (0.3-0.6 range as per spec)
         expression_intensity = min(0.6, max(0.3, (warmth + playfulness + attachment) / 3))
