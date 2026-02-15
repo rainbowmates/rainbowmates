@@ -82,7 +82,7 @@ export default function ChatScreen({ user }) {
       if (!messagesRes.data || messagesRes.data.length === 0) {
         try {
           setShowTyping(true);
-          const starterRes = await axios.post(`${API}/chat/starter?user_id=${user.id}&bestie_id=${bestieRes.data.id}`);
+          const starterRes = await axios.post(`${API}/chat/starter?user_id=${user.id}&bestie_id=${bestieRes.data.id}&language=${language}`);
           setShowTyping(false);
           
           const starterMessage = {
