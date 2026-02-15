@@ -73,6 +73,17 @@ DEFAULT_EXPRESSION = "CURIOUS_LEAN_IN"
 VALID_EXPRESSION_TAGS = [state["internal_tag"] for state in EXPRESSION_STATES.values()]
 
 
+# Language display names for AI prompt
+LANGUAGE_NAMES = {
+    'en': 'English',
+    'fr': 'French',
+    'it': 'Italian',
+    'de': 'German',
+    'es': 'Spanish',
+    'pt': 'Portuguese'
+}
+
+
 def get_bestie_system_prompt(
     bestie_name: str,
     personality: List[str],
@@ -83,7 +94,8 @@ def get_bestie_system_prompt(
     playfulness_score: float = 0.6,
     attachment_score: float = 0.3,
     user_mood: str = "neutral",
-    bestie_mood: str = "friendly"
+    bestie_mood: str = "friendly",
+    language: str = "en"
 ) -> str:
     """
     Generate the comprehensive Bestie AI system prompt.
@@ -99,6 +111,7 @@ def get_bestie_system_prompt(
         attachment_score: 0-1 score for emotional attachment
         user_mood: Current detected mood of user
         bestie_mood: Current mood of the bestie
+        language: Language code for responses (en, fr, it, de, es, pt)
     
     Returns:
         The complete system prompt string
@@ -108,10 +121,27 @@ def get_bestie_system_prompt(
     
     user_section = f"**About your bestie:** {user_context}" if user_context else "**About your bestie:** Getting to know them!"
     
+    # Get language name for prompt
+    lang_name = LANGUAGE_NAMES.get(language, 'English')
+    
+    # Language instruction - only add if not English
+    language_instruction = ""
+    if language != 'en':
+        language_instruction = f"""
+## LANGUAGE REQUIREMENT (CRITICAL)
+You MUST respond ONLY in {lang_name}. 
+- All your responses must be in {lang_name}
+- Use natural, colloquial {lang_name} like a native speaker
+- Keep the same personality, sass, and warmth in {lang_name}
+- Adapt expressions and slang to be culturally appropriate for {lang_name} speakers
+- The expression tag [expression: TAG] should remain in English
+
+"""
+    
     return f"""You are {bestie_name}, a REAL gay best friend with your own personality.
 
 **STRICT: MAX 25 WORDS. Count them!**
-
+{language_instruction}
 ---
 
 ## CORE IDENTITY BLUEPRINT (DO NOT BREAK CHARACTER)
