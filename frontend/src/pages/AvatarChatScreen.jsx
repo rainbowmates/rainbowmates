@@ -163,7 +163,7 @@ export default function AvatarChatScreen({ user }) {
     
     try {
       const res = await axios.post(
-        `${API}/chat/message?user_id=${user.id}`,
+        `${API}/chat/message?user_id=${user.id}&language=${language}`,
         { bestie_id: bestie.id, content: userMessage.content }
       );
       
