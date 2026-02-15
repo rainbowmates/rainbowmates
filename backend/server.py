@@ -1327,6 +1327,7 @@ async def avatar_speak(request: AvatarSpeechRequest):
     """
     Generate speech for talking avatar with emotion payload.
     Returns audio + animation data for client-side avatar.
+    Supports multilingual TTS via language parameter.
     """
     if not ELEVENLABS_API_KEY:
         raise HTTPException(status_code=500, detail="ElevenLabs API key not configured")
@@ -1343,13 +1344,14 @@ async def avatar_speak(request: AvatarSpeechRequest):
             "attachment_score": scores.get("attachment_score", 0.3)
         }
         
-        # Generate speech with emotion payload
+        # Generate speech with emotion payload and language support
         tts_service = get_tts_service(ELEVENLABS_API_KEY, db)
         result = await tts_service.generate_speech(
             text=request.text,
             user_id=request.user_id,
             emotion=request.emotion,
-            relationship_scores=relationship_scores
+            relationship_scores=relationship_scores,
+            language=request.language
         )
         
         if result.get("error"):
