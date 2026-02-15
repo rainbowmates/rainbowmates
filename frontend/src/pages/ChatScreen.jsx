@@ -20,7 +20,7 @@ const getAudioContext = () => {
 
 export default function ChatScreen({ user }) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [bestie, setBestie] = useState(null);
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
