@@ -280,7 +280,53 @@ export const translations = {
     tryAgain: "Réessayer",
     micAccessDenied: "Accès au micro refusé. Clique sur l'icône cadenas pour autoriser.",
     couldNotAccessMic: "Impossible d'accéder au micro",
-    voiceProcessingFailed: "Échec du traitement vocal"
+    voiceProcessingFailed: "Échec du traitement vocal",
+    
+    // Dashboard
+    you: "Vous",
+    premiumActive: "Premium Actif",
+    subscribeToPlay: "Abonnez-vous pour Jouer",
+    unlockFeatures: "Débloquez chat, voix, danse et plus !",
+    beAnyoneYouWant: "Sois qui tu veux — c'est ton monde !",
+    shareYourVibe: "Partage ton style pour que ton bestie te comprenne vraiment.",
+    pickTraits: "Choisis les traits qui correspondent à l'ami que tu mérites.",
+    chooseBestieFirst: "Choisis d'abord ton bestie pour jouer ensemble !",
+    createAvatarFirst: "Crée d'abord ton avatar pour continuer !",
+    
+    // Avatar Chat
+    loadingTom: "Chargement de Tom...",
+    tom: "Tom",
+    repliesLeft: "réponses restantes",
+    tomIsThinking: "Tom réfléchit...",
+    talkToTom: "Parle à Tom...",
+    
+    // Subscription
+    processingPayment: "Traitement du paiement...",
+    unlockAllFeatures: "Débloquez toutes les fonctionnalités et amusez-vous sans fin !",
+    freeSubscription: "Abonnement Gratuit",
+    comingSoon: "Bientôt Disponible",
+    
+    // Create Bestie
+    enterFabulousName: "Entre un nom fabuleux...",
+    
+    // Settings
+    days: "jours",
+    dominantMood: "Humeur dominante",
+    noMoodDataYet: "Pas encore de données d'humeur. Commence à discuter pour suivre ton humeur !",
+    deleteAccount: "Supprimer le Compte ?",
+    
+    // Auth
+    signingYouIn: "Connexion en cours...",
+    pleaseWaitLogin: "Veuillez patienter pendant que nous terminons votre connexion",
+    useForTesting: "Utilisez 123456 pour tester",
+    enterToVerify: "Entrez 123456 pour vérifier",
+    
+    // Date or Mate
+    previousDiscussions: "Discussions Précédentes",
+    newPerson: "Nouvelle Personne",
+    
+    // Play Screen
+    freePilotActive: "Abonnement Pilote Gratuit Actif"
   },
   
   it: {
