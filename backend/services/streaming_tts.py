@@ -1,19 +1,30 @@
 """
-Streaming TTS Service with emotion payload for talking avatar.
+Streaming TTS Service with emotion payload and viseme timing for talking avatar.
 Handles ElevenLabs TTS streaming and generates emotion/timing data.
+
+Architecture Requirements:
+- Streaming neural TTS (Opus codec, 24kHz target)
+- Chunked audio streaming for <800ms time-to-first-audio
+- Viseme timing data for lip-sync
+- Hard cap: 750 spoken replies per user per month
 """
 import logging
 import base64
 import uuid
-from typing import Optional, Dict, Any, AsyncGenerator
+import json
+import re
+from typing import Optional, Dict, Any, AsyncGenerator, List, Tuple
 from datetime import datetime, timezone
 from motor.motor_asyncio import AsyncIOMotorDatabase
 from elevenlabs import ElevenLabs, VoiceSettings
 
 logger = logging.getLogger(__name__)
 
-# Voice configuration for Tom
+# Voice configuration for Tom (Luca in new spec)
 TOM_VOICE_ID = "onwK4e9ZLuTAKqWW03F9"  # Daniel - British, warm
+
+# Monthly usage hard cap per architecture spec
+MONTHLY_USAGE_LIMIT = 750
 
 # Voice settings optimized for avatar
 AVATAR_VOICE_SETTINGS = {
@@ -34,6 +45,38 @@ EMOTION_VOICE_MAP = {
     "curious": {"stability": 0.50, "style": 0.70},
     "warm": {"stability": 0.60, "style": 0.60},
     "supportive": {"stability": 0.65, "style": 0.55},
+    "dramatic": {"stability": 0.35, "style": 0.90},
+    "concern": {"stability": 0.65, "style": 0.50},
+    "teasing_annoyed": {"stability": 0.45, "style": 0.75},
+}
+
+# Viseme mapping for lip-sync (phoneme to mouth shape)
+# Standard 15 viseme shapes for English
+VISEME_MAP = {
+    # Silence
+    "sil": 0,
+    # Bilabial (p, b, m)
+    "p": 1, "b": 1, "m": 1,
+    # Labiodental (f, v)  
+    "f": 2, "v": 2,
+    # Dental (th)
+    "th": 3,
+    # Alveolar (t, d, n, l)
+    "t": 4, "d": 4, "n": 4, "l": 4,
+    # Postalveolar (sh, ch, zh, j)
+    "sh": 5, "ch": 5, "zh": 5, "j": 5,
+    # Velar (k, g, ng)
+    "k": 6, "g": 6, "ng": 6,
+    # Glottal (h)
+    "h": 7,
+    # Vowels
+    "aa": 8, "ah": 8,  # father, but
+    "ae": 9,  # cat
+    "eh": 10, # bed
+    "ih": 11, # bit
+    "iy": 12, # beat
+    "oh": 13, "ow": 13, # boat
+    "uw": 14, # boot
 }
 
 
