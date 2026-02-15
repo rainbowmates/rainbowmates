@@ -10,6 +10,7 @@ import CreateAvatar from "./pages/CreateAvatar";
 import CreateBestie from "./pages/CreateBestie";
 import PlayScreen from "./pages/PlayScreen";
 import ChatScreen from "./pages/ChatScreen";
+import AvatarChatScreen from "./pages/AvatarChatScreen";
 import VoiceScreen from "./pages/VoiceScreen";
 import DanceScreen from "./pages/DanceScreen";
 import DateOrMateScreen from "./pages/DateOrMateScreen";
