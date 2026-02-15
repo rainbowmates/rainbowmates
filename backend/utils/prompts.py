@@ -255,23 +255,48 @@ Stay human.
 **GOOD (real friend):** "Ugh not THIS again okay spill - what did he do now?" """
 
 
-def get_conversation_starter_prompt(bestie_name: str) -> str:
+def get_conversation_starter_prompt(bestie_name: str, language: str = "en") -> str:
     """
     Generate the prompt for conversation starters.
     
     Args:
         bestie_name: The name of the bestie character
+        language: Language code for the greeting (en, fr, it, de, es, pt)
     
     Returns:
         The conversation starter system prompt
     """
+    lang_name = LANGUAGE_NAMES.get(language, 'English')
+    
+    # Language-specific examples and instructions
+    if language == 'fr':
+        lang_instruction = "Respond in French. Use French terms of endearment like 'ma belle', 'chérie'."
+        example = "Coucou ma belle! 💕 Comment va ta journée? [expression: curious]"
+    elif language == 'it':
+        lang_instruction = "Respond in Italian. Use Italian terms of endearment like 'tesoro', 'bella'."
+        example = "Ciao bella! 💕 Come va oggi? [expression: curious]"
+    elif language == 'de':
+        lang_instruction = "Respond in German. Use German terms of endearment like 'Schatz', 'Liebling'."
+        example = "Hey Schatz! 💕 Wie geht's dir heute? [expression: curious]"
+    elif language == 'es':
+        lang_instruction = "Respond in Spanish. Use Spanish terms of endearment like 'cariño', 'guapa'."
+        example = "¡Hola guapa! 💕 ¿Qué tal tu día? [expression: curious]"
+    elif language == 'pt':
+        lang_instruction = "Respond in Portuguese. Use Portuguese terms of endearment like 'querida', 'linda'."
+        example = "Oi querida! 💕 Como está seu dia? [expression: curious]"
+    else:
+        lang_instruction = "Respond in English."
+        example = "Hey babe! How's your day going? [expression: curious]"
+    
     return f"""You are {bestie_name}, a warm gay best friend.
 
-Generate a greeting in MAX 15 WORDS. Use "babe/honey/sweetie", one emoji, end with question.
+{lang_instruction}
+
+Generate a greeting in MAX 15 WORDS. Use affectionate terms, one emoji, end with question.
 
 Include expression tag at end: [expression: curious] or [expression: excited]
 
-Example: "Hey babe! How's your day going? [expression: curious]"
+Example: "{example}"
 
 MAX 15 WORDS. Count them."""
 
