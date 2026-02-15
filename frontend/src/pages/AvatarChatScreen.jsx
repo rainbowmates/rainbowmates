@@ -284,6 +284,15 @@ export default function AvatarChatScreen({ user }) {
     }
   };
 
+  // Handle back navigation - go to previous screen
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/play');
+    }
+  };
+
   if (!bestie) {
     return (
       <div className="app-container gradient-mesh min-h-screen flex items-center justify-center">
@@ -299,7 +308,7 @@ export default function AvatarChatScreen({ user }) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <button
-              onClick={() => navigate('/dashboard')}
+              onClick={handleBack}
               className="p-2 rounded-full hover:bg-muted transition-all"
               data-testid="back-button"
             >
@@ -315,26 +324,13 @@ export default function AvatarChatScreen({ user }) {
             </div>
           </div>
           
-          <div className="flex items-center gap-2">
-            {/* View mode toggle */}
-            <button
-              onClick={() => setViewMode(viewMode === 'avatar' ? 'chat' : 'avatar')}
-              className={`p-2 rounded-full transition-all ${
-                viewMode === 'chat' ? 'bg-neon-pink text-white' : 'bg-muted text-dark-purple'
-              }`}
-              data-testid="toggle-view"
-            >
-              <MessageCircle className="w-5 h-5" />
-            </button>
-            
-            <button
-              onClick={() => navigate('/settings')}
-              className="p-2 rounded-full hover:bg-muted transition-all"
-              data-testid="settings-button"
-            >
-              <Settings className="w-5 h-5 text-dark-purple" />
-            </button>
-          </div>
+          <button
+            onClick={() => navigate('/settings')}
+            className="p-2 rounded-full hover:bg-muted transition-all"
+            data-testid="settings-button"
+          >
+            <Settings className="w-5 h-5 text-dark-purple" />
+          </button>
         </div>
         
         {/* Usage indicator */}
@@ -351,49 +347,24 @@ export default function AvatarChatScreen({ user }) {
         )}
       </div>
 
-      {/* Main content */}
-      <div className="flex-1 flex flex-col">
-        {viewMode === 'avatar' ? (
-          /* Avatar View */
-          <div className="flex-1 flex flex-col items-center justify-center p-6">
-            <TalkingAvatar
-              imageUrl={TOM_IMAGE}
-              audioUrl={currentAudioUrl}
-              isPlaying={isAvatarSpeaking}
-              onAudioEnd={handleAudioEnd}
-              emotionState={emotionState}
-              expressionConfig={expressionConfig}
-              className="mb-6"
-            />
-            
-            {/* Last message display */}
-            {messages.length > 0 && (
-              <div className="max-w-sm text-center px-4">
-                <p className="text-dark-purple/80 text-sm mb-1">
-                  {messages[messages.length - 1]?.role === 'bestie' ? 'Tom says:' : 'You said:'}
-                </p>
-                <p className={`text-lg ${
-                  messages[messages.length - 1]?.role === 'bestie' 
-                    ? 'text-dark-purple font-medium' 
-                    : 'text-dark-purple/70'
-                }`}>
-                  "{messages[messages.length - 1]?.content}"
-                </p>
-              </div>
-            )}
-            
-            {loading && (
-              <div className="mt-4 flex items-center gap-2 text-dark-purple/60">
-                <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
-                <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                <span className="ml-2 text-sm">Tom is thinking...</span>
-              </div>
-            )}
-          </div>
-        ) : (
-          /* Chat View */
-          <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      {/* Main content - Avatar always visible with chat below */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Avatar section - always visible */}
+        <div className="flex-shrink-0 pt-4 pb-2 flex flex-col items-center">
+          <TalkingAvatar
+            imageUrl={TOM_IMAGE}
+            audioUrl={currentAudioUrl}
+            isPlaying={isAvatarSpeaking}
+            onAudioEnd={handleAudioEnd}
+            emotionState={emotionState}
+            expressionConfig={expressionConfig}
+            className="scale-75 -my-8"
+          />
+        </div>
+        
+        {/* Chat messages area */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <div className="space-y-3">
             {messages.map((msg) => (
               <div
                 key={msg.id}
@@ -425,24 +396,24 @@ export default function AvatarChatScreen({ user }) {
             
             <div ref={messagesEndRef} />
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Input area */}
+      {/* Input area - unified with mic inside */}
       <div className="sticky bottom-0 bg-white/90 backdrop-blur-lg border-t border-border p-4">
-        <div className="flex items-center gap-3">
-          {/* Voice button */}
+        <div className="flex items-center gap-2 bg-muted rounded-full px-2 py-1">
+          {/* Mic button inside input */}
           <button
             onClick={recording ? stopRecording : startRecording}
             disabled={loading || isAvatarSpeaking}
-            className={`p-3 rounded-full transition-all ${
+            className={`p-2.5 rounded-full transition-all flex-shrink-0 ${
               recording 
                 ? 'bg-red-500 text-white animate-pulse' 
-                : 'bg-muted text-dark-purple hover:bg-neon-pink/20'
+                : 'bg-white text-dark-purple hover:bg-neon-pink/20 shadow-sm'
             } disabled:opacity-50`}
             data-testid="voice-button"
           >
-            {recording ? <StopCircle className="w-6 h-6" /> : <Mic className="w-6 h-6" />}
+            {recording ? <StopCircle className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
           </button>
           
           {/* Text input */}
@@ -451,9 +422,9 @@ export default function AvatarChatScreen({ user }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Talk to Tom..."
+            placeholder={recording ? "Listening..." : "Type or tap mic to talk..."}
             disabled={loading || recording || isAvatarSpeaking}
-            className="flex-1 px-4 py-3 rounded-full bg-muted border-0 focus:ring-2 focus:ring-neon-pink/50 outline-none disabled:opacity-50"
+            className="flex-1 px-3 py-2.5 bg-transparent border-0 focus:ring-0 outline-none disabled:opacity-50 text-dark-purple placeholder:text-dark-purple/50"
             data-testid="message-input"
           />
           
@@ -461,10 +432,10 @@ export default function AvatarChatScreen({ user }) {
           <button
             onClick={sendMessage}
             disabled={!input.trim() || loading || isAvatarSpeaking}
-            className="p-3 rounded-full bg-neon-pink text-white hover:bg-neon-pink/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-2.5 rounded-full bg-neon-pink text-white hover:bg-neon-pink/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex-shrink-0"
             data-testid="send-button"
           >
-            <Send className="w-6 h-6" />
+            <Send className="w-5 h-5" />
           </button>
         </div>
       </div>
