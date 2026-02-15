@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import { ArrowLeft, Send, Mic, StopCircle, Settings, MessageCircle } from 'lucide-react';
+import { ArrowLeft, Send, Mic, StopCircle, Settings } from 'lucide-react';
 import { toast } from 'sonner';
 import TalkingAvatar from '../components/TalkingAvatar';
 import { useLanguage } from '../context/LanguageContext';
@@ -35,9 +35,6 @@ export default function AvatarChatScreen({ user }) {
   
   // Usage tracking
   const [usageStats, setUsageStats] = useState(null);
-  
-  // View mode
-  const [viewMode, setViewMode] = useState('avatar'); // 'avatar' or 'chat'
   
   const messagesEndRef = useRef(null);
   const audioChunksRef = useRef([]);
