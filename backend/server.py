@@ -1145,7 +1145,7 @@ async def get_mood_summary(user_id: str, days: int = 7):
 
 
 @api_router.post("/chat/starter")
-async def get_conversation_starter(user_id: str, bestie_id: str):
+async def get_conversation_starter(user_id: str, bestie_id: str, language: str = "en"):
     """Generate a proactive conversation starter from the Bestie"""
     try:
         # Get bestie details
@@ -1155,8 +1155,8 @@ async def get_conversation_starter(user_id: str, bestie_id: str):
         
         bestie = Bestie(**parse_from_mongo(bestie_doc))
         
-        # Use shared prompt utility
-        starter_prompt = get_conversation_starter_prompt(bestie.name)
+        # Use shared prompt utility with language
+        starter_prompt = get_conversation_starter_prompt(bestie.name, language)
         
         # Generate the starter
         chat = LlmChat(
