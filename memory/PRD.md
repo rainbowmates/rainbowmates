@@ -5,6 +5,38 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - Talking Bestie Architecture (COMPLETE)
+**Per architecture spec documents, implemented:**
+
+1. **Memory Compression Service** (`backend/services/memory_service.py`)
+   - Rolling summary instead of full chat history
+   - Emotional trend tracking
+   - Key facts extraction
+   - NO full history sent to LLM - only compressed context
+
+2. **Enhanced Streaming TTS** (`backend/services/streaming_tts.py`)
+   - Streaming audio delivery for <800ms time-to-first-audio target
+   - Turbo v2.5 model for faster generation
+   - Emotion-based voice modulation
+
+3. **Viseme Timing for Lip-Sync**
+   - 15 standard viseme shapes mapped to phonemes
+   - Precise timing data generated per word
+   - Sent with TTS response for client-side animation
+
+4. **Monthly Usage Caps (750/month HARD CAP)**
+   - `tts_usage` collection tracks per user per month
+   - Usage stats returned with each speak request
+   - UI shows remaining count with warning when low
+
+5. **Expression Transitions (300-500ms)**
+   - Smooth blending between 8 expression states
+   - Configurable transition duration from backend
+
+**Frontend Updates:**
+- `TalkingAvatar.jsx` - Added viseme-based lip-sync, improved transitions
+- `AvatarChatScreen.jsx` - Shows monthly usage stats, passes viseme data
+
 ### Feb 15, 2026 - UI/UX Improvements (COMPLETE)
 **Navigation & Layout Changes:**
 1. **Back Arrow Navigation** - All screens now use `navigate(-1)` to go back one step in browser history instead of hardcoded routes
