@@ -266,8 +266,6 @@ def get_conversation_starter_prompt(bestie_name: str, language: str = "en") -> s
     Returns:
         The conversation starter system prompt
     """
-    lang_name = LANGUAGE_NAMES.get(language, 'English')
-    
     # Language-specific examples and instructions
     if language == 'fr':
         lang_instruction = "Respond in French. Use French terms of endearment like 'ma belle', 'chérie'."
