@@ -5,34 +5,41 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - Talking Avatar Feature (COMPLETE)
+**Tom - The Only Bestie**
+- Replaced all bestie images with single character "Tom"
+- Tom's image: `https://customer-assets.emergentagent.com/job_d78d511c-01b3-4716-b2c4-6339dea946bb/artifacts/dmzb8405_tom.png`
+
+**2.5D Talking Avatar Components:**
+- `/app/frontend/src/components/TalkingAvatar.jsx` - Avatar with Web Audio API lip-sync
+- `/app/frontend/src/pages/AvatarChatScreen.jsx` - New chat screen with avatar view
+- Breathing animation, emotion glow effects, speaking indicator
+
+**Backend TTS Service:**
+- `/app/backend/services/streaming_tts.py` - ElevenLabs TTS with emotion payload
+- Voice: Daniel (British) - onwK4e9ZLuTAKqWW03F9
+- Voice modulation based on emotion state
+- 750 monthly TTS limit with usage tracking
+
+**API Endpoints:**
+- `POST /api/avatar/speak` - Generate speech with emotion payload
+- `GET /api/avatar/usage/{user_id}` - Check usage stats
+
 ### Feb 15, 2026 - Relationship Scoring Engine (COMPLETE)
-- Built dynamic relationship engine at `/app/backend/services/relationship_engine.py`
-- Tracks 4 evolving scores: warmth, trust, playfulness, attachment
-- Auto-detects user mood from messages
-- Bestie mood adapts based on user mood + relationship scores
-- Streak tracking for daily engagement
-- New API endpoints: `/api/relationship/{user_id}/{bestie_id}`, `/api/relationship/scores/{user_id}/{bestie_id}`
+- Built at `/app/backend/services/relationship_engine.py`
+- Tracks: warmth, trust, playfulness, attachment (0.0-1.0)
+- Auto-detects user mood, bestie adapts
+- Streak tracking, relationship stages
 
 ### Feb 15, 2026 - Enhanced AI Personality Blueprint (COMPLETE)
-- Added Core Identity Blueprint to prompts
-- Dynamic injection of relationship scores into prompts
-- Emotional behavior rules (soften when sad, increase sass when playful)
-- Natural human variation (rotate response styles)
+- Core Identity Blueprint in prompts
+- Dynamic relationship score injection
+- Emotional behavior rules
+- Natural human variation
 - Subtle flaws (dramatic, exaggerate, pet peeves)
-- Avatar expression signals
 
 ### Feb 15, 2026 - Prompt Consolidation (COMPLETE)
-- Created shared prompt utility at `/app/backend/utils/prompts.py`
-- Single source of truth for all AI personality prompts
-- Removed duplicate prompts from server.py and bestie_service.py
-
-### Feb 15, 2026 - New Bestie Image (COMPLETE)
-- Added "Freckled Charm" bestie option from user-provided image
-
-### Feb 15, 2026 - Voice Controls, Mood Tracking & Multi-Lingual (COMPLETE)
-- Voice playback controls (pause/resume, listen again)
-- Mood tracking via AI analysis
-- 6 languages: English, French, Italian, German, Spanish, Portuguese
+- Single source at `/app/backend/utils/prompts.py`
 
 ### Feb 14, 2026 - Previous Features (COMPLETE)
 - 25-word response limit
@@ -40,34 +47,16 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 - Conversation starters
 - Proactive AI behavior
 - Desktop warning modal
-
-## Relationship Scoring System
-
-### Scores (0.0 - 1.0)
-| Score | Default | Grows From |
-|-------|---------|------------|
-| warmth_score | 0.3 | Regular chatting, positive messages |
-| trust_score | 0.2 | Vulnerability, sharing secrets |
-| playfulness_score | 0.5 | Jokes, emojis, playful banter |
-| attachment_score | 0.1 | Consistency, returning after absence |
-
-### Relationship Stages
-- **< 0.3 avg**: "Getting to Know Each Other"
-- **0.3-0.5**: "Building Trust"
-- **0.5-0.7**: "Close Friends"
-- **> 0.7**: "Ride or Die"
-
-### Bestie Moods (auto-selected)
-- comforting, supportive, playful, excited, protective, curious, sassy, warm, affectionate, friendly
-
-## AI Personality Prompt Structure
-**Single source of truth:** `/app/backend/utils/prompts.py`
+- Multi-language framework
 
 ## Tech Stack
-- **Frontend**: React, Tailwind CSS, lucide-react
+- **Frontend**: React, Tailwind CSS, lucide-react, Web Audio API
 - **Backend**: FastAPI, Python, MongoDB
 - **AI**: Claude claude-sonnet-4-5-20250929 via emergentintegrations
-- **Voice**: ElevenLabs TTS, OpenAI Whisper STT
+- **Voice**: ElevenLabs TTS (Daniel voice), OpenAI Whisper STT
+
+## Test Reports
+- `/app/test_reports/iteration_6.json` - Talking Avatar tests (100% pass)
 
 ## Next Action Items
 - Populate actual translations (currently English placeholders)
