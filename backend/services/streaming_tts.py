@@ -143,11 +143,19 @@ class StreamingTTSService:
         text: str,
         user_id: str,
         emotion: str = "friendly",
-        relationship_scores: Optional[Dict[str, float]] = None
+        relationship_scores: Optional[Dict[str, float]] = None,
+        language: str = "en"
     ) -> Dict[str, Any]:
         """
         Generate speech audio with emotion payload.
         Returns base64 audio and emotion data for avatar animation.
+        
+        Args:
+            text: Text to convert to speech
+            user_id: User ID for usage tracking
+            emotion: Emotion for voice modulation
+            relationship_scores: Relationship data for animation
+            language: Language code (en, fr, de, es, it, pt)
         """
         if not self.client:
             raise ValueError("ElevenLabs API key not configured")
@@ -182,12 +190,18 @@ class StreamingTTSService:
             use_speaker_boost=AVATAR_VOICE_SETTINGS["use_speaker_boost"]
         )
         
+        # Select model based on language
+        # Use multilingual model for non-English languages
+        model_id = MULTILINGUAL_MODEL if language in MULTILINGUAL_LANGUAGES else ENGLISH_MODEL
+        
+        logger.info(f"Generating TTS: language={language}, model={model_id}")
+        
         try:
             # Generate TTS audio
             audio_generator = self.client.text_to_speech.convert(
                 text=text,
                 voice_id=TOM_VOICE_ID,
-                model_id="eleven_turbo_v2_5",
+                model_id=model_id,
                 voice_settings=voice_settings
             )
             
@@ -207,6 +221,8 @@ class StreamingTTSService:
                 "audio_url": f"data:audio/mpeg;base64,{audio_b64}",
                 "emotion_payload": emotion_payload,
                 "text": text,
+                "language": language,
+                "model": model_id,
                 "usage": await self.check_usage_limit(user_id)
             }
             
