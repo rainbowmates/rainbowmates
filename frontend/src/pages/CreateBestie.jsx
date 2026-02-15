@@ -131,14 +131,14 @@ export default function CreateBestie({ user }) {
           {/* Name */}
           <div>
             <label className="block text-sm font-medium text-dark-purple mb-2">
-              Bestie's Name
+              {t('bestieName')}
             </label>
             <input
               data-testid="bestie-name"
               type="text"
               value={formData.name}
               onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              placeholder="Enter a fabulous name..."
+              placeholder={t('enterFabulousName')}
               className="w-full px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none"
             />
           </div>
