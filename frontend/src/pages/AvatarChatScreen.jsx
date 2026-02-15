@@ -309,10 +309,10 @@ export default function AvatarChatScreen({ user }) {
               <ArrowLeft className="w-5 h-5 text-dark-purple" />
             </button>
             <div>
-              <h1 className="text-lg font-bold text-dark-purple">Tom</h1>
+              <h1 className="text-lg font-bold text-dark-purple">{t('tom')}</h1>
               {relationshipData && (
                 <p className="text-xs text-dark-purple/60">
-                  {relationshipData.stage} • {relationshipData.streak_days} day streak
+                  {relationshipData.stage} • {relationshipData.streak_days} {t('days')} streak
                 </p>
               )}
             </div>
