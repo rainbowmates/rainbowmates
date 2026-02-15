@@ -23,7 +23,8 @@ export default function AvatarChatScreen({ user }) {
   // Avatar state
   const [isAvatarSpeaking, setIsAvatarSpeaking] = useState(false);
   const [currentAudioUrl, setCurrentAudioUrl] = useState(null);
-  const [emotionState, setEmotionState] = useState('friendly');
+  const [emotionState, setEmotionState] = useState('curious'); // Default to curious
+  const [expressionConfig, setExpressionConfig] = useState(null);
   const [relationshipData, setRelationshipData] = useState(null);
   
   // Voice recording
