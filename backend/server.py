@@ -1166,16 +1166,28 @@ async def get_conversation_starter(user_id: str, bestie_id: str):
         
         response = await chat.send_message(UserMessage(text="Greet me"))
         
-        # Save the starter message
+        # Parse expression from response
+        clean_response, expression_tag, intensity = parse_expression_from_response(response)
+        expression_config = get_expression_config(expression_tag)
+        
+        # Save the starter message (with clean text)
         starter_message = Message(
             user_id=user_id,
             bestie_id=bestie_id,
             role="bestie",
-            content=response
+            content=clean_response
         )
         await db.messages.insert_one(prepare_for_mongo(starter_message.model_dump()))
         
-        return {"message": response, "message_id": starter_message.id}
+        return {
+            "message": clean_response, 
+            "message_id": starter_message.id,
+            "expression": {
+                "tag": expression_tag,
+                "intensity": intensity,
+                "config": expression_config
+            }
+        }
         
     except Exception as e:
         logger.error(f"Error generating conversation starter: {str(e)}")
