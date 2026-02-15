@@ -261,8 +261,14 @@ export default function AvatarChatScreen({ user }) {
         
         setMessages(prev => [...prev, bestieMessage]);
         
-        const emotion = res.data.relationship?.bestie_mood || 'friendly';
-        await speakMessage(res.data.message, emotion);
+        // Get expression from response
+        const expressionTag = res.data.expression?.tag || 'curious';
+        const expConfig = res.data.expression?.config || null;
+        
+        setEmotionState(expressionTag);
+        setExpressionConfig(expConfig);
+        
+        await speakMessage(res.data.message, expressionTag);
       }
     } catch (error) {
       toast.error('Failed to process voice');
