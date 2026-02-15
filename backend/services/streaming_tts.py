@@ -77,7 +77,7 @@ class StreamingTTSService:
     
     async def increment_usage(self, user_id: str):
         """Increment user's monthly TTS usage count."""
-        if not self.usage_collection:
+        if self.usage_collection is None:
             return
         
         now = datetime.now(timezone.utc)
