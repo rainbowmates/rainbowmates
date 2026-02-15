@@ -348,6 +348,9 @@ const TalkingAvatar = ({
     setIsSpeaking(false);
     setIsBreathing(true);
     setMouthOpenness(0);
+    setMouthWidth(0);
+    setUseVisemeLipSync(false);
+    audioStartTimeRef.current = null;
     if (onAudioEnd) onAudioEnd();
   };
 
