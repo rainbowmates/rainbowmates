@@ -239,6 +239,146 @@ def get_conversation_starter_prompt(bestie_name: str) -> str:
 
 Generate a greeting in MAX 15 WORDS. Use "babe/honey/sweetie", one emoji, end with question.
 
-Example: "Hey babe! How's your day going?"
+Include expression tag at end: [expression: curious] or [expression: excited]
+
+Example: "Hey babe! How's your day going? [expression: curious]"
 
 MAX 15 WORDS. Count them."""
+
+
+def parse_expression_from_response(response: str) -> tuple:
+    """
+    Parse the expression tag from an AI response.
+    
+    Args:
+        response: The AI response text
+        
+    Returns:
+        Tuple of (clean_text, expression_tag, intensity)
+    """
+    import re
+    
+    # Default expression
+    expression_tag = "curious"
+    intensity = 0.5
+    clean_text = response
+    
+    # Look for [expression: TAG] pattern
+    pattern = r'\[expression:\s*(\w+)\]'
+    match = re.search(pattern, response, re.IGNORECASE)
+    
+    if match:
+        found_tag = match.group(1).lower()
+        # Validate the tag
+        if found_tag in VALID_EXPRESSION_TAGS:
+            expression_tag = found_tag
+        # Remove the tag from the response
+        clean_text = re.sub(pattern, '', response, flags=re.IGNORECASE).strip()
+    
+    # Determine intensity based on expression
+    intensity_map = {
+        "comforting": 0.4,
+        "playful": 0.6,
+        "dramatic": 0.8,
+        "protective": 0.5,
+        "curious": 0.5,
+        "excited": 0.8,
+        "teasing_annoyed": 0.6,
+        "concern": 0.4
+    }
+    intensity = intensity_map.get(expression_tag, 0.5)
+    
+    return clean_text, expression_tag, intensity
+
+
+def get_expression_config(expression_tag: str) -> dict:
+    """
+    Get the full expression configuration for avatar animation.
+    
+    Args:
+        expression_tag: The internal tag (e.g., 'playful', 'dramatic')
+        
+    Returns:
+        Dictionary with animation parameters
+    """
+    # Map internal tags to full expression configs
+    configs = {
+        "comforting": {
+            "name": "SOFT_COMFORTING",
+            "eyebrows": -0.1,      # Inward tilt
+            "eyeScale": 1.0,
+            "eyeSquint": 0.1,      # Soft eyes
+            "mouthCurve": 0.15,    # Gentle smile
+            "headTilt": 0.05,      # Slight tilt
+            "energy": "low_medium",
+            "glow_color": "rgba(150, 200, 255, 0.4)"  # Soft blue
+        },
+        "playful": {
+            "name": "PLAYFUL_TEASING",
+            "eyebrows": 0.2,       # One raised (asymmetric)
+            "eyebrowAsymmetry": 0.15,
+            "eyeScale": 1.05,
+            "mouthCurve": 0.2,     # Smirk
+            "mouthAsymmetry": 0.1, # Asymmetric smirk
+            "energy": "medium",
+            "glow_color": "rgba(255, 150, 200, 0.5)"  # Pink
+        },
+        "dramatic": {
+            "name": "DRAMATIC_DISBELIEF",
+            "eyebrows": 0.35,      # Lifted high
+            "eyeScale": 1.25,      # Wide eyes
+            "mouthOpen": 0.3,      # Mouth slightly open
+            "mouthCurve": 0,
+            "energy": "medium_high",
+            "glow_color": "rgba(255, 200, 100, 0.5)"  # Gold
+        },
+        "protective": {
+            "name": "PROTECTIVE_SERIOUS",
+            "eyebrows": -0.15,     # Lowered
+            "eyeScale": 1.1,
+            "mouthCurve": 0,       # Firm neutral
+            "jawSet": 0.1,         # Firm jaw
+            "energy": "medium_low",
+            "glow_color": "rgba(100, 150, 255, 0.4)"  # Steel blue
+        },
+        "curious": {
+            "name": "CURIOUS_LEAN_IN",
+            "eyebrows": 0.15,      # Raised
+            "eyeScale": 1.15,      # Wide, attentive
+            "mouthCurve": 0.1,     # Slight smile
+            "headLean": 0.1,       # Forward lean
+            "energy": "medium",
+            "glow_color": "rgba(200, 255, 150, 0.4)"  # Lime
+        },
+        "excited": {
+            "name": "EXCITED_SPARKLE",
+            "eyebrows": 0.2,       # Lifted
+            "eyeScale": 1.2,       # Bright, wide
+            "eyeSparkle": True,
+            "mouthCurve": 0.35,    # Full smile
+            "mouthOpen": 0.1,
+            "energy": "medium_high",
+            "glow_color": "rgba(255, 220, 100, 0.6)"  # Bright gold
+        },
+        "teasing_annoyed": {
+            "name": "TEASING_EYEROLL",
+            "eyebrows": 0.1,
+            "eyeRoll": True,       # Eye roll animation
+            "eyeScale": 1.0,
+            "mouthCurve": 0.15,    # Soft smirk
+            "mouthAsymmetry": 0.1,
+            "energy": "medium",
+            "glow_color": "rgba(255, 180, 200, 0.4)"  # Light pink
+        },
+        "concern": {
+            "name": "GENTLE_CONCERN",
+            "eyebrows": -0.05,     # Tilted upward slightly
+            "eyebrowTilt": 0.1,    # Inner brow lift
+            "eyeScale": 1.05,
+            "mouthCurve": 0.05,    # Soft lips
+            "energy": "low",
+            "glow_color": "rgba(180, 200, 255, 0.4)"  # Pale blue
+        }
+    }
+    
+    return configs.get(expression_tag, configs["curious"])
