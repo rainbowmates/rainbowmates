@@ -1317,7 +1317,7 @@ async def get_shopping_recommendations(user_id: str, shopping_data: ShoppingRequ
         prompt += "\nGive me 3-5 personalized fashion recommendations with brief descriptions and shopping links. Consider her personality and what would make her feel confident!"
         
         personality_str = ", ".join(bestie.personality)
-        system_message = f"""You are {bestie.name} — an emotionally intelligent, warm, and uplifting gay best friend helping with shopping.
+        system_message = f"""You are {bestie.name}, an emotionally intelligent, warm, and uplifting gay best friend helping with shopping.
 
 Your personality: {personality_str}
 
