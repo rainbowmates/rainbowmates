@@ -273,18 +273,20 @@ class StreamingTTSService:
         relationship_scores: Optional[Dict[str, float]] = None
     ) -> Dict[str, Any]:
         """
-        Generate speech audio with emotion payload.
-        Returns base64 audio and emotion data for avatar animation.
+        Generate speech audio with emotion payload and viseme timing.
+        Returns base64 audio and animation data for avatar.
+        
+        Architecture target: <1.5s total perceived response start
         """
         if not self.client:
             raise ValueError("ElevenLabs API key not configured")
         
-        # Check usage limit
+        # Check usage limit (HARD CAP: 750/month)
         usage = await self.check_usage_limit(user_id)
         if not usage["allowed"]:
             return {
                 "error": "usage_limit_exceeded",
-                "message": f"Monthly limit of {usage['limit']} spoken replies reached",
+                "message": f"Monthly limit of {usage['limit']} spoken replies reached. Resets next month.",
                 "usage": usage
             }
         
@@ -295,7 +297,7 @@ class StreamingTTSService:
             "attachment_score": 0.3
         }
         
-        # Generate emotion payload
+        # Generate emotion payload with viseme timing
         emotion_payload = self.generate_emotion_payload(
             text, emotion, relationship_scores
         )
@@ -310,18 +312,21 @@ class StreamingTTSService:
         )
         
         try:
-            # Generate TTS audio
+            # Generate TTS audio using streaming for lower latency
             audio_generator = self.client.text_to_speech.convert(
                 text=text,
                 voice_id=TOM_VOICE_ID,
-                model_id="eleven_turbo_v2_5",
-                voice_settings=voice_settings
+                model_id="eleven_turbo_v2_5",  # Fast model for <800ms TTFA
+                voice_settings=voice_settings,
+                output_format="mp3_44100_128"  # Good quality, reasonable size
             )
             
             # Collect audio chunks
             audio_data = b""
+            chunk_count = 0
             for chunk in audio_generator:
                 audio_data += chunk
+                chunk_count += 1
             
             # Encode to base64
             audio_b64 = base64.b64encode(audio_data).decode()
@@ -329,12 +334,17 @@ class StreamingTTSService:
             # Increment usage
             await self.increment_usage(user_id)
             
+            # Get updated usage stats
+            updated_usage = await self.check_usage_limit(user_id)
+            
             return {
                 "success": True,
                 "audio_url": f"data:audio/mpeg;base64,{audio_b64}",
                 "emotion_payload": emotion_payload,
+                "viseme_timing": emotion_payload.get("viseme_timing", []),
                 "text": text,
-                "usage": await self.check_usage_limit(user_id)
+                "usage": updated_usage,
+                "chunks_received": chunk_count
             }
             
         except Exception as e:
@@ -348,19 +358,51 @@ class StreamingTTSService:
         self,
         text: str,
         user_id: str,
-        emotion: str = "friendly"
-    ) -> AsyncGenerator[bytes, None]:
+        emotion: str = "friendly",
+        relationship_scores: Optional[Dict[str, float]] = None
+    ) -> AsyncGenerator[Dict[str, Any], None]:
         """
-        Stream speech audio chunks for lower latency.
-        Yields audio chunks as they're generated.
+        Stream speech audio chunks for lowest latency.
+        Yields audio chunks + metadata as they're generated.
+        Target: <800ms time-to-first-audio.
+        
+        Yields:
+        - First chunk: metadata with viseme timing
+        - Subsequent chunks: audio data
         """
         if not self.client:
             raise ValueError("ElevenLabs API key not configured")
         
-        # Check usage limit
+        # Check usage limit first
         usage = await self.check_usage_limit(user_id)
         if not usage["allowed"]:
-            raise ValueError(f"Monthly limit of {usage['limit']} reached")
+            yield {
+                "type": "error",
+                "error": "usage_limit_exceeded",
+                "message": f"Monthly limit of {usage['limit']} reached",
+                "usage": usage
+            }
+            return
+        
+        relationship_scores = relationship_scores or {
+            "warmth_score": 0.5,
+            "trust_score": 0.4,
+            "playfulness_score": 0.5,
+            "attachment_score": 0.3
+        }
+        
+        # Generate emotion payload with viseme timing
+        emotion_payload = self.generate_emotion_payload(
+            text, emotion, relationship_scores
+        )
+        
+        # Send metadata first so client can prepare
+        yield {
+            "type": "metadata",
+            "emotion_payload": emotion_payload,
+            "viseme_timing": emotion_payload.get("viseme_timing", []),
+            "text": text
+        }
         
         voice_mod = EMOTION_VOICE_MAP.get(emotion, EMOTION_VOICE_MAP["friendly"])
         voice_settings = VoiceSettings(
@@ -375,18 +417,36 @@ class StreamingTTSService:
                 text=text,
                 voice_id=TOM_VOICE_ID,
                 model_id="eleven_turbo_v2_5",
-                voice_settings=voice_settings
+                voice_settings=voice_settings,
+                output_format="mp3_44100_128"
             )
             
+            chunk_index = 0
             for chunk in audio_generator:
-                yield chunk
+                yield {
+                    "type": "audio_chunk",
+                    "chunk_index": chunk_index,
+                    "data": base64.b64encode(chunk).decode(),
+                    "size": len(chunk)
+                }
+                chunk_index += 1
             
             # Increment usage after successful generation
             await self.increment_usage(user_id)
             
+            # Send completion
+            yield {
+                "type": "complete",
+                "total_chunks": chunk_index,
+                "usage": await self.check_usage_limit(user_id)
+            }
+            
         except Exception as e:
             logger.error(f"Streaming TTS error: {str(e)}")
-            raise
+            yield {
+                "type": "error",
+                "error": str(e)
+            }
 
 
 # Singleton instance
