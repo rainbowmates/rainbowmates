@@ -152,7 +152,7 @@ export default function ChatScreen({ user }) {
     }, 500);
 
     try {
-      const response = await axios.post(`${API}/chat/message?user_id=${user.id}`, {
+      const response = await axios.post(`${API}/chat/message?user_id=${user.id}&language=${language}`, {
         bestie_id: bestie.id,
         content: content
       });
