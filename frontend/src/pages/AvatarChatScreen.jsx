@@ -125,16 +125,22 @@ export default function AvatarChatScreen({ user }) {
         setCurrentAudioUrl(res.data.audio_url);
         setUsageStats(res.data.usage);
         
-        // Update emotion from payload
+        // Update emotion and viseme data from payload
         if (res.data.emotion_payload) {
           setEmotionState(res.data.emotion_payload.emotion);
+          setEmotionPayload(res.data.emotion_payload);
+        }
+        
+        // Set viseme timing for lip-sync
+        if (res.data.viseme_timing) {
+          setVisemeTimingData(res.data.viseme_timing);
         }
       }
     } catch (error) {
       console.error('TTS error:', error);
       setIsAvatarSpeaking(false);
       if (error.response?.status === 429) {
-        toast.error('Monthly speaking limit reached');
+        toast.error('Monthly speaking limit reached. Resets next month!');
       }
     }
   };
