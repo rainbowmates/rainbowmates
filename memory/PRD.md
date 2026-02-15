@@ -5,6 +5,18 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - AI Safety Guardrails (COMPLETE)
+**Implemented behavioral guardrails to ensure responsible AI behavior:**
+1. **No Inappropriate Content**: AI politely refuses sexual or explicit conversation requests
+   - Example response: "Okay babe, that's not really my vibe 😅 Let's talk about something else"
+2. **No Major Life Advice**: AI avoids giving definitive advice on life-changing decisions (job changes, breakups, medical/legal matters)
+   - Encourages user to consult trusted friends, family, or professionals
+   - Example response: "That's HUGE - have you talked to someone you trust about this?"
+
+**Technical Implementation:**
+- Added `BEHAVIORAL GUARDRAILS` section to `CORE_IDENTITY_BLUEPRINT` in `backend/utils/prompts.py`
+- Guardrails are part of the system prompt, not hardcoded responses
+
 ### Feb 15, 2026 - Multi-lingual AI Responses (COMPLETE)
 **Tom now responds in user's selected language (text only):**
 - English (en) - default
