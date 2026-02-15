@@ -119,7 +119,8 @@ export default function AvatarChatScreen({ user }) {
         text,
         user_id: user.id,
         bestie_id: bestie.id,
-        emotion
+        emotion,
+        language  // Pass current language for multilingual TTS
       });
       
       if (res.data.success) {
