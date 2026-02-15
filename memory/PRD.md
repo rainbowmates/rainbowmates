@@ -5,6 +5,31 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - Dynamic Avatar Expressions (COMPLETE)
+**8 Core Expression States Implemented:**
+1. **SOFT_COMFORTING** - User sad/anxious/vulnerable. Soft blue glow, gentle eyes.
+2. **PLAYFUL_TEASING** - Light banter. Pink glow, asymmetric smirk.
+3. **DRAMATIC_DISBELIEF** - Surprising news. Gold glow, wide eyes, mouth open.
+4. **PROTECTIVE_SERIOUS** - User facing conflict. Steel blue glow, firm expression.
+5. **CURIOUS_LEAN_IN** - User shares info (DEFAULT). Green glow, raised brows.
+6. **EXCITED_SPARKLE** - Good news. Bright gold glow, full smile, sparkle effect.
+7. **TEASING_EYEROLL** - User repeating bad decision. Light pink, eye roll animation.
+8. **GENTLE_CONCERN** - User emotional. Pale blue glow, soft empathetic expression.
+
+**Technical Implementation:**
+- AI prompt includes expression tagging instructions: `[expression: TAG]`
+- `parse_expression_from_response()` extracts tag, removes from displayed message
+- `get_expression_config()` returns full visual config for avatar
+- TalkingAvatar.jsx has visual properties: eyebrows, eyeScale, mouthCurve, headTilt, glowColor
+- Expression label shows current state below avatar
+- Smooth 300-500ms transitions between expressions
+
+**Files Modified:**
+- `/app/backend/utils/prompts.py` - EXPRESSION_STATES, parse/config functions
+- `/app/backend/server.py` - Expression parsing in chat endpoints
+- `/app/frontend/src/components/TalkingAvatar.jsx` - 8 expression visual configs
+- `/app/frontend/src/pages/AvatarChatScreen.jsx` - Expression state handling
+
 ### Feb 15, 2026 - Talking Avatar Feature (COMPLETE)
 **Tom - The Only Bestie**
 - Replaced all bestie images with single character "Tom"
@@ -56,6 +81,7 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 - **Voice**: ElevenLabs TTS (Daniel voice), OpenAI Whisper STT
 
 ## Test Reports
+- `/app/test_reports/iteration_7.json` - Dynamic Expressions (100% pass - 14/14)
 - `/app/test_reports/iteration_6.json` - Talking Avatar tests (100% pass)
 
 ## Next Action Items
