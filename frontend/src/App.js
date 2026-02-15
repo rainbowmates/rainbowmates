@@ -18,6 +18,7 @@ import SubscriptionScreen from "./pages/SubscriptionScreen";
 import SettingsScreen from "./pages/SettingsScreen";
 import DesktopWarningModal from "./components/DesktopWarningModal";
 import { Toaster } from "@/components/ui/sonner";
+import { LanguageProvider } from "./context/LanguageContext";
 
 function App() {
   const [user, setUser] = useState(null);
