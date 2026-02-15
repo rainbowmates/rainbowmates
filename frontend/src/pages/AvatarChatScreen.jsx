@@ -28,6 +28,8 @@ export default function AvatarChatScreen({ user }) {
   const [emotionState, setEmotionState] = useState('curious'); // Default to curious
   const [expressionConfig, setExpressionConfig] = useState(null);
   const [relationshipData, setRelationshipData] = useState(null);
+  const [visemeTimingData, setVisemeTimingData] = useState(null);  // NEW: Viseme timing for lip-sync
+  const [emotionPayload, setEmotionPayload] = useState(null);      // NEW: Full emotion payload
   
   // Voice recording
   const [recording, setRecording] = useState(false);
