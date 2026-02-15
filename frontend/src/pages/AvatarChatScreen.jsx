@@ -368,6 +368,8 @@ export default function AvatarChatScreen({ user }) {
             onAudioEnd={handleAudioEnd}
             emotionState={emotionState}
             expressionConfig={expressionConfig}
+            visemeTimingData={visemeTimingData}
+            emotionPayload={emotionPayload}
             className="scale-75 -my-8"
           />
         </div>
