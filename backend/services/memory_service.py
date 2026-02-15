@@ -210,7 +210,7 @@ class MemoryService:
         if mood in ["sad", "anxious"]:
             exchange_summary = f"User was feeling {mood}. "
         elif mood in ["happy", "excited"]:
-            exchange_summary = f"User shared positive news. "
+            exchange_summary = "User shared positive news. "
         elif any(word in message_lower for word in ["help", "advice", "should i"]):
             exchange_summary = "User asked for advice. "
         
