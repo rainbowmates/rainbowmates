@@ -149,6 +149,8 @@ export default function AvatarChatScreen({ user }) {
   const handleAudioEnd = useCallback(() => {
     setIsAvatarSpeaking(false);
     setCurrentAudioUrl(null);
+    setVisemeTimingData(null);  // Clear viseme data
+    setEmotionPayload(null);    // Clear emotion payload
   }, []);
 
   // Send text message
