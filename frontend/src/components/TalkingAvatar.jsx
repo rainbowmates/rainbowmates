@@ -303,11 +303,14 @@ const TalkingAvatar = ({
         preload="auto"
       />
 
-      {/* Avatar wrapper with breathing animation */}
+      {/* Avatar wrapper with breathing animation and expression-based transforms */}
       <div 
-        className={`avatar-wrapper ${isBreathing ? 'breathing' : ''}`}
+        className={`avatar-wrapper ${isBreathing ? 'breathing' : ''} ${eyeRollActive ? 'eye-rolling' : ''}`}
         style={{
-          '--breath-scale': isBreathing ? 1 : 1,
+          '--head-tilt': `${expression.headTilt || 0}rad`,
+          '--glow-color': expression.glowColor || 'rgba(233, 137, 234, 0.4)',
+          '--glow-intensity': `${expression.glowIntensity || 40}px`,
+          '--transition-progress': transitionProgress,
         }}
       >
         {/* Base avatar image */}
@@ -319,33 +322,68 @@ const TalkingAvatar = ({
           />
         </div>
 
-        {/* Mouth overlay for lip-sync */}
+        {/* Eyebrow overlays for expression */}
+        <div 
+          className="eyebrows-overlay"
+          style={{
+            '--brow-raise': expression.eyebrows || 0,
+            '--brow-asymmetry': expression.eyebrowAsymmetry || 0,
+            '--brow-tilt': expression.eyebrowTilt || 0,
+          }}
+        >
+          <div className="eyebrow left-brow" />
+          <div className="eyebrow right-brow" />
+        </div>
+
+        {/* Eye overlays for expressions with squint/scale */}
+        <div 
+          className={`eyes-overlay ${eyeRollActive ? 'rolling' : ''}`}
+          style={{
+            '--eye-scale': eyeState === 'blink' ? 0.1 : (expression.eyeScale || 1),
+            '--eye-squint': expression.eyeSquint || 0,
+          }}
+        >
+          <div className="eye left-eye">
+            {expression.eyeSparkle && <span className="sparkle" />}
+          </div>
+          <div className="eye right-eye">
+            {expression.eyeSparkle && <span className="sparkle" />}
+          </div>
+        </div>
+
+        {/* Mouth overlay for lip-sync + expression */}
         <div 
           className="mouth-overlay"
           style={{
-            '--mouth-open': mouthOpenness,
-            '--mouth-curve': expression.mouthCurve,
+            '--mouth-open': mouthOpenness + (expression.mouthOpen || 0),
+            '--mouth-curve': expression.mouthCurve || 0,
+            '--mouth-asymmetry': expression.mouthAsymmetry || 0,
           }}
         >
           <div className="mouth-shape" />
         </div>
 
-        {/* Eye overlay for expressions */}
+        {/* Dynamic emotion glow */}
         <div 
-          className="eyes-overlay"
+          className="emotion-glow"
           style={{
-            '--eye-scale': eyeState === 'blink' ? 0.1 : expression.eyeScale,
-            '--brow-position': expression.eyeBrows,
+            boxShadow: `0 0 ${expression.glowIntensity || 40}px ${expression.glowColor || 'rgba(233, 137, 234, 0.4)'}`,
           }}
-        >
-          <div className="eye left-eye" />
-          <div className="eye right-eye" />
-        </div>
-
-        {/* Emotion indicator (subtle glow) */}
-        <div 
-          className={`emotion-glow emotion-${emotionState}`}
         />
+        
+        {/* Energy indicator particles for high-energy states */}
+        {(expression.energy === 'medium_high') && (
+          <div className="energy-particles">
+            <span className="particle p1" />
+            <span className="particle p2" />
+            <span className="particle p3" />
+          </div>
+        )}
+      </div>
+
+      {/* Expression label (for debugging - can hide in production) */}
+      <div className="expression-label">
+        {emotionState}
       </div>
 
       {/* Speaking indicator */}
@@ -371,24 +409,37 @@ const TalkingAvatar = ({
           width: 280px;
           height: 280px;
           border-radius: 50%;
-          overflow: hidden;
-          box-shadow: 0 8px 32px rgba(233, 137, 234, 0.3);
-          transition: transform 0.3s ease;
+          overflow: visible;
+          transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+          transform: rotate(var(--head-tilt, 0));
         }
 
         .avatar-wrapper.breathing {
           animation: breathe 4s ease-in-out infinite;
         }
+        
+        .avatar-wrapper.eye-rolling {
+          animation: subtle-head-shake 0.6s ease-in-out;
+        }
 
         @keyframes breathe {
-          0%, 100% { transform: scale(1); }
-          50% { transform: scale(1.02); }
+          0%, 100% { transform: rotate(var(--head-tilt, 0)) scale(1); }
+          50% { transform: rotate(var(--head-tilt, 0)) scale(1.015); }
+        }
+        
+        @keyframes subtle-head-shake {
+          0%, 100% { transform: rotate(var(--head-tilt, 0)); }
+          25% { transform: rotate(calc(var(--head-tilt, 0) - 0.02rad)); }
+          75% { transform: rotate(calc(var(--head-tilt, 0) + 0.02rad)); }
         }
 
         .avatar-base {
           width: 100%;
           height: 100%;
           position: relative;
+          border-radius: 50%;
+          overflow: hidden;
+          box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
         }
 
         .avatar-image {
@@ -398,26 +449,40 @@ const TalkingAvatar = ({
           object-position: center top;
         }
 
-        .mouth-overlay {
+        /* Eyebrow overlays */
+        .eyebrows-overlay {
           position: absolute;
-          bottom: 28%;
+          top: 32%;
           left: 50%;
           transform: translateX(-50%);
-          width: 60px;
-          height: 30px;
+          width: 110px;
+          display: flex;
+          justify-content: space-between;
           pointer-events: none;
-          opacity: 0;
+          z-index: 10;
         }
 
-        .mouth-shape {
-          width: 100%;
-          height: calc(10px + var(--mouth-open, 0) * 20px);
-          background: rgba(80, 40, 40, 0.9);
-          border-radius: 50%;
-          transform: scaleY(calc(0.3 + var(--mouth-open, 0) * 0.7));
-          transition: transform 0.05s ease-out;
+        .eyebrow {
+          width: 35px;
+          height: 6px;
+          background: transparent;
+          border-radius: 3px;
+          transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
+        .left-brow {
+          transform: 
+            translateY(calc(var(--brow-raise, 0) * -15px))
+            rotate(calc((var(--brow-asymmetry, 0) + var(--brow-tilt, 0)) * -0.15rad));
+        }
+
+        .right-brow {
+          transform: 
+            translateY(calc((var(--brow-raise, 0) - var(--brow-asymmetry, 0)) * -15px))
+            rotate(calc(var(--brow-tilt, 0) * 0.15rad));
+        }
+
+        /* Eye overlays */
         .eyes-overlay {
           position: absolute;
           top: 38%;
@@ -427,39 +492,123 @@ const TalkingAvatar = ({
           display: flex;
           justify-content: space-between;
           pointer-events: none;
-          opacity: 0;
+          z-index: 5;
+        }
+        
+        .eyes-overlay.rolling .eye {
+          animation: eye-roll 0.8s ease-in-out;
+        }
+        
+        @keyframes eye-roll {
+          0%, 100% { transform: translateY(0) scaleY(var(--eye-scale, 1)); }
+          25% { transform: translateY(-3px) scaleY(0.8); }
+          50% { transform: translateY(-6px) scaleY(0.9); }
+          75% { transform: translateY(-3px) scaleY(0.85); }
         }
 
         .eye {
-          width: 20px;
-          height: calc(20px * var(--eye-scale, 1));
+          width: 22px;
+          height: calc(22px * var(--eye-scale, 1) * (1 - var(--eye-squint, 0)));
           background: transparent;
           border-radius: 50%;
-          transition: height 0.1s ease;
+          transition: all 0.15s ease;
+          position: relative;
+        }
+        
+        .sparkle {
+          position: absolute;
+          top: 20%;
+          right: 20%;
+          width: 6px;
+          height: 6px;
+          background: rgba(255, 255, 255, 0.9);
+          border-radius: 50%;
+          animation: sparkle-shine 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes sparkle-shine {
+          0%, 100% { opacity: 0.7; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.3); }
         }
 
+        /* Mouth overlay */
+        .mouth-overlay {
+          position: absolute;
+          bottom: 28%;
+          left: 50%;
+          transform: translateX(calc(-50% + var(--mouth-asymmetry, 0) * 5px));
+          width: 55px;
+          height: 30px;
+          pointer-events: none;
+          z-index: 5;
+          opacity: 0;
+        }
+
+        .mouth-shape {
+          width: 100%;
+          height: calc(8px + var(--mouth-open, 0) * 22px);
+          background: transparent;
+          border-radius: calc(50% - var(--mouth-curve, 0) * 20%);
+          transform: 
+            scaleY(calc(0.3 + var(--mouth-open, 0) * 0.7))
+            skewX(calc(var(--mouth-asymmetry, 0) * 5deg));
+          transition: all 0.08s ease-out;
+        }
+
+        /* Dynamic emotion glow */
         .emotion-glow {
           position: absolute;
-          inset: -10px;
+          inset: -15px;
           border-radius: 50%;
-          opacity: 0.3;
+          opacity: 0.4;
           pointer-events: none;
-          transition: all 0.5s ease;
+          transition: box-shadow 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+          z-index: -1;
         }
 
-        .emotion-glow.emotion-friendly { box-shadow: 0 0 40px rgba(233, 137, 234, 0.4); }
-        .emotion-glow.emotion-excited { box-shadow: 0 0 60px rgba(255, 200, 100, 0.5); }
-        .emotion-glow.emotion-comforting { box-shadow: 0 0 50px rgba(150, 200, 255, 0.4); }
-        .emotion-glow.emotion-playful { box-shadow: 0 0 50px rgba(255, 150, 200, 0.5); }
-        .emotion-glow.emotion-sassy { box-shadow: 0 0 50px rgba(255, 100, 150, 0.5); }
-        .emotion-glow.emotion-protective { box-shadow: 0 0 50px rgba(100, 150, 255, 0.4); }
-        .emotion-glow.emotion-curious { box-shadow: 0 0 50px rgba(200, 255, 150, 0.4); }
-        .emotion-glow.emotion-warm { box-shadow: 0 0 50px rgba(255, 180, 100, 0.5); }
+        /* Energy particles for excited states */
+        .energy-particles {
+          position: absolute;
+          inset: -30px;
+          pointer-events: none;
+        }
 
+        .particle {
+          position: absolute;
+          width: 8px;
+          height: 8px;
+          background: rgba(255, 220, 100, 0.7);
+          border-radius: 50%;
+          animation: float-particle 2s ease-in-out infinite;
+        }
+
+        .p1 { top: 10%; left: 20%; animation-delay: 0s; }
+        .p2 { top: 15%; right: 15%; animation-delay: 0.5s; }
+        .p3 { bottom: 20%; left: 10%; animation-delay: 1s; }
+
+        @keyframes float-particle {
+          0%, 100% { transform: translateY(0) scale(1); opacity: 0.7; }
+          50% { transform: translateY(-10px) scale(1.2); opacity: 1; }
+        }
+
+        /* Expression label */
+        .expression-label {
+          margin-top: 12px;
+          padding: 4px 12px;
+          background: rgba(0, 0, 0, 0.05);
+          border-radius: 12px;
+          font-size: 11px;
+          color: #666;
+          text-transform: uppercase;
+          letter-spacing: 0.5px;
+          font-weight: 500;
+        }
+
+        /* Speaking indicator */
         .speaking-indicator {
           display: flex;
           gap: 6px;
-          margin-top: 16px;
+          margin-top: 12px;
         }
 
         .pulse-dot {
