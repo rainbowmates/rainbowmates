@@ -432,7 +432,53 @@ export const translations = {
     tryAgain: "Riprova",
     micAccessDenied: "Accesso al microfono negato. Clicca l'icona del lucchetto per consentire.",
     couldNotAccessMic: "Impossibile accedere al microfono",
-    voiceProcessingFailed: "Elaborazione vocale fallita"
+    voiceProcessingFailed: "Elaborazione vocale fallita",
+    
+    // Dashboard
+    you: "Tu",
+    premiumActive: "Premium Attivo",
+    subscribeToPlay: "Abbonati per Giocare",
+    unlockFeatures: "Sblocca chat, voce, ballo e altro!",
+    beAnyoneYouWant: "Sii chi vuoi — questo è il tuo mondo!",
+    shareYourVibe: "Condividi il tuo stile così il tuo bestie ti capisce davvero.",
+    pickTraits: "Scegli i tratti che corrispondono all'amico che meriti.",
+    chooseBestieFirst: "Scegli prima il tuo bestie per giocare insieme!",
+    createAvatarFirst: "Crea prima il tuo avatar per continuare!",
+    
+    // Avatar Chat
+    loadingTom: "Caricamento Tom...",
+    tom: "Tom",
+    repliesLeft: "risposte rimaste",
+    tomIsThinking: "Tom sta pensando...",
+    talkToTom: "Parla con Tom...",
+    
+    // Subscription
+    processingPayment: "Elaborazione pagamento...",
+    unlockAllFeatures: "Sblocca tutte le funzionalità e divertiti senza fine!",
+    freeSubscription: "Abbonamento Gratuito",
+    comingSoon: "Prossimamente",
+    
+    // Create Bestie
+    enterFabulousName: "Inserisci un nome favoloso...",
+    
+    // Settings
+    days: "giorni",
+    dominantMood: "Umore dominante",
+    noMoodDataYet: "Nessun dato sull'umore ancora. Inizia a chattare per tracciare il tuo umore!",
+    deleteAccount: "Eliminare Account?",
+    
+    // Auth
+    signingYouIn: "Accesso in corso...",
+    pleaseWaitLogin: "Attendere mentre completiamo l'accesso",
+    useForTesting: "Usa 123456 per testare",
+    enterToVerify: "Inserisci 123456 per verificare",
+    
+    // Date or Mate
+    previousDiscussions: "Discussioni Precedenti",
+    newPerson: "Nuova Persona",
+    
+    // Play Screen
+    freePilotActive: "Abbonamento Pilota Gratuito Attivo"
   },
   
   de: {
