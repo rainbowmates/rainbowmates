@@ -1289,6 +1289,72 @@ async def speech_to_text(audio_file: UploadFile = File(...)):
         logger.error(f"Error transcribing audio: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+# ============= AVATAR TTS ROUTES =============
+
+class AvatarSpeechRequest(BaseModel):
+    text: str
+    user_id: str
+    bestie_id: str
+    emotion: str = "friendly"
+
+
+@api_router.post("/avatar/speak")
+async def avatar_speak(request: AvatarSpeechRequest):
+    """
+    Generate speech for talking avatar with emotion payload.
+    Returns audio + animation data for client-side avatar.
+    """
+    if not ELEVENLABS_API_KEY:
+        raise HTTPException(status_code=500, detail="ElevenLabs API key not configured")
+    
+    try:
+        # Get relationship scores for emotion-aware speech
+        relationship_engine = get_relationship_engine(db)
+        scores = await relationship_engine.get_scores(request.user_id, request.bestie_id)
+        
+        relationship_scores = {
+            "warmth_score": scores.get("warmth_score", 0.5),
+            "trust_score": scores.get("trust_score", 0.4),
+            "playfulness_score": scores.get("playfulness_score", 0.5),
+            "attachment_score": scores.get("attachment_score", 0.3)
+        }
+        
+        # Generate speech with emotion payload
+        tts_service = get_tts_service(ELEVENLABS_API_KEY, db)
+        result = await tts_service.generate_speech(
+            text=request.text,
+            user_id=request.user_id,
+            emotion=request.emotion,
+            relationship_scores=relationship_scores
+        )
+        
+        if result.get("error"):
+            raise HTTPException(
+                status_code=429 if result["error"] == "usage_limit_exceeded" else 500,
+                detail=result.get("message", result["error"])
+            )
+        
+        return result
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error generating avatar speech: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/avatar/usage/{user_id}")
+async def get_avatar_usage(user_id: str):
+    """Get user's avatar TTS usage stats."""
+    try:
+        tts_service = get_tts_service(ELEVENLABS_API_KEY, db)
+        usage = await tts_service.check_usage_limit(user_id)
+        return usage
+    except Exception as e:
+        logger.error(f"Error getting usage: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
 # ============= SHOPPING ROUTES =============
 
 @api_router.post("/shopping/recommendations")
