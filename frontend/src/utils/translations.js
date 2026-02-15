@@ -888,7 +888,53 @@ export const translations = {
     tryAgain: "Tentar novamente",
     micAccessDenied: "Acesso ao microfone negado. Clique no ícone de cadeado para permitir.",
     couldNotAccessMic: "Não foi possível acessar o microfone",
-    voiceProcessingFailed: "Falha no processamento de voz"
+    voiceProcessingFailed: "Falha no processamento de voz",
+    
+    // Dashboard
+    you: "Você",
+    premiumActive: "Premium Ativo",
+    subscribeToPlay: "Assine para Jogar",
+    unlockFeatures: "Desbloqueie chat, voz, dança e mais!",
+    beAnyoneYouWant: "Seja quem você quiser — este é o seu mundo!",
+    shareYourVibe: "Compartilhe seu estilo para que seu bestie te entenda de verdade.",
+    pickTraits: "Escolha traços que combinem com o amigo que você merece.",
+    chooseBestieFirst: "Escolha primeiro seu bestie para jogar juntos!",
+    createAvatarFirst: "Crie primeiro seu avatar para continuar!",
+    
+    // Avatar Chat
+    loadingTom: "Carregando Tom...",
+    tom: "Tom",
+    repliesLeft: "respostas restantes",
+    tomIsThinking: "Tom está pensando...",
+    talkToTom: "Fale com Tom...",
+    
+    // Subscription
+    processingPayment: "Processando pagamento...",
+    unlockAllFeatures: "Desbloqueie todas as funcionalidades e diversão sem fim!",
+    freeSubscription: "Assinatura Gratuita",
+    comingSoon: "Em Breve",
+    
+    // Create Bestie
+    enterFabulousName: "Digite um nome fabuloso...",
+    
+    // Settings
+    days: "dias",
+    dominantMood: "Humor dominante",
+    noMoodDataYet: "Ainda não há dados de humor. Comece a conversar para rastrear seu humor!",
+    deleteAccount: "Excluir Conta?",
+    
+    // Auth
+    signingYouIn: "Entrando...",
+    pleaseWaitLogin: "Por favor aguarde enquanto completamos seu login",
+    useForTesting: "Use 123456 para testar",
+    enterToVerify: "Digite 123456 para verificar",
+    
+    // Date or Mate
+    previousDiscussions: "Discussões Anteriores",
+    newPerson: "Nova Pessoa",
+    
+    // Play Screen
+    freePilotActive: "Assinatura Piloto Gratuita Ativa"
   }
 };
 
