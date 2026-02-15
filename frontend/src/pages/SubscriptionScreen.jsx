@@ -175,7 +175,7 @@ export default function SubscriptionScreen({ user }) {
                   <Gift className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-lg font-bold text-dark-purple">Free Subscription</h3>
+                  <h3 className="text-lg font-bold text-dark-purple">{t('freeSubscription')}</h3>
                   <div className="flex items-baseline gap-1">
                     <span className="text-2xl font-bold text-green-600">$0</span>
                     <span className="text-sm text-dark-purple/60">forever during pilot</span>
