@@ -8,6 +8,7 @@ import uuid
 from motor.motor_asyncio import AsyncIOMotorDatabase
 
 from services.user_service import prepare_for_mongo, parse_from_mongo
+from utils.prompts import get_bestie_system_prompt
 
 logger = logging.getLogger(__name__)
 
