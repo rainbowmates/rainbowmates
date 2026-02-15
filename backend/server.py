@@ -1584,7 +1584,7 @@ async def get_subscription_status(session_id: str):
 
 @api_router.get("/subscription/{user_id}")
 async def get_user_subscription(user_id: str):
-    """Get user's active subscription"""
+    """Get user active subscription"""
     subscription_doc = await db.subscriptions.find_one(
         {"user_id": user_id, "is_active": True},
         {"_id": 0}
