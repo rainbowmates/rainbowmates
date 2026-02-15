@@ -736,7 +736,53 @@ export const translations = {
     tryAgain: "Intentar de nuevo",
     micAccessDenied: "Acceso al micrófono denegado. Haz clic en el icono del candado para permitir.",
     couldNotAccessMic: "No se pudo acceder al micrófono",
-    voiceProcessingFailed: "Error en el procesamiento de voz"
+    voiceProcessingFailed: "Error en el procesamiento de voz",
+    
+    // Dashboard
+    you: "Tú",
+    premiumActive: "Premium Activo",
+    subscribeToPlay: "Suscríbete para Jugar",
+    unlockFeatures: "¡Desbloquea chat, voz, baile y más!",
+    beAnyoneYouWant: "Sé quien quieras — ¡este es tu mundo!",
+    shareYourVibe: "Comparte tu estilo para que tu bestie te entienda de verdad.",
+    pickTraits: "Elige rasgos que coincidan con el amigo que mereces.",
+    chooseBestieFirst: "¡Elige primero tu bestie para jugar juntos!",
+    createAvatarFirst: "¡Crea primero tu avatar para continuar!",
+    
+    // Avatar Chat
+    loadingTom: "Cargando Tom...",
+    tom: "Tom",
+    repliesLeft: "respuestas restantes",
+    tomIsThinking: "Tom está pensando...",
+    talkToTom: "Habla con Tom...",
+    
+    // Subscription
+    processingPayment: "Procesando pago...",
+    unlockAllFeatures: "¡Desbloquea todas las funciones y diversión sin fin!",
+    freeSubscription: "Suscripción Gratuita",
+    comingSoon: "Próximamente",
+    
+    // Create Bestie
+    enterFabulousName: "Introduce un nombre fabuloso...",
+    
+    // Settings
+    days: "días",
+    dominantMood: "Estado de ánimo dominante",
+    noMoodDataYet: "Aún no hay datos de ánimo. ¡Empieza a chatear para rastrear tu ánimo!",
+    deleteAccount: "¿Eliminar Cuenta?",
+    
+    // Auth
+    signingYouIn: "Iniciando sesión...",
+    pleaseWaitLogin: "Por favor espera mientras completamos tu inicio de sesión",
+    useForTesting: "Usa 123456 para probar",
+    enterToVerify: "Introduce 123456 para verificar",
+    
+    // Date or Mate
+    previousDiscussions: "Discusiones Anteriores",
+    newPerson: "Nueva Persona",
+    
+    // Play Screen
+    freePilotActive: "Suscripción Piloto Gratuita Activa"
   },
   
   pt: {
