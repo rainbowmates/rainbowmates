@@ -305,15 +305,26 @@ const TalkingAvatar = ({
       audioRef.current.src = audioUrl;
       
       if (isPlaying) {
+        // Determine if we should use viseme-based lip sync
+        const hasVisemeData = visemeTimingData && visemeTimingData.length > 0;
+        setUseVisemeLipSync(hasVisemeData);
+        
         initAudioAnalyser();
         audioRef.current.play().then(() => {
           setIsSpeaking(true);
           setIsBreathing(false);
-          animateMouth();
+          audioStartTimeRef.current = Date.now();
+          
+          // Start appropriate lip sync method
+          if (hasVisemeData) {
+            animateWithVisemes();
+          } else {
+            animateMouth();
+          }
         }).catch(console.error);
       }
     }
-  }, [audioUrl, isPlaying, initAudioAnalyser, animateMouth]);
+  }, [audioUrl, isPlaying, initAudioAnalyser, animateMouth, animateWithVisemes, visemeTimingData]);
 
   // Start animation loop when speaking
   useEffect(() => {
