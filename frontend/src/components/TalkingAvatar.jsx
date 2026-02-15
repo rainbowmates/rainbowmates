@@ -630,14 +630,15 @@ const TalkingAvatar = ({
         }
 
         .mouth-shape {
-          width: 100%;
+          width: calc(100% * (1 + var(--mouth-width, 0) * 0.3));
           height: calc(8px + var(--mouth-open, 0) * 22px);
           background: transparent;
           border-radius: calc(50% - var(--mouth-curve, 0) * 20%);
           transform: 
             scaleY(calc(0.3 + var(--mouth-open, 0) * 0.7))
+            scaleX(calc(1 + var(--mouth-width, 0) * 0.2))
             skewX(calc(var(--mouth-asymmetry, 0) * 5deg));
-          transition: all 0.08s ease-out;
+          transition: all 0.06s ease-out;  /* Faster for viseme sync */
         }
 
         /* Dynamic emotion glow */
