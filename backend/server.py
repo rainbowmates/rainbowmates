@@ -36,6 +36,7 @@ from utils.auth import create_access_token, create_refresh_token
 from utils.responses import ErrorMessages
 from utils.prompts import get_bestie_system_prompt, get_conversation_starter_prompt
 from services.relationship_engine import RelationshipEngine, get_relationship_engine
+from services.streaming_tts import StreamingTTSService, get_tts_service
 
 load_dotenv(ROOT_DIR / '.env')
 
