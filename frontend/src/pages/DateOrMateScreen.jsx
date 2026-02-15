@@ -234,6 +234,106 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
     }
   };
 
+  // Handle back navigation - go to previous screen
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/play');
+    }
+  };
+
+  // Voice recording functions
+  const startRecording = async () => {
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      const recorder = new MediaRecorder(stream, { mimeType: 'audio/webm' });
+      
+      audioChunksRef.current = [];
+      
+      recorder.ondataavailable = (e) => {
+        if (e.data.size > 0) {
+          audioChunksRef.current.push(e.data);
+        }
+      };
+      
+      recorder.onstop = async () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: 'audio/webm' });
+        stream.getTracks().forEach(track => track.stop());
+        await processVoiceInput(audioBlob);
+      };
+      
+      recorder.start();
+      setMediaRecorder(recorder);
+      setRecording(true);
+    } catch (error) {
+      toast.error('Microphone access denied');
+    }
+  };
+
+  const stopRecording = () => {
+    if (mediaRecorder && recording) {
+      mediaRecorder.stop();
+      setRecording(false);
+    }
+  };
+
+  const processVoiceInput = async (audioBlob) => {
+    setSending(true);
+    try {
+      const formData = new FormData();
+      formData.append('audio_file', audioBlob, 'recording.webm');
+      
+      const sttRes = await axios.post(`${API}/voice/stt`, formData);
+      const transcribedText = sttRes.data.text;
+      
+      if (transcribedText) {
+        // Auto-send the transcribed message
+        const userMessage = {
+          id: Date.now(),
+          sender: 'user',
+          text: transcribedText,
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, userMessage]);
+        
+        const response = await axios.post(`${API}/date-or-mate/chat`, {
+          user_id: user.id,
+          session_id: sessionId,
+          message: transcribedText,
+          bestie_name: bestie.name,
+          bestie_personality: bestie.personality || [],
+          current_person: currentPerson,
+          previous_people: previousPeople.map(p => p.name)
+        });
+
+        const bestieMessage = {
+          id: Date.now() + 1,
+          sender: 'bestie',
+          text: response.data.response,
+          timestamp: new Date()
+        };
+
+        setMessages(prev => [...prev, bestieMessage]);
+
+        if (response.data.detected_person) {
+          setCurrentPerson(response.data.detected_person);
+          const peopleResponse = await axios.get(`${API}/date-or-mate/people/${user.id}`);
+          setPreviousPeople(peopleResponse.data.people || []);
+        }
+
+        if (response.data.verdict) {
+          toast.success(`Verdict: ${response.data.verdict}! 💖`);
+        }
+      }
+    } catch (error) {
+      toast.error('Failed to process voice');
+    } finally {
+      setSending(false);
+    }
+  };
+
   return (
     <div className="app-container gradient-mesh min-h-screen flex flex-col">
       {/* Header */}
@@ -241,7 +341,7 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
         <div className="flex items-center gap-3">
           <button
             data-testid="back-button"
-            onClick={() => navigate('/play')}
+            onClick={handleBack}
             className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all flex-shrink-0"
           >
             <ArrowLeft className="w-5 h-5 text-dark-purple" />
@@ -320,59 +420,77 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {isInitializing ? (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="w-8 h-8 text-neon-pink animate-spin" />
-          </div>
-        ) : (
-          messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.sender === 'bestie' && bestie && (
-                <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0 mr-2">
-                  <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
-                </div>
-              )}
-              <div
-                className={`max-w-[75%] p-3 rounded-2xl ${
-                  msg.sender === 'user'
-                    ? 'bg-gradient-to-br from-neon-pink to-soft-blue text-white rounded-br-md'
-                    : 'bg-white border border-border text-dark-purple rounded-bl-md'
-                }`}
-              >
-                <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
-              </div>
+      {/* Main content - Bestie image always visible */}
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Bestie avatar section - always visible */}
+        <div className="flex-shrink-0 py-4 flex justify-center">
+          <div className="relative">
+            <div className="w-24 h-24 rounded-full overflow-hidden border-4 border-neon-pink shadow-lg">
+              <img 
+                src={TOM_IMAGE} 
+                alt="Tom" 
+                className="w-full h-full object-cover object-top"
+              />
             </div>
-          ))
-        )}
-        
-        {sending && (
-          <div className="flex justify-start">
-            {bestie && (
-              <div className="w-8 h-8 rounded-full overflow-hidden border-2 border-neon-pink flex-shrink-0 mr-2">
-                <img src={bestie.image_url} alt={bestie.name} className="w-full h-full object-cover object-top" />
+            {/* Speaking indicator */}
+            {sending && (
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 flex gap-1 bg-white rounded-full px-2 py-1 shadow">
+                <div className="w-1.5 h-1.5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                <div className="w-1.5 h-1.5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                <div className="w-1.5 h-1.5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
               </div>
             )}
-            <div className="bg-white border border-border rounded-2xl rounded-bl-md p-3">
-              <div className="flex gap-1">
-                <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
-                <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
-                <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
-              </div>
-            </div>
           </div>
-        )}
-        
-        <div ref={messagesEndRef} />
+        </div>
+
+        {/* Messages */}
+        <div className="flex-1 overflow-y-auto px-4 pb-4">
+          <div className="space-y-3">
+            {isInitializing ? (
+              <div className="flex items-center justify-center py-8">
+                <Loader2 className="w-8 h-8 text-neon-pink animate-spin" />
+              </div>
+            ) : (
+              messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  <div
+                    className={`max-w-[80%] p-3 rounded-2xl ${
+                      msg.sender === 'user'
+                        ? 'bg-gradient-to-br from-neon-pink to-soft-blue text-white rounded-br-md'
+                        : 'bg-white border border-border text-dark-purple rounded-bl-md'
+                    }`}
+                  >
+                    <p className="text-sm whitespace-pre-wrap">{msg.text}</p>
+                  </div>
+                </div>
+              ))
+            )}
+            
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
       </div>
 
-      {/* Input */}
+      {/* Input - unified with mic inside */}
       <div className="p-4 border-t border-neon-pink/20 bg-white/80 backdrop-blur-sm">
-        <div className="flex gap-2">
+        <div className="flex items-center gap-2 bg-muted rounded-full px-2 py-1">
+          {/* Mic button inside input */}
+          <button
+            onClick={recording ? stopRecording : startRecording}
+            disabled={sending}
+            className={`p-2.5 rounded-full transition-all flex-shrink-0 ${
+              recording 
+                ? 'bg-red-500 text-white animate-pulse' 
+                : 'bg-white text-dark-purple hover:bg-neon-pink/20 shadow-sm'
+            } disabled:opacity-50`}
+            data-testid="voice-button"
+          >
+            {recording ? <StopCircle className="w-5 h-5" /> : <Mic className="w-5 h-5" />}
+          </button>
+          
           <input
             ref={inputRef}
             data-testid="message-input"
@@ -380,15 +498,16 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
             value={inputText}
             onChange={(e) => setInputText(e.target.value)}
             onKeyPress={(e) => e.key === 'Enter' && sendMessage()}
-            placeholder="Tell me about them..."
-            className="flex-1 px-4 py-3 rounded-2xl bg-muted border-transparent focus:border-neon-pink focus:ring-2 focus:ring-neon-pink/20 outline-none text-sm"
-            disabled={sending}
+            placeholder={recording ? "Listening..." : "Type or tap mic to talk..."}
+            className="flex-1 px-3 py-2.5 bg-transparent border-0 focus:ring-0 outline-none text-dark-purple placeholder:text-dark-purple/50 text-sm"
+            disabled={sending || recording}
           />
+          
           <button
             data-testid="send-button"
             onClick={sendMessage}
             disabled={!inputText.trim() || sending}
-            className="p-3 rounded-2xl bg-gradient-to-br from-neon-pink to-soft-blue text-white disabled:opacity-50 transition-all hover:opacity-90"
+            className="p-2.5 rounded-full bg-gradient-to-br from-neon-pink to-soft-blue text-white disabled:opacity-50 transition-all hover:opacity-90 flex-shrink-0"
           >
             <Send className="w-5 h-5" />
           </button>
