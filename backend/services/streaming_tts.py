@@ -1,6 +1,7 @@
 """
 Streaming TTS Service with emotion payload for talking avatar.
 Handles ElevenLabs TTS streaming and generates emotion/timing data.
+Supports multilingual speech using eleven_multilingual_v2 model.
 """
 import logging
 import base64
@@ -14,6 +15,15 @@ logger = logging.getLogger(__name__)
 
 # Voice configuration for Tom
 TOM_VOICE_ID = "onwK4e9ZLuTAKqWW03F9"  # Daniel - British, warm
+
+# Model selection based on language
+# eleven_turbo_v2_5 is faster but English-only
+# eleven_multilingual_v2 supports 29 languages including FR, DE, ES, IT, PT
+ENGLISH_MODEL = "eleven_turbo_v2_5"
+MULTILINGUAL_MODEL = "eleven_multilingual_v2"
+
+# Supported languages for multilingual TTS
+MULTILINGUAL_LANGUAGES = {'fr', 'it', 'de', 'es', 'pt'}
 
 # Voice settings optimized for avatar
 AVATAR_VOICE_SETTINGS = {
