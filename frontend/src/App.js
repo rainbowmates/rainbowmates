@@ -118,88 +118,90 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <DesktopWarningModal />
-      <BrowserRouter>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              user ? <Navigate to="/dashboard" /> : <Navigate to="/auth" />
-            }
-          />
-          <Route
-            path="/auth"
-            element={
-              user ? (
-                <Navigate to="/dashboard" />
-              ) : (
-                <AuthPage onLogin={handleLogin} onBack={() => setShowIntro(true)} />
-              )
-            }
-          />
-          <Route
-            path="/auth/callback"
-            element={<AuthCallback onLogin={handleLogin} />}
-          />
-          <Route
-            path="/dashboard"
-            element={
-              user ? (
-                <Dashboard user={user} onLogout={handleLogout} />
-              ) : (
-                <Navigate to="/auth" />
-              )
-            }
-          />
-          <Route
-            path="/create-avatar"
-            element={user ? <CreateAvatar user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/create-bestie"
-            element={user ? <CreateBestie user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/play"
-            element={user ? <PlayScreen user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/chat"
-            element={user ? <ChatScreen user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/voice"
-            element={user ? <VoiceScreen user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/dance"
-            element={user ? <DanceScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/date-or-mate"
-            element={user ? <DateOrMateScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/shopping"
-            element={user ? <ShoppingScreen user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/subscription"
-            element={user ? <SubscriptionScreen user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/subscription/success"
-            element={user ? <SubscriptionScreen user={user} /> : <Navigate to="/auth" />}
-          />
-          <Route
-            path="/settings"
-            element={user ? <SettingsScreen user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />}
-          />
-        </Routes>
-      </BrowserRouter>
-      <Toaster />
-    </div>
+    <LanguageProvider>
+      <div className="App">
+        <DesktopWarningModal />
+        <BrowserRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                user ? <Navigate to="/dashboard" /> : <Navigate to="/auth" />
+              }
+            />
+            <Route
+              path="/auth"
+              element={
+                user ? (
+                  <Navigate to="/dashboard" />
+                ) : (
+                  <AuthPage onLogin={handleLogin} onBack={() => setShowIntro(true)} />
+                )
+              }
+            />
+            <Route
+              path="/auth/callback"
+              element={<AuthCallback onLogin={handleLogin} />}
+            />
+            <Route
+              path="/dashboard"
+              element={
+                user ? (
+                  <Dashboard user={user} onLogout={handleLogout} />
+                ) : (
+                  <Navigate to="/auth" />
+                )
+              }
+            />
+            <Route
+              path="/create-avatar"
+              element={user ? <CreateAvatar user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/create-bestie"
+              element={user ? <CreateBestie user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/play"
+              element={user ? <PlayScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/chat"
+              element={user ? <ChatScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/voice"
+              element={user ? <VoiceScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/dance"
+              element={user ? <DanceScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/date-or-mate"
+              element={user ? <DateOrMateScreen user={user} bestie={bestie} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/shopping"
+              element={user ? <ShoppingScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/subscription"
+              element={user ? <SubscriptionScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/subscription/success"
+              element={user ? <SubscriptionScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/settings"
+              element={user ? <SettingsScreen user={user} onLogout={handleLogout} /> : <Navigate to="/auth" />}
+            />
+          </Routes>
+        </BrowserRouter>
+        <Toaster />
+      </div>
+    </LanguageProvider>
   );
 }
 
