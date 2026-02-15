@@ -46,7 +46,7 @@ async def create_subscription(user_id: str, subscription: SubscriptionCreate):
         # Determine redirect URLs based on environment
         app_url = settings.APP_URL
         if not app_url:
-            app_url = "https://tom-emotional-avatar.preview.emergentagent.com"
+            app_url = "https://mates-mobile-build-1.preview.emergentagent.com"
         
         success_url = f"{app_url}/subscription?status=success&session_id={{CHECKOUT_SESSION_ID}}"
         cancel_url = f"{app_url}/subscription?status=cancelled"
