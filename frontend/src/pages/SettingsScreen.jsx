@@ -202,7 +202,7 @@ export default function SettingsScreen({ user, onLogout }) {
                 <div className="text-center mb-4">
                   <span className="text-4xl">{getMoodEmoji(moodData.dominant_mood)}</span>
                   <p className="text-sm text-dark-purple/70 mt-1">
-                    Dominant mood: <span className="font-semibold capitalize">{t(moodData.dominant_mood)}</span>
+                    {t('dominantMood')}: <span className="font-semibold capitalize">{t(moodData.dominant_mood)}</span>
                   </p>
                 </div>
                 
@@ -219,11 +219,11 @@ export default function SettingsScreen({ user, onLogout }) {
                 </div>
                 
                 <p className="text-xs text-dark-purple/50 mt-4 text-center">
-                  {moodData.total_entries} mood entries in the last 7 days
+                  {moodData.total_entries} mood entries in the last 7 {t('days')}
                 </p>
               </>
             ) : (
-              <p className="text-center text-dark-purple/70">No mood data yet. Start chatting to track your mood!</p>
+              <p className="text-center text-dark-purple/70">{t('noMoodDataYet')}</p>
             )}
             
             <button
