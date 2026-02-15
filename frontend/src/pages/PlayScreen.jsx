@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, MessageCircle, Music, ShoppingBag, Heart, Gift } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 export default function PlayScreen({ user }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [freeSubscription, setFreeSubscription] = useState(null);
 
   useEffect(() => {
@@ -15,10 +17,10 @@ export default function PlayScreen({ user }) {
   }, []);
 
   const features = [
-    { icon: MessageCircle, title: 'Chat', description: 'Text or talk with your bestie', path: '/chat', color: 'from-neon-pink to-purple-400' },
-    { icon: Music, title: 'Play Music', description: 'Listen & dance together', path: '/dance', color: 'from-purple-400 to-neon-pink' },
-    { icon: Heart, title: 'Date or Just Mates', description: 'Get relationship advice', path: '/date-or-mate', color: 'from-red-400 to-neon-pink' },
-    { icon: ShoppingBag, title: 'Shopping', description: 'Get fashion advice', path: '/shopping', color: 'from-neon-pink to-soft-yellow' }
+    { icon: MessageCircle, title: t('chat'), description: t('chatDescription'), path: '/chat', color: 'from-neon-pink to-purple-400' },
+    { icon: Music, title: t('playMusic'), description: t('playMusicDescription'), path: '/dance', color: 'from-purple-400 to-neon-pink' },
+    { icon: Heart, title: t('dateOrMate'), description: t('dateOrMateDescription'), path: '/date-or-mate', color: 'from-red-400 to-neon-pink' },
+    { icon: ShoppingBag, title: t('shopping'), description: t('shoppingDescription'), path: '/shopping', color: 'from-neon-pink to-soft-yellow' }
   ];
 
   return (
@@ -33,7 +35,7 @@ export default function PlayScreen({ user }) {
             <ArrowLeft className="w-6 h-6 text-dark-purple" />
           </button>
           <h1 className="text-3xl font-bold text-dark-purple" style={{ fontFamily: 'Nunito, sans-serif' }}>
-            Let's Play!
+            {t('letsPlay')}
           </h1>
         </div>
 
@@ -41,7 +43,7 @@ export default function PlayScreen({ user }) {
         {freeSubscription?.is_active && (
           <div className="flex items-center justify-center gap-2 py-2 px-4 rounded-full bg-green-100 border border-green-300">
             <Gift className="w-4 h-4 text-green-600" />
-            <span className="text-sm font-semibold text-green-700">Free Pilot Subscription Active</span>
+            <span className="text-sm font-semibold text-green-700">{t('freePilotActive')}</span>
           </div>
         )}
 
