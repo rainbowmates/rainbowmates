@@ -36,7 +36,7 @@ export default function PlayScreen({ user }) {
         <div className="flex items-center gap-4">
           <button
             data-testid="back-button"
-            onClick={() => navigate('/dashboard')}
+            onClick={handleBack}
             className="p-2 rounded-full bg-white border border-border hover:bg-muted transition-all"
           >
             <ArrowLeft className="w-6 h-6 text-dark-purple" />
