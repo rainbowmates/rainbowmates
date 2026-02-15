@@ -174,11 +174,15 @@ export default function AvatarChatScreen({ user }) {
       
       setMessages(prev => [...prev, bestieMessage]);
       
-      // Get emotion from relationship data
-      const emotion = res.data.relationship?.bestie_mood || 'friendly';
+      // Get expression from response (new dynamic expression system)
+      const expressionTag = res.data.expression?.tag || 'curious';
+      const expConfig = res.data.expression?.config || null;
       
-      // Speak the response
-      await speakMessage(res.data.message, emotion);
+      setEmotionState(expressionTag);
+      setExpressionConfig(expConfig);
+      
+      // Speak the response with the detected expression
+      await speakMessage(res.data.message, expressionTag);
       
     } catch (error) {
       toast.error('Failed to send message');
