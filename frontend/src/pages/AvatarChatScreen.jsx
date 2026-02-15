@@ -390,7 +390,7 @@ export default function AvatarChatScreen({ user }) {
                 <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" />
                 <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0.1s' }} />
                 <div className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0.2s' }} />
-                <span className="ml-2 text-sm">Tom is thinking...</span>
+                <span className="ml-2 text-sm">{t('tomIsThinking')}</span>
               </div>
             )}
           </div>
