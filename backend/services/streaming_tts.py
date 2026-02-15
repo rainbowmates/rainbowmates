@@ -46,14 +46,14 @@ class StreamingTTSService:
         self.api_key = api_key
         self.db = db
         self.client = ElevenLabs(api_key=api_key) if api_key else None
-        self.usage_collection = db.tts_usage if db else None
+        self.usage_collection = db.tts_usage if db is not None else None
     
     async def check_usage_limit(self, user_id: str, limit: int = 750) -> Dict[str, Any]:
         """
         Check if user has exceeded monthly TTS usage limit.
         Returns usage stats and whether they can proceed.
         """
-        if not self.usage_collection:
+        if self.usage_collection is None:
             return {"allowed": True, "used": 0, "limit": limit}
         
         # Get current month's start
