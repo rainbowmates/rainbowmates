@@ -5,6 +5,15 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - Prompt Consolidation (COMPLETE)
+- Created shared prompt utility at `/app/backend/utils/prompts.py`
+- Single source of truth for all AI personality prompts
+- Removed duplicate prompts from server.py and bestie_service.py
+
+### Feb 15, 2026 - New Bestie Image (COMPLETE)
+- Added "Freckled Charm" bestie option from user-provided image
+- Image URL: https://customer-assets.emergentagent.com/job_56bc6b4d-97f6-4647-8eee-09ac0beb6611/artifacts/928gl340_1.png
+
 ### Feb 15, 2026 - Enhanced AI Personality (COMPLETE)
 New AI personality features added to system prompts:
 1. **Remember Yesterday's Tone**: References previous conversation energy
@@ -28,9 +37,9 @@ New AI personality features added to system prompts:
 - Desktop warning modal
 
 ## AI Personality Prompt Structure
-Located in:
-- `/app/backend/server.py` - `get_bestie_system_prompt()`
-- `/app/backend/services/bestie_service.py` - `build_system_prompt()`
+**Single source of truth:** `/app/backend/utils/prompts.py`
+- `get_bestie_system_prompt()` - Main chat prompt
+- `get_conversation_starter_prompt()` - Greeting prompts
 
 Key personality behaviors:
 - Uses quirks like "literally", signature phrases
