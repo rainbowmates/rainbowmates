@@ -110,7 +110,7 @@ export default function Dashboard({ user, onLogout }) {
                     <Pencil className="w-4 h-4 text-white" />
                   </button>
                   <div className="text-center mt-3">
-                    <p className="text-sm font-semibold text-dark-purple">You</p>
+                    <p className="text-sm font-semibold text-dark-purple">{t('you')}</p>
                   </div>
                 </div>
 
