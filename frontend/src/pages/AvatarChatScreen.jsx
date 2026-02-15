@@ -370,6 +370,24 @@ export default function AvatarChatScreen({ user }) {
         {viewMode === 'avatar' ? (
           /* Avatar View */
           <div className="flex-1 flex flex-col items-center justify-center p-6">
+            {/* Language Speaking Indicator */}
+            {isAvatarSpeaking && language !== 'en' && (
+              <div 
+                className="mb-3 flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-neon-pink/20 to-soft-blue/20 border border-neon-pink/30 animate-pulse"
+                data-testid="language-indicator"
+              >
+                <span className="text-xl">{LANGUAGE_INFO[language]?.flag}</span>
+                <span className="text-sm font-medium text-dark-purple">
+                  Speaking {LANGUAGE_INFO[language]?.name}
+                </span>
+                <div className="flex gap-1">
+                  <span className="w-1.5 h-1.5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="w-1.5 h-1.5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="w-1.5 h-1.5 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
+              </div>
+            )}
+            
             <TalkingAvatar
               imageUrl={TOM_IMAGE}
               audioUrl={currentAudioUrl}
