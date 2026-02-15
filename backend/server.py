@@ -1025,6 +1025,7 @@ Message: """ + message
         
         chat = LlmChat(
             api_key=EMERGENT_LLM_KEY,
+            session_id=f"mood_{user_id}_{uuid.uuid4()}",
             system_message="You are a mood analyzer. Respond with exactly one mood word."
         ).with_model("anthropic", "claude-sonnet-4-5-20250929")
         
