@@ -319,12 +319,23 @@ export default function AvatarChatScreen({ user }) {
             >
               <ArrowLeft className="w-5 h-5 text-dark-purple" />
             </button>
-            <div>
-              <h1 className="text-lg font-bold text-dark-purple">{t('tom')}</h1>
-              {relationshipData && (
-                <p className="text-xs text-dark-purple/60">
-                  {relationshipData.stage} • {relationshipData.streak_days} {t('days')} streak
-                </p>
+            <div className="flex items-center gap-2">
+              <div>
+                <h1 className="text-lg font-bold text-dark-purple">{t('tom')}</h1>
+                {relationshipData && (
+                  <p className="text-xs text-dark-purple/60">
+                    {relationshipData.stage} • {relationshipData.streak_days} {t('days')} streak
+                  </p>
+                )}
+              </div>
+              {/* Language badge - always visible when not English */}
+              {language !== 'en' && (
+                <span 
+                  className="px-2 py-1 text-xs rounded-full bg-gradient-to-r from-neon-pink/10 to-soft-blue/10 border border-neon-pink/20"
+                  data-testid="language-badge"
+                >
+                  {LANGUAGE_INFO[language]?.flag} {LANGUAGE_INFO[language]?.name}
+                </span>
               )}
             </div>
           </div>
