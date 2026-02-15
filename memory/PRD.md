@@ -14,6 +14,10 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 - Spanish (es) - uses `eleven_multilingual_v2`
 - Portuguese (pt) - uses `eleven_multilingual_v2`
 
+**Visual Indicators Added:**
+- Language badge in header (e.g., "🇫🇷 Français") when non-English selected
+- Animated "Speaking [Language]" indicator during TTS playback
+
 **Technical Implementation:**
 - Added `language` parameter to `/api/avatar/speak` endpoint
 - Updated `StreamingTTSService.generate_speech()` to select model based on language
