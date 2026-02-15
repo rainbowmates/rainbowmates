@@ -168,6 +168,10 @@ function App() {
             />
             <Route
               path="/chat"
+              element={user ? <AvatarChatScreen user={user} /> : <Navigate to="/auth" />}
+            />
+            <Route
+              path="/chat-text"
               element={user ? <ChatScreen user={user} /> : <Navigate to="/auth" />}
             />
             <Route
