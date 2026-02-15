@@ -17,6 +17,7 @@ const PLANS = [
 export default function SubscriptionScreen({ user }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
+  const { t } = useLanguage();
   const [selectedPlan, setSelectedPlan] = useState('free_pilot');
   const [autoRenew, setAutoRenew] = useState(true);
   const [loading, setLoading] = useState(false);
