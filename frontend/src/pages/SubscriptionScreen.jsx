@@ -205,7 +205,7 @@ export default function SubscriptionScreen({ user }) {
           {/* Divider */}
           <div className="flex items-center gap-3 py-2">
             <div className="flex-1 h-px bg-border"></div>
-            <span className="text-xs text-dark-purple/40">Coming Soon</span>
+            <span className="text-xs text-dark-purple/40">{t('comingSoon')}</span>
             <div className="flex-1 h-px bg-border"></div>
           </div>
 
