@@ -945,22 +945,31 @@ async def send_message(user_id: str, message_data: MessageCreate):
         # Send message
         response = await chat.send_message(UserMessage(text=message_data.content))
         
-        # Save bestie response
+        # Parse expression from response
+        clean_response, expression_tag, intensity = parse_expression_from_response(response)
+        expression_config = get_expression_config(expression_tag)
+        
+        # Save bestie response (with clean text, without expression tag)
         bestie_message = Message(
             user_id=user_id,
             bestie_id=message_data.bestie_id,
             role="bestie",
-            content=response
+            content=clean_response
         )
         await db.messages.insert_one(prepare_for_mongo(bestie_message.model_dump()))
         
         return {
-            "message": response, 
+            "message": clean_response, 
             "message_id": bestie_message.id,
             "relationship": {
                 "user_mood": relationship_data.get("user_mood"),
                 "bestie_mood": relationship_data.get("bestie_mood"),
                 "streak_days": relationship_data.get("streak_days", 0)
+            },
+            "expression": {
+                "tag": expression_tag,
+                "intensity": intensity,
+                "config": expression_config
             }
         }
         
