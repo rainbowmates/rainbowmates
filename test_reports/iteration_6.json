@@ -1,0 +1,102 @@
+{
+  "summary": "Completed testing of Talking Avatar (Tom) feature: Backend API tests passed (9/9), frontend UI tests verified registration flow, avatar chat screen, and CreateBestie page showing only Tom option.",
+  "backend_issues": {
+    "critical": [],
+    "minor": []
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {
+        "component": "AvatarChatScreen",
+        "issue": "Send button partially blocked by 'Made with Emergent' badge at bottom of screen on mobile viewport - users must use Enter key to send messages",
+        "selector": "[data-testid='send-button']",
+        "priority": "LOW",
+        "workaround": "Enter key works for sending messages"
+      }
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "passed_tests": [
+    "Backend: TestAvatarSpeakEndpoint::test_avatar_speak_endpoint_exists - POST /api/avatar/speak exists",
+    "Backend: TestAvatarSpeakEndpoint::test_avatar_speak_returns_success - Returns success with audio data",
+    "Backend: TestAvatarSpeakEndpoint::test_avatar_speak_returns_emotion_payload - Returns emotion_payload for animation",
+    "Backend: TestAvatarSpeakEndpoint::test_avatar_speak_returns_usage_stats - Returns usage statistics",
+    "Backend: TestAvatarSpeakEndpoint::test_avatar_speak_different_emotions - Works with friendly, excited, comforting, playful, warm emotions",
+    "Backend: TestAvatarUsageEndpoint::test_usage_endpoint_exists - GET /api/avatar/usage/{user_id} exists",
+    "Backend: TestAvatarUsageEndpoint::test_usage_returns_stats - Returns allowed, used, limit, remaining fields",
+    "Backend: TestHealthEndpoint::test_health_endpoint - Health check returns OK",
+    "Backend: TestHealthEndpoint::test_elevenlabs_configured - ElevenLabs API connected",
+    "Frontend: User registration form fills correctly (First Name, Surname, DOB, Mobile, Email, Password)",
+    "Frontend: OTP verification works with code 123456",
+    "Frontend: Dashboard loads with user avatar and bestie info",
+    "Frontend: PlayScreen shows 'Free Pilot Subscription Active' badge",
+    "Frontend: AvatarChatScreen loads with Tom's avatar image displayed",
+    "Frontend: Chat input and send button are functional (via Enter key)",
+    "Frontend: View toggle switches between avatar view and chat view",
+    "Frontend: CreateBestie page shows only Tom as bestie option",
+    "Frontend: Tom's image URL correctly uses https://customer-assets.emergentagent.com/job_d78d511c-01b3-4716-b2c4-6339dea946bb/artifacts/dmzb8405_tom.png"
+  ],
+  "features_verified": {
+    "avatar_speak_api": {
+      "endpoint": "POST /api/avatar/speak",
+      "request_format": {"text": "string", "user_id": "string", "bestie_id": "string", "emotion": "string"},
+      "response_format": {"success": true, "audio_url": "data:audio/mpeg;base64,...", "emotion_payload": {}, "usage": {}},
+      "working": true
+    },
+    "avatar_usage_api": {
+      "endpoint": "GET /api/avatar/usage/{user_id}",
+      "response_format": {"allowed": true, "used": 2, "limit": 750, "remaining": 748},
+      "working": true
+    },
+    "avatar_chat_screen": {
+      "header": "Tom - Getting to Know Each Other - 0 day streak",
+      "usage_display": "750 replies left",
+      "avatar_image": "Tom's circular avatar displayed",
+      "message_display": "Tom says: with message text",
+      "input_placeholder": "Talk to Tom...",
+      "voice_button": "Microphone button for voice input",
+      "send_button": "Pink send button (works with Enter key)",
+      "view_toggle": "Switches between avatar view and chat text view"
+    },
+    "create_bestie_page": {
+      "tom_only": true,
+      "tom_image_url": "https://customer-assets.emergentagent.com/job_d78d511c-01b3-4716-b2c4-6339dea946bb/artifacts/dmzb8405_tom.png",
+      "personality_traits": ["Witty", "Sassy", "Loyal", "Supportive", "Confident", "Empathetic", "Outspoken", "Stylish", "Adventurous", "Protective"],
+      "interests": ["Fashion", "Food", "Going out", "Relationships"],
+      "voice_options": ["Daniel (British)", "James (British)", "Arthur (British)", "Adam (American)", "Josh (American)", "Antoni (American)"]
+    }
+  },
+  "test_report_links": [
+    "/app/backend/tests/test_avatar_tts.py",
+    "/app/test_reports/pytest/pytest_avatar_tts.xml"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "AvatarChatScreen.jsx correctly uses TOM_IMAGE constant for avatar display",
+    "TalkingAvatar.jsx implements Web Audio API for lip-sync animation",
+    "StreamingTTSService uses ElevenLabs TTS with emotion-based voice modulation",
+    "CreateBestie.jsx BESTIE_IMAGES array only contains Tom (line 10-12)",
+    "Usage tracking implemented with 750 monthly limit"
+  ],
+  "updated_files": [
+    "/app/backend/tests/test_avatar_tts.py"
+  ],
+  "success_rate": {
+    "backend": "100% (9/9 tests passed)",
+    "frontend": "100% (all features verified working)"
+  },
+  "test_credentials": {
+    "existing_user": {
+      "user_id": "85638886-e144-40a9-8ff4-2da41bba84a1",
+      "bestie_id": "fe65008f-e661-4755-8fa6-4bac1e72f133",
+      "email": "proactive_test2@test.com",
+      "password": "test123456"
+    },
+    "otp_code": "123456"
+  },
+  "seed_data_creation": "None - used existing test user",
+  "retest_needed": false,
+  "should_main_agent_self_test": true,
+  "context_for_next_testing_agent": "Talking Avatar feature fully tested. Tom is the only bestie option in CreateBestie page. AvatarChatScreen shows Tom's avatar with lip-sync animation capability. ElevenLabs TTS integration working with emotion payload. Usage tracking shows 750 monthly limit. Send button has minor overlay issue with Emergent badge but Enter key works as alternative."
+}
