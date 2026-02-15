@@ -1339,7 +1339,7 @@ For EACH item you recommend, include a clickable link to find it. Use this forma
 
 Replace SEARCH_TERM with URL-encoded search terms for that specific item (e.g., "black+cocktail+dress" or "silk+midi+skirt").
 
-Use a mix of these shopping sites based on what's appropriate:
+Use a mix of these shopping sites based on what is appropriate:
 - ASOS: https://www.asos.com/search/?q=
 - Nordstrom: https://www.nordstrom.com/sr?keyword=
 - Zara: https://www.zara.com/us/en/search?searchTerm=
