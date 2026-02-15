@@ -10,6 +10,7 @@ const API = `${BACKEND_URL}/api`;
 
 export default function Dashboard({ user, onLogout }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   // Initialize bestie from localStorage for immediate display
   const [bestie, setBestie] = useState(() => {
     const saved = localStorage.getItem('rainbow_mates_bestie');
