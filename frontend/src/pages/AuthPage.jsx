@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Mail, Phone, Lock, ArrowLeft } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const LOGO_URL = "https://customer-assets.emergentagent.com/job_rainbow-mates-2/artifacts/ye9ehtif_logo.png?v=2";
 import { toast } from 'sonner';
