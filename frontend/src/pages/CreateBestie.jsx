@@ -8,16 +8,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const BESTIE_IMAGES = [
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/32yvckp4_gay%2017.png', description: 'Pink Chic' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/2jwu7p2q_gay%206.png', description: 'Cool & Casual' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/fsnv5n4y_gay%202.png', description: 'Golden Style' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/huvllvzn_gay%208.png', description: 'Glamorous' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/fmgwn4zi_gay%2040.png', description: 'Classic & Warm' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/hzbdtvjr_gay%2036.png', description: 'All Black' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/5ta5p4v7_gay%204.png', description: 'Sunny Vibes' },
-  { url: 'https://customer-assets.emergentagent.com/job_rainbow-mates-1/artifacts/qiajp76h_gay%201.png', description: 'Summer Scarf' },
-  { url: 'https://customer-assets.emergentagent.com/job_59b3b69e-a28f-44fd-a869-c7d33149fa88/artifacts/mpppkgxg_gay%204%20-%202.png', description: 'Test bestie' },
-  { url: 'https://customer-assets.emergentagent.com/job_56bc6b4d-97f6-4647-8eee-09ac0beb6611/artifacts/928gl340_1.png', description: 'Freckled Charm' }
+  { url: 'https://customer-assets.emergentagent.com/job_d78d511c-01b3-4716-b2c4-6339dea946bb/artifacts/dmzb8405_tom.png', description: 'Tom' }
 ];
 
 const PERSONALITIES = ['Witty', 'Sassy', 'Loyal', 'Supportive', 'Confident', 'Empathetic', 'Outspoken', 'Stylish', 'Adventurous', 'Protective'];
