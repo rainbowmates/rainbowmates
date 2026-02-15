@@ -130,7 +130,7 @@ export default function SubscriptionScreen({ user }) {
       <div className="app-container gradient-mesh min-h-screen flex items-center justify-center">
         <div className="text-center">
           <Crown className="w-16 h-16 mx-auto text-neon-pink animate-pulse mb-4" />
-          <p className="text-xl font-bold text-dark-purple">Processing payment...</p>
+          <p className="text-xl font-bold text-dark-purple">{t('processingPayment')}</p>
         </div>
       </div>
     );
