@@ -2,9 +2,33 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
  * TalkingAvatar - 2.5D avatar with lip-sync animation and dynamic expressions
- * Uses Web Audio API for real-time amplitude analysis
- * Supports 8 emotional expression states from the Expression State Mapping
+ * 
+ * Architecture Features:
+ * - Viseme-based lip-sync (15 mouth shapes mapped to phonemes)
+ * - 300-500ms smooth expression transitions
+ * - Real-time audio amplitude fallback
+ * - 8 emotional expression states
  */
+
+// Viseme to mouth shape mapping (15 standard visemes)
+const VISEME_MOUTH_SHAPES = {
+  0: { openness: 0, width: 0 },       // Silence
+  1: { openness: 0.1, width: -0.2 },  // Bilabial (p, b, m) - lips together
+  2: { openness: 0.15, width: -0.1 }, // Labiodental (f, v) - teeth on lip
+  3: { openness: 0.2, width: 0.1 },   // Dental (th)
+  4: { openness: 0.25, width: 0 },    // Alveolar (t, d, n, l)
+  5: { openness: 0.3, width: 0.2 },   // Postalveolar (sh, ch, zh, j)
+  6: { openness: 0.2, width: -0.1 },  // Velar (k, g, ng)
+  7: { openness: 0.25, width: 0.1 },  // Glottal (h)
+  8: { openness: 0.6, width: 0.3 },   // Open vowels (aa, ah)
+  9: { openness: 0.5, width: 0.4 },   // (ae) cat
+  10: { openness: 0.4, width: 0.2 },  // (eh) bed
+  11: { openness: 0.3, width: 0.3 },  // (ih) bit
+  12: { openness: 0.2, width: 0.5 },  // (iy) beat - spread lips
+  13: { openness: 0.5, width: -0.2 }, // (oh, ow) - rounded
+  14: { openness: 0.3, width: -0.3 }, // (uw) boot - pursed
+};
+
 const TalkingAvatar = ({ 
   imageUrl, 
   audioUrl, 
@@ -12,6 +36,8 @@ const TalkingAvatar = ({
   onAudioEnd,
   emotionState = 'curious',
   expressionConfig = null,
+  visemeTimingData = null,  // NEW: Viseme timing from backend
+  emotionPayload = null,    // NEW: Full emotion payload from backend
   className = ''
 }) => {
   const audioRef = useRef(null);
@@ -19,14 +45,18 @@ const TalkingAvatar = ({
   const analyserRef = useRef(null);
   const animationFrameRef = useRef(null);
   const sourceRef = useRef(null);
+  const visemeIntervalRef = useRef(null);
+  const audioStartTimeRef = useRef(null);
   
   const [mouthOpenness, setMouthOpenness] = useState(0);
+  const [mouthWidth, setMouthWidth] = useState(0);  // NEW: For viseme shapes
   const [isBreathing, setIsBreathing] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [eyeState, setEyeState] = useState('neutral');
   const [eyeRollActive, setEyeRollActive] = useState(false);
   const [currentExpression, setCurrentExpression] = useState(null);
   const [transitionProgress, setTransitionProgress] = useState(1);
+  const [useVisemeLipSync, setUseVisemeLipSync] = useState(false);  // NEW
 
   // 8 Core Expression States based on document specification
   const expressionConfigs = {
