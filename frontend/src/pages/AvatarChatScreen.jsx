@@ -12,6 +12,16 @@ const API = `${BACKEND_URL}/api`;
 // Tom's image URL
 const TOM_IMAGE = 'https://customer-assets.emergentagent.com/job_d78d511c-01b3-4716-b2c4-6339dea946bb/artifacts/dmzb8405_tom.png';
 
+// Language flags and names for the speaking indicator
+const LANGUAGE_INFO = {
+  en: { flag: '🇬🇧', name: 'English' },
+  fr: { flag: '🇫🇷', name: 'Français' },
+  it: { flag: '🇮🇹', name: 'Italiano' },
+  de: { flag: '🇩🇪', name: 'Deutsch' },
+  es: { flag: '🇪🇸', name: 'Español' },
+  pt: { flag: '🇵🇹', name: 'Português' }
+};
+
 export default function AvatarChatScreen({ user }) {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
