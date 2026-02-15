@@ -237,11 +237,18 @@ class StreamingTTSService:
         self,
         text: str,
         user_id: str,
-        emotion: str = "friendly"
+        emotion: str = "friendly",
+        language: str = "en"
     ) -> AsyncGenerator[bytes, None]:
         """
         Stream speech audio chunks for lower latency.
         Yields audio chunks as they're generated.
+        
+        Args:
+            text: Text to convert to speech
+            user_id: User ID for usage tracking
+            emotion: Emotion for voice modulation
+            language: Language code (en, fr, de, es, it, pt)
         """
         if not self.client:
             raise ValueError("ElevenLabs API key not configured")
@@ -259,11 +266,14 @@ class StreamingTTSService:
             use_speaker_boost=AVATAR_VOICE_SETTINGS["use_speaker_boost"]
         )
         
+        # Select model based on language
+        model_id = MULTILINGUAL_MODEL if language in MULTILINGUAL_LANGUAGES else ENGLISH_MODEL
+        
         try:
             audio_generator = self.client.text_to_speech.convert(
                 text=text,
                 voice_id=TOM_VOICE_ID,
-                model_id="eleven_turbo_v2_5",
+                model_id=model_id,
                 voice_settings=voice_settings
             )
             
