@@ -889,7 +889,7 @@ async def update_bestie(bestie_id: str, bestie_data: BestieCreate):
 
 @api_router.post("/chat/message")
 async def send_message(user_id: str, message_data: MessageCreate):
-    """Send a message to bestie"""
+    """Send a message to bestie with dynamic relationship scoring"""
     try:
         # Get bestie details
         bestie_doc = await db.besties.find_one({"id": message_data.bestie_id}, {"_id": 0})
@@ -897,6 +897,14 @@ async def send_message(user_id: str, message_data: MessageCreate):
             raise HTTPException(status_code=404, detail="Bestie not found")
         
         bestie = Bestie(**parse_from_mongo(bestie_doc))
+        
+        # Initialize relationship engine and update scores based on message
+        relationship_engine = get_relationship_engine(db)
+        relationship_data = await relationship_engine.update_scores(
+            user_id=user_id,
+            bestie_id=message_data.bestie_id,
+            message=message_data.content
+        )
         
         # Save user message
         user_message = Message(
@@ -913,11 +921,17 @@ async def send_message(user_id: str, message_data: MessageCreate):
             {"_id": 0}
         ).sort("timestamp", 1).limit(20).to_list(20)
         
-        # Create comprehensive Bestie system prompt
+        # Create comprehensive Bestie system prompt with dynamic scores
         system_message = get_bestie_system_prompt(
             bestie_name=bestie.name,
             personality=bestie.personality,
-            interests=bestie.interests
+            interests=bestie.interests,
+            warmth_score=relationship_data.get("warmth_score", 0.5),
+            trust_score=relationship_data.get("trust_score", 0.4),
+            playfulness_score=relationship_data.get("playfulness_score", 0.6),
+            attachment_score=relationship_data.get("attachment_score", 0.3),
+            user_mood=relationship_data.get("user_mood", "neutral"),
+            bestie_mood=relationship_data.get("bestie_mood", "friendly")
         )
         
         # Initialize Claude chat
@@ -939,7 +953,15 @@ async def send_message(user_id: str, message_data: MessageCreate):
         )
         await db.messages.insert_one(prepare_for_mongo(bestie_message.model_dump()))
         
-        return {"message": response, "message_id": bestie_message.id}
+        return {
+            "message": response, 
+            "message_id": bestie_message.id,
+            "relationship": {
+                "user_mood": relationship_data.get("user_mood"),
+                "bestie_mood": relationship_data.get("bestie_mood"),
+                "streak_days": relationship_data.get("streak_days", 0)
+            }
+        }
         
     except Exception as e:
         logger.error(f"Error sending message: {str(e)}")
