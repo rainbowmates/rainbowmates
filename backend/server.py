@@ -1319,6 +1319,7 @@ class AvatarSpeechRequest(BaseModel):
     user_id: str
     bestie_id: str
     emotion: str = "friendly"
+    language: str = "en"  # Language code for multilingual TTS
 
 
 @api_router.post("/avatar/speak")
