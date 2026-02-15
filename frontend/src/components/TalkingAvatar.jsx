@@ -1,15 +1,17 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 
 /**
- * TalkingAvatar - 2.5D avatar with lip-sync animation
+ * TalkingAvatar - 2.5D avatar with lip-sync animation and dynamic expressions
  * Uses Web Audio API for real-time amplitude analysis
+ * Supports 8 emotional expression states from the Expression State Mapping
  */
 const TalkingAvatar = ({ 
   imageUrl, 
   audioUrl, 
   isPlaying,
   onAudioEnd,
-  emotionState = 'friendly',
+  emotionState = 'curious',
+  expressionConfig = null,
   className = ''
 }) => {
   const audioRef = useRef(null);
@@ -22,21 +24,162 @@ const TalkingAvatar = ({
   const [isBreathing, setIsBreathing] = useState(true);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [eyeState, setEyeState] = useState('neutral');
+  const [eyeRollActive, setEyeRollActive] = useState(false);
+  const [currentExpression, setCurrentExpression] = useState(null);
+  const [transitionProgress, setTransitionProgress] = useState(1);
 
-  // Emotion to expression mapping
-  const emotionExpressions = {
-    friendly: { eyeBrows: 0, eyeScale: 1, mouthCurve: 0.1 },
-    excited: { eyeBrows: 0.1, eyeScale: 1.1, mouthCurve: 0.2 },
-    comforting: { eyeBrows: -0.05, eyeScale: 1, mouthCurve: 0.05 },
-    playful: { eyeBrows: 0.15, eyeScale: 1.05, mouthCurve: 0.15 },
-    sassy: { eyeBrows: 0.2, eyeScale: 1, mouthCurve: 0.1 },
-    protective: { eyeBrows: -0.1, eyeScale: 1.1, mouthCurve: 0 },
-    curious: { eyeBrows: 0.1, eyeScale: 1.15, mouthCurve: 0.05 },
-    warm: { eyeBrows: 0, eyeScale: 1.05, mouthCurve: 0.15 },
-    supportive: { eyeBrows: -0.05, eyeScale: 1.05, mouthCurve: 0.1 },
+  // 8 Core Expression States based on document specification
+  const expressionConfigs = {
+    // 1. SOFT_COMFORTING - User is sad/anxious/vulnerable
+    comforting: {
+      eyebrows: -0.1,        // Inward tilt (gentle concern)
+      eyebrowAsymmetry: 0,
+      eyeScale: 1.0,
+      eyeSquint: 0.15,       // Soft, warm eyes
+      mouthCurve: 0.12,      // Gentle smile
+      mouthAsymmetry: 0,
+      mouthOpen: 0,
+      headTilt: 0.05,        // Slight empathetic tilt
+      energy: 'low_medium',
+      glowColor: 'rgba(150, 200, 255, 0.35)',  // Soft calming blue
+      glowIntensity: 40
+    },
+    // 2. PLAYFUL_TEASING - Light banter, playfulness > 0.6
+    playful: {
+      eyebrows: 0.18,        // One raised
+      eyebrowAsymmetry: 0.2, // Asymmetric (left higher)
+      eyeScale: 1.08,
+      eyeSquint: 0,
+      mouthCurve: 0.22,      // Smirk
+      mouthAsymmetry: 0.15,  // Asymmetric smirk
+      mouthOpen: 0,
+      headTilt: -0.03,       // Slight playful tilt
+      energy: 'medium',
+      glowColor: 'rgba(255, 150, 200, 0.45)',  // Playful pink
+      glowIntensity: 50
+    },
+    // 3. DRAMATIC_DISBELIEF - Surprising or absurd statement
+    dramatic: {
+      eyebrows: 0.35,        // Lifted HIGH
+      eyebrowAsymmetry: 0,
+      eyeScale: 1.3,         // Wide eyes!
+      eyeSquint: -0.1,       // Eyes wide open
+      mouthCurve: -0.05,     // Slight "O" shape
+      mouthAsymmetry: 0,
+      mouthOpen: 0.25,       // Mouth open in disbelief
+      headTilt: 0,
+      energy: 'medium_high',
+      glowColor: 'rgba(255, 200, 100, 0.5)',   // Dramatic gold
+      glowIntensity: 60
+    },
+    // 4. PROTECTIVE_SERIOUS - User facing conflict, needs grounding
+    protective: {
+      eyebrows: -0.18,       // Lowered, determined
+      eyebrowAsymmetry: 0,
+      eyeScale: 1.12,        // Alert, focused
+      eyeSquint: 0.05,
+      mouthCurve: 0,         // Firm, neutral
+      mouthAsymmetry: 0,
+      mouthOpen: 0,
+      headTilt: 0,           // Steady
+      energy: 'medium_low',
+      glowColor: 'rgba(100, 150, 255, 0.4)',   // Steady steel blue
+      glowIntensity: 45
+    },
+    // 5. CURIOUS_LEAN_IN - User shares new story/detail (DEFAULT)
+    curious: {
+      eyebrows: 0.15,        // Raised, interested
+      eyebrowAsymmetry: 0.05,
+      eyeScale: 1.18,        // Wide, attentive
+      eyeSquint: 0,
+      mouthCurve: 0.08,      // Slight interested smile
+      mouthAsymmetry: 0,
+      mouthOpen: 0.05,       // Slightly parted
+      headTilt: 0.08,        // Leaning in
+      energy: 'medium',
+      glowColor: 'rgba(180, 230, 150, 0.4)',   // Fresh curious green
+      glowIntensity: 45
+    },
+    // 6. EXCITED_SPARKLE - User shares good news
+    excited: {
+      eyebrows: 0.22,        // Lifted with joy
+      eyebrowAsymmetry: 0,
+      eyeScale: 1.25,        // Bright, wide
+      eyeSquint: 0.1,        // Happy squint
+      mouthCurve: 0.35,      // Full natural smile
+      mouthAsymmetry: 0,
+      mouthOpen: 0.12,       // Open smile
+      headTilt: 0,
+      energy: 'medium_high',
+      glowColor: 'rgba(255, 220, 100, 0.55)',  // Bright sparkle gold
+      glowIntensity: 65
+    },
+    // 7. TEASING_EYEROLL - User repeating bad decision, playful frustration
+    teasing_annoyed: {
+      eyebrows: 0.12,
+      eyebrowAsymmetry: 0.08,
+      eyeScale: 1.0,
+      eyeSquint: 0,
+      eyeRoll: true,         // Eye roll animation trigger
+      mouthCurve: 0.15,      // Soft smirk
+      mouthAsymmetry: 0.12,
+      mouthOpen: 0,
+      headTilt: -0.04,
+      energy: 'medium',
+      glowColor: 'rgba(255, 180, 200, 0.4)',   // Light pink (affectionate)
+      glowIntensity: 45
+    },
+    // 8. GENTLE_CONCERN - User emotional but not fully vulnerable
+    concern: {
+      eyebrows: 0.05,        // Inner brows lifted
+      eyebrowAsymmetry: 0,
+      eyebrowTilt: 0.12,     // Tilted upward (empathy)
+      eyeScale: 1.08,
+      eyeSquint: 0.08,       // Soft, caring
+      mouthCurve: 0.05,      // Soft, neutral
+      mouthAsymmetry: 0,
+      mouthOpen: 0,
+      headTilt: 0.04,
+      energy: 'low',
+      glowColor: 'rgba(180, 200, 255, 0.35)',  // Gentle pale blue
+      glowIntensity: 35
+    }
   };
 
-  const expression = emotionExpressions[emotionState] || emotionExpressions.friendly;
+  // Get expression config (from prop or lookup)
+  const getExpression = useCallback(() => {
+    if (expressionConfig) {
+      return expressionConfig;
+    }
+    return expressionConfigs[emotionState] || expressionConfigs.curious;
+  }, [emotionState, expressionConfig]);
+
+  const expression = getExpression();
+
+  // Smooth transition between expressions
+  useEffect(() => {
+    setTransitionProgress(0);
+    const timer = setInterval(() => {
+      setTransitionProgress(prev => {
+        if (prev >= 1) {
+          clearInterval(timer);
+          return 1;
+        }
+        return prev + 0.05; // ~300-500ms transition
+      });
+    }, 16);
+    
+    return () => clearInterval(timer);
+  }, [emotionState]);
+
+  // Eye roll animation for teasing_annoyed
+  useEffect(() => {
+    if (expression.eyeRoll && emotionState === 'teasing_annoyed') {
+      setEyeRollActive(true);
+      const timer = setTimeout(() => setEyeRollActive(false), 800);
+      return () => clearTimeout(timer);
+    }
+  }, [emotionState, expression.eyeRoll]);
 
   // Initialize Web Audio API
   const initAudioAnalyser = useCallback(() => {
