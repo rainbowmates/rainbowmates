@@ -186,21 +186,25 @@ const TalkingAvatar = ({
 
   const expression = getExpression();
 
-  // Smooth transition between expressions
+  // Smooth transition between expressions (300-500ms per architecture spec)
   useEffect(() => {
     setTransitionProgress(0);
+    const transitionDuration = emotionPayload?.transition_ms || 350;  // Default 350ms
+    const steps = Math.ceil(transitionDuration / 16);  // ~60fps
+    const increment = 1 / steps;
+    
     const timer = setInterval(() => {
       setTransitionProgress(prev => {
         if (prev >= 1) {
           clearInterval(timer);
           return 1;
         }
-        return prev + 0.05; // ~300-500ms transition
+        return Math.min(1, prev + increment);
       });
     }, 16);
     
     return () => clearInterval(timer);
-  }, [emotionState]);
+  }, [emotionState, emotionPayload?.transition_ms]);
 
   // Eye roll animation for teasing_annoyed
   useEffect(() => {
