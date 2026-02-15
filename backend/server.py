@@ -967,6 +967,40 @@ async def send_message(user_id: str, message_data: MessageCreate):
         logger.error(f"Error sending message: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
 
+
+@api_router.get("/relationship/{user_id}/{bestie_id}")
+async def get_relationship_status(user_id: str, bestie_id: str):
+    """Get relationship summary and scores"""
+    try:
+        relationship_engine = get_relationship_engine(db)
+        summary = await relationship_engine.get_relationship_summary(user_id, bestie_id)
+        return summary
+    except Exception as e:
+        logger.error(f"Error getting relationship status: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+@api_router.get("/relationship/scores/{user_id}/{bestie_id}")
+async def get_relationship_scores(user_id: str, bestie_id: str):
+    """Get raw relationship scores"""
+    try:
+        relationship_engine = get_relationship_engine(db)
+        scores = await relationship_engine.get_scores(user_id, bestie_id)
+        return {
+            "warmth_score": scores.get("warmth_score"),
+            "trust_score": scores.get("trust_score"),
+            "playfulness_score": scores.get("playfulness_score"),
+            "attachment_score": scores.get("attachment_score"),
+            "bestie_mood": scores.get("bestie_mood"),
+            "last_user_mood": scores.get("last_user_mood"),
+            "streak_days": scores.get("streak_days"),
+            "total_messages": scores.get("total_messages")
+        }
+    except Exception as e:
+        logger.error(f"Error getting relationship scores: {str(e)}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @api_router.get("/chat/history/{user_id}/{bestie_id}")
 async def get_chat_history(user_id: str, bestie_id: str, limit: int = 50):
     """Get chat history"""
