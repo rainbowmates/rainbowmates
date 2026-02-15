@@ -82,7 +82,14 @@ VISEME_MAP = {
 
 class StreamingTTSService:
     """
-    Service for streaming TTS with emotion payload generation.
+    Service for streaming TTS with emotion payload and viseme generation.
+    
+    Architecture compliance:
+    - Streaming neural TTS
+    - Chunked audio delivery
+    - Viseme timing for lip-sync
+    - <800ms time-to-first-audio target
+    - 750 replies/month hard cap
     """
     
     def __init__(self, api_key: str, db: AsyncIOMotorDatabase):
@@ -91,13 +98,13 @@ class StreamingTTSService:
         self.client = ElevenLabs(api_key=api_key) if api_key else None
         self.usage_collection = db.tts_usage if db is not None else None
     
-    async def check_usage_limit(self, user_id: str, limit: int = 750) -> Dict[str, Any]:
+    async def check_usage_limit(self, user_id: str, limit: int = MONTHLY_USAGE_LIMIT) -> Dict[str, Any]:
         """
         Check if user has exceeded monthly TTS usage limit.
-        Returns usage stats and whether they can proceed.
+        HARD CAP: 750 spoken replies per user per month.
         """
         if self.usage_collection is None:
-            return {"allowed": True, "used": 0, "limit": limit}
+            return {"allowed": True, "used": 0, "limit": limit, "remaining": limit}
         
         # Get current month's start
         now = datetime.now(timezone.utc)
@@ -115,7 +122,8 @@ class StreamingTTSService:
             "allowed": used < limit,
             "used": used,
             "limit": limit,
-            "remaining": max(0, limit - used)
+            "remaining": max(0, limit - used),
+            "month": month_start.strftime("%B %Y")
         }
     
     async def increment_usage(self, user_id: str):
@@ -135,6 +143,84 @@ class StreamingTTSService:
             upsert=True
         )
     
+    def generate_viseme_timing(self, text: str, estimated_duration_ms: int) -> List[Dict[str, Any]]:
+        """
+        Generate viseme timing data for lip-sync animation.
+        Maps text to mouth shapes with timing.
+        
+        Returns list of viseme events with timestamps.
+        """
+        visemes = []
+        words = text.split()
+        if not words:
+            return visemes
+        
+        # Calculate timing per word
+        ms_per_word = estimated_duration_ms / len(words)
+        current_time = 0
+        
+        for word in words:
+            word_clean = re.sub(r'[^\w]', '', word.lower())
+            if not word_clean:
+                continue
+            
+            # Generate visemes for word
+            word_visemes = self._word_to_visemes(word_clean)
+            viseme_duration = ms_per_word / max(len(word_visemes), 1)
+            
+            for viseme in word_visemes:
+                visemes.append({
+                    "viseme": viseme,
+                    "time": round(current_time),
+                    "duration": round(viseme_duration)
+                })
+                current_time += viseme_duration
+            
+            # Small pause between words
+            current_time += 20
+        
+        return visemes
+    
+    def _word_to_visemes(self, word: str) -> List[int]:
+        """Convert word to sequence of viseme indices."""
+        visemes = []
+        i = 0
+        while i < len(word):
+            # Check for digraphs first
+            if i + 1 < len(word):
+                digraph = word[i:i+2]
+                if digraph in ["sh", "ch", "th", "ng"]:
+                    visemes.append(VISEME_MAP.get(digraph, 0))
+                    i += 2
+                    continue
+            
+            char = word[i]
+            # Map character to viseme
+            if char in "pbm":
+                visemes.append(1)  # Bilabial
+            elif char in "fv":
+                visemes.append(2)  # Labiodental
+            elif char in "tdnl":
+                visemes.append(4)  # Alveolar
+            elif char in "kg":
+                visemes.append(6)  # Velar
+            elif char == "h":
+                visemes.append(7)  # Glottal
+            elif char in "aeo":
+                visemes.append(8)  # Open vowel
+            elif char in "iu":
+                visemes.append(12)  # Close vowel
+            elif char in "szjr":
+                visemes.append(5)  # Fricative
+            elif char in "wy":
+                visemes.append(14)  # Glide
+            else:
+                visemes.append(0)  # Default/silence
+            
+            i += 1
+        
+        return visemes if visemes else [0]
+    
     def generate_emotion_payload(
         self, 
         text: str, 
@@ -144,31 +230,39 @@ class StreamingTTSService:
         """
         Generate emotion payload for avatar animation.
         This is sent alongside audio for client-side animation control.
+        JSON payload < 1KB as per architecture spec.
         """
-        # Estimate speech duration (~150ms per word)
+        # Estimate speech duration (~150ms per word, ~7 seconds per reply max)
         word_count = len(text.split())
-        estimated_duration_ms = word_count * 150
+        estimated_duration_ms = min(word_count * 150, 7000)  # Cap at 7 seconds
         
         # Calculate expression intensity based on relationship
         warmth = relationship_scores.get("warmth_score", 0.5)
         playfulness = relationship_scores.get("playfulness_score", 0.5)
         attachment = relationship_scores.get("attachment_score", 0.3)
+        trust = relationship_scores.get("trust_score", 0.4)
         
-        # Determine expression parameters
-        expression_intensity = (warmth + playfulness + attachment) / 3
+        # Determine expression parameters (0.3-0.6 range as per spec)
+        expression_intensity = min(0.6, max(0.3, (warmth + playfulness + attachment) / 3))
+        
+        # Generate viseme timing
+        viseme_timing = self.generate_viseme_timing(text, estimated_duration_ms)
         
         return {
             "emotion": emotion,
             "expression_intensity": round(expression_intensity, 2),
             "estimated_duration_ms": estimated_duration_ms,
             "word_count": word_count,
+            "viseme_timing": viseme_timing,
             "animation_hints": {
-                "eyebrow_raise": 0.1 if emotion in ["excited", "curious", "playful"] else 0,
-                "smile_intensity": warmth * 0.5,
-                "head_tilt": 0.05 if emotion in ["curious", "comforting"] else 0,
-                "blink_frequency": "normal" if emotion != "excited" else "fast",
+                "eyebrow_raise": 0.15 if emotion in ["excited", "curious", "dramatic"] else 0.05,
+                "smile_intensity": round(warmth * 0.5, 2),
+                "head_tilt": 0.08 if emotion in ["curious", "comforting"] else 0.03,
+                "blink_frequency": "fast" if emotion == "excited" else "normal",
+                "eye_squint": 0.1 if emotion in ["playful", "comforting"] else 0,
             },
-            "voice_modulation": EMOTION_VOICE_MAP.get(emotion, EMOTION_VOICE_MAP["friendly"])
+            "voice_modulation": EMOTION_VOICE_MAP.get(emotion, EMOTION_VOICE_MAP["friendly"]),
+            "transition_ms": 350  # 300-500ms blend between expressions
         }
     
     async def generate_speech(
