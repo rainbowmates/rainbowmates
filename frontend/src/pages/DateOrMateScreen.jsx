@@ -261,7 +261,7 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
             {showPeopleList && (
               <div className="absolute right-0 top-12 w-64 bg-white rounded-2xl shadow-xl border border-border z-50 overflow-hidden">
                 <div className="p-3 border-b border-border">
-                  <p className="text-sm font-bold text-dark-purple">Previous Discussions</p>
+                  <p className="text-sm font-bold text-dark-purple">{t('previousDiscussions')}</p>
                 </div>
                 
                 <button
@@ -272,7 +272,7 @@ export default function DateOrMateScreen({ user, bestie: propBestie }) {
                   <div className="w-8 h-8 rounded-full bg-gradient-to-br from-neon-pink to-soft-blue flex items-center justify-center">
                     <Plus className="w-4 h-4 text-white" />
                   </div>
-                  <span className="text-sm font-medium text-dark-purple">New Person</span>
+                  <span className="text-sm font-medium text-dark-purple">{t('newPerson')}</span>
                 </button>
                 
                 <div className="max-h-60 overflow-y-auto">
