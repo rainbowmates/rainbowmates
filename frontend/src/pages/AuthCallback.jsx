@@ -64,8 +64,8 @@ export default function AuthCallback({ onLogin }) {
     <div className="app-container gradient-mesh flex items-center justify-center min-h-screen">
       <div className="text-center">
         <Sparkles className="w-16 h-16 mx-auto text-neon-pink mb-4 animate-pulse" />
-        <h2 className="text-xl font-bold text-dark-purple mb-2">Signing you in...</h2>
-        <p className="text-dark-purple/70">Please wait while we complete your login</p>
+        <h2 className="text-xl font-bold text-dark-purple mb-2">{t('signingYouIn')}</h2>
+        <p className="text-dark-purple/70">{t('pleaseWaitLogin')}</p>
         <div className="mt-4 flex justify-center gap-1">
           <span className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></span>
           <span className="w-2 h-2 bg-neon-pink rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
