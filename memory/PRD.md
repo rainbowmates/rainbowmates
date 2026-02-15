@@ -5,6 +5,24 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - UI/UX Improvements (COMPLETE)
+**Navigation & Layout Changes:**
+1. **Back Arrow Navigation** - All screens now use `navigate(-1)` to go back one step in browser history instead of hardcoded routes
+2. **Unified Chat Screen** - Merged text and voice chat into single interface:
+   - Bestie avatar (Tom) always visible at top (scaled for space)
+   - Chat messages displayed below avatar
+   - Single input bar with mic button integrated inside
+   - Type OR tap mic to talk
+3. **Relationship Advice Screen** - Same unified layout:
+   - Tom's avatar always visible at top with speaking indicator
+   - Integrated mic button in input field
+   - Voice-to-text for speaking your questions
+
+**Files Modified:**
+- `frontend/src/pages/AvatarChatScreen.jsx` - Removed view toggle, unified UI
+- `frontend/src/pages/DateOrMateScreen.jsx` - Added voice recording, unified UI
+- `frontend/src/pages/PlayScreen.jsx` - Fixed back navigation
+
 ### Feb 15, 2026 - AI Safety Guardrails (COMPLETE)
 **Added content boundaries to the AI's core prompt:**
 1. **No Sexual/Inappropriate Content:** AI politely declines sexual/explicit conversations
