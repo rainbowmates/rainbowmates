@@ -5,90 +5,68 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
-### Feb 15, 2026 - UI Translations Complete (COMPLETE)
-**Multi-language support for 6 languages:**
+### Feb 15, 2026 - Multi-lingual AI Responses (COMPLETE)
+**Tom now responds in user's selected language (text only):**
 - English (en) - default
-- French (fr)
-- Italian (it)
-- German (de)
-- Spanish (es)
-- Portuguese (pt)
-
-**Translation system:**
-- `frontend/src/utils/translations.js` - All translation strings
-- `frontend/src/context/LanguageContext.jsx` - Language provider & t() function
-- `frontend/src/components/LanguageSelector.jsx` - Language picker UI
-
-**Pages updated to use translations:**
-- SplashScreen.jsx - App name, tagline
-- IntroScreen.jsx - Title, feature labels, buttons
-- AuthPage.jsx - All form labels, buttons, error messages
-- ChatScreen.jsx - Chat UI elements
-- SettingsScreen.jsx - Settings labels
-- All other screens already had translation support
-
-**Translation keys added:**
-- Auth flow: verifyOtp, forgotPassword, resetPassword, newPassword, confirmPassword, otpCode, enterOtp, orContinueWith, mustBe18, minChars, backToLogin
-
-### Feb 15, 2026 - Dynamic Avatar Expressions (COMPLETE)
-**8 Core Expression States Implemented:**
-1. **SOFT_COMFORTING** - User sad/anxious/vulnerable. Soft blue glow, gentle eyes.
-2. **PLAYFUL_TEASING** - Light banter. Pink glow, asymmetric smirk.
-3. **DRAMATIC_DISBELIEF** - Surprising news. Gold glow, wide eyes, mouth open.
-4. **PROTECTIVE_SERIOUS** - User facing conflict. Steel blue glow, firm expression.
-5. **CURIOUS_LEAN_IN** - User shares info (DEFAULT). Green glow, raised brows.
-6. **EXCITED_SPARKLE** - Good news. Bright gold glow, full smile, sparkle effect.
-7. **TEASING_EYEROLL** - User repeating bad decision. Light pink, eye roll animation.
-8. **GENTLE_CONCERN** - User emotional. Pale blue glow, soft empathetic expression.
+- French (fr) - "Salut chérie!" / "ma belle"
+- Italian (it) - "Ciao tesoro!" / "bella"
+- German (de) - "Hallo Liebling!" / "Schatz"
+- Spanish (es) - "¡Hola cariño!" / "guapa"
+- Portuguese (pt) - "Olá linda!" / "querida"
 
 **Technical Implementation:**
-- AI prompt includes expression tagging instructions: `[expression: TAG]`
-- `parse_expression_from_response()` extracts tag, removes from displayed message
-- `get_expression_config()` returns full visual config for avatar
-- TalkingAvatar.jsx has visual properties: eyebrows, eyeScale, mouthCurve, headTilt, glowColor
-- Expression label shows current state below avatar
-- Smooth 300-500ms transitions between expressions
+- Added `language` parameter to `/api/chat/message` and `/api/chat/starter` endpoints
+- Updated `get_bestie_system_prompt()` with language-specific instructions
+- Updated `get_conversation_starter_prompt()` with language-specific greetings
+- Frontend passes `language` from `useLanguage()` context to all chat API calls
+- Expression tags remain in English for consistent parsing
 
-**Files Modified:**
-- `/app/backend/utils/prompts.py` - EXPRESSION_STATES, parse/config functions
-- `/app/backend/server.py` - Expression parsing in chat endpoints
-- `/app/frontend/src/components/TalkingAvatar.jsx` - 8 expression visual configs
-- `/app/frontend/src/pages/AvatarChatScreen.jsx` - Expression state handling
+**Note:** TTS (voice) remains in English. This is text-only multi-lingual support.
+
+### Feb 15, 2026 - UI Translations (COMPLETE)
+- All UI text translated for 6 languages
+- Translation file: `/app/frontend/src/utils/translations.js`
+- LanguageProvider wraps entire app including splash/intro screens
+
+### Feb 15, 2026 - Dynamic Avatar Expressions (COMPLETE)
+**8 Core Expression States:**
+1. SOFT_COMFORTING - Soft blue glow, gentle eyes
+2. PLAYFUL_TEASING - Pink glow, asymmetric smirk
+3. DRAMATIC_DISBELIEF - Gold glow, wide eyes
+4. PROTECTIVE_SERIOUS - Steel blue glow, firm expression
+5. CURIOUS_LEAN_IN - Green glow, raised brows (default)
+6. EXCITED_SPARKLE - Bright gold glow, sparkle effect
+7. TEASING_EYEROLL - Light pink, eye roll animation
+8. GENTLE_CONCERN - Pale blue glow, soft expression
 
 ### Feb 15, 2026 - Talking Avatar Feature (COMPLETE)
-**Tom - The Only Bestie**
 - Single character "Tom" with 2.5D talking avatar
 - Web Audio API lip-sync
-- ElevenLabs TTS (Daniel voice)
+- ElevenLabs TTS (Daniel voice - English)
 
-### Feb 15, 2026 - Relationship Scoring Engine (COMPLETE)
-- Tracks: warmth, trust, playfulness, attachment (0.0-1.0)
-- Auto-detects user mood, bestie adapts
-- Streak tracking, relationship stages
-
-### Feb 15, 2026 - Enhanced AI Personality Blueprint (COMPLETE)
-- Core Identity Blueprint in prompts
-- Dynamic relationship score injection
-- Emotional behavior rules
-
-### Feb 14, 2026 - Previous Features (COMPLETE)
+### Previous Features (COMPLETE)
+- Relationship scoring engine (warmth, trust, playfulness, attachment)
+- Enhanced AI personality blueprint
 - 25-word response limit
 - Merged chat + voice screen
-- Conversation starters
-- Proactive AI behavior
 - Desktop warning modal
 
 ## Tech Stack
 - **Frontend**: React, Tailwind CSS, lucide-react, Web Audio API
 - **Backend**: FastAPI, Python, MongoDB
 - **AI**: Claude claude-sonnet-4-5-20250929 via emergentintegrations
-- **Voice**: ElevenLabs TTS (Daniel voice), OpenAI Whisper STT
+- **Voice**: ElevenLabs TTS (English only), OpenAI Whisper STT
+
+## API Endpoints
+- `POST /api/chat/message?user_id=X&language=Y` - Send message (language optional, default: en)
+- `POST /api/chat/starter?user_id=X&bestie_id=Y&language=Z` - Get greeting
+- `POST /api/avatar/speak` - Generate TTS audio
 
 ## Test Reports
-- `/app/test_reports/iteration_7.json` - Dynamic Expressions (100% pass - 14/14)
+- `/app/test_reports/iteration_7.json` - Dynamic Expressions (100% pass)
 
 ## Backlog/Future Enhancements
 - P2: Display relationship stats in UI
-- P2: Make Tom respond in user's selected language (currently English only)
+- P2: Multi-lingual TTS (different voices per language)
 - P3: Weekly mood insights/reports
 - P3: Push notifications for re-engagement
