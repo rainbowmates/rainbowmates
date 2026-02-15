@@ -101,20 +101,20 @@ function App() {
 
   if (showSplash) {
     return (
-      <>
+      <LanguageProvider>
         <DesktopWarningModal />
         <SplashScreen />
-      </>
+      </LanguageProvider>
     );
   }
 
   // Always show intro screen after splash (every time app opens)
   if (showIntro) {
     return (
-      <>
+      <LanguageProvider>
         <DesktopWarningModal />
         <IntroScreen onNext={handleIntroComplete} />
-      </>
+      </LanguageProvider>
     );
   }
 
