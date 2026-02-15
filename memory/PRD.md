@@ -115,7 +115,6 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 - `/app/test_reports/iteration_7.json` - Dynamic Expressions (100% pass)
 
 ## Backlog/Future Enhancements
-- P1: Multi-lingual TTS (different voices per language)
 - P2: Display relationship stats in UI
 - P3: Weekly mood insights/reports
 - P3: Push notifications for re-engagement
