@@ -454,7 +454,7 @@ export default function AvatarChatScreen({ user }) {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyPress={handleKeyPress}
-            placeholder="Talk to Tom..."
+            placeholder={t('talkToTom')}
             disabled={loading || recording || isAvatarSpeaking}
             className="flex-1 px-4 py-3 rounded-full bg-muted border-0 focus:ring-2 focus:ring-neon-pink/50 outline-none disabled:opacity-50"
             data-testid="message-input"
