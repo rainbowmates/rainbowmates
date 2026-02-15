@@ -27,6 +27,7 @@ const VOICE_OPTIONS = [
 
 export default function CreateBestie({ user }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [formData, setFormData] = useState({
     name: '',
     image_url: BESTIE_IMAGES[0].url,
