@@ -85,7 +85,7 @@ export default function AvatarChatScreen({ user }) {
   // Get conversation starter
   const getConversationStarter = async (bestieId) => {
     try {
-      const res = await axios.post(`${API}/chat/starter?user_id=${user.id}&bestie_id=${bestieId}`);
+      const res = await axios.post(`${API}/chat/starter?user_id=${user.id}&bestie_id=${bestieId}&language=${language}`);
       const starterMessage = {
         id: res.data.message_id,
         role: 'bestie',
