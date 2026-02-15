@@ -154,7 +154,7 @@ export default function SubscriptionScreen({ user }) {
 
         <div className="text-center py-2">
           <Crown className="w-12 h-12 mx-auto text-neon-pink mb-1" />
-          <p className="text-sm text-dark-purple/70">Unlock all features and endless fun!</p>
+          <p className="text-sm text-dark-purple/70">{t('unlockAllFeatures')}</p>
         </div>
 
         {/* Free Pilot Plan */}
