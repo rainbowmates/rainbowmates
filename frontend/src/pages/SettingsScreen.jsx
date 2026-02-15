@@ -240,7 +240,7 @@ export default function SettingsScreen({ user, onLogout }) {
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-6 z-50">
           <div className="card-soft p-6 max-w-sm w-full" data-testid="delete-confirm-modal">
-            <h3 className="text-xl font-bold text-dark-purple mb-2">Delete Account?</h3>
+            <h3 className="text-xl font-bold text-dark-purple mb-2">{t('deleteAccount')}</h3>
             <p className="text-sm text-dark-purple/70 mb-6">
               This action cannot be undone. All your data will be permanently deleted.
             </p>
