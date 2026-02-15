@@ -2,6 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { Sparkles } from 'lucide-react';
+import { useLanguage } from '../context/LanguageContext';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -10,6 +11,7 @@ const API = `${BACKEND_URL}/api`;
 
 export default function AuthCallback({ onLogin }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const hasProcessed = useRef(false);
 
   useEffect(() => {
