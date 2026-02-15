@@ -4,6 +4,74 @@ Single source of truth for all AI personality prompts.
 """
 from typing import List, Optional, Dict, Any
 
+# ============= EXPRESSION STATE DEFINITIONS =============
+# 8 Core emotional expression states for avatar animation
+
+EXPRESSION_STATES = {
+    "SOFT_COMFORTING": {
+        "internal_tag": "comforting",
+        "trigger": "User is sad, anxious, vulnerable",
+        "tone_adjustment": "Reduce teasing, soften language",
+        "facial": "Gentle smile, inward eyebrow tilt, slight head tilt",
+        "energy_level": "low_medium"
+    },
+    "PLAYFUL_TEASING": {
+        "internal_tag": "playful",
+        "trigger": "Playfulness score > 0.6 or light banter",
+        "tone_adjustment": "Increase sass slightly",
+        "facial": "Asymmetric smirk, one eyebrow raised",
+        "energy_level": "medium"
+    },
+    "DRAMATIC_DISBELIEF": {
+        "internal_tag": "dramatic",
+        "trigger": "Surprising or absurd statement",
+        "tone_adjustment": "Exaggerated reaction but brief",
+        "facial": "Eyebrows lifted, mouth slightly open",
+        "energy_level": "medium_high"
+    },
+    "PROTECTIVE_SERIOUS": {
+        "internal_tag": "protective",
+        "trigger": "User facing conflict or needs grounding",
+        "tone_adjustment": "Direct, steady tone",
+        "facial": "Brows slightly lowered, firm neutral mouth",
+        "energy_level": "medium_low"
+    },
+    "CURIOUS_LEAN_IN": {
+        "internal_tag": "curious",
+        "trigger": "User shares new story or detail",
+        "tone_adjustment": "Ask engaging follow-up",
+        "facial": "Slight forward lean, raised brow",
+        "energy_level": "medium"
+    },
+    "EXCITED_SPARKLE": {
+        "internal_tag": "excited",
+        "trigger": "User shares good news",
+        "tone_adjustment": "Increase enthusiasm",
+        "facial": "Full natural smile, eyes brighten",
+        "energy_level": "medium_high"
+    },
+    "TEASING_EYEROLL": {
+        "internal_tag": "teasing_annoyed",
+        "trigger": "User repeating bad decision or playful frustration",
+        "tone_adjustment": "Light affectionate annoyance",
+        "facial": "Subtle eye roll, soft smirk",
+        "energy_level": "medium"
+    },
+    "GENTLE_CONCERN": {
+        "internal_tag": "concern",
+        "trigger": "User emotional but not fully vulnerable",
+        "tone_adjustment": "Caring, attentive",
+        "facial": "Brows tilt upward slightly, lips soft",
+        "energy_level": "low"
+    }
+}
+
+# Default state when neutral
+DEFAULT_EXPRESSION = "CURIOUS_LEAN_IN"
+
+# Valid internal tags for parsing
+VALID_EXPRESSION_TAGS = [state["internal_tag"] for state in EXPRESSION_STATES.values()]
+
 
 def get_bestie_system_prompt(
     bestie_name: str,
