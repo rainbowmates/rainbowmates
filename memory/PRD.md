@@ -5,6 +5,21 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 ## What's Been Implemented
 
+### Feb 15, 2026 - AI Safety Guardrails (COMPLETE)
+**Added content boundaries to the AI's core prompt:**
+1. **No Sexual/Inappropriate Content:** AI politely declines sexual/explicit conversations
+   - Response: "Babe, that's not really my vibe - this app isn't for that kind of chat! Let's talk about something else 💕"
+2. **No Major Life Decisions:** AI won't make/validate major life decisions (quitting jobs, breakups, financial, medical)
+   - Response: Supportive but redirects to family, friends, or professionals
+
+**Tested scenarios (all PASSED):**
+- Inappropriate content request → Polite refusal ✅
+- Job quitting decision → Supportive redirect ✅
+- Relationship breakup advice → Supportive redirect ✅
+- Financial investment advice → Redirect to advisor ✅
+- Normal conversation → Works normally ✅
+- Safety in French language → Works correctly ✅
+
 ### Feb 15, 2026 - Multi-lingual AI Responses (COMPLETE)
 **Tom now responds in user's selected language (text only):**
 - English (en) - default
