@@ -35,6 +35,28 @@ Rainbow Mates is a mobile-first application for creating a virtual gay best frie
 
 **Note:** TTS (voice) remains in English. This is text-only multi-lingual support.
 
+### Feb 15, 2026 - UI Translations Extended (COMPLETE)
+**Extended UI translations to cover all remaining hardcoded text:**
+- Dashboard: "You", "Premium Active", "Subscribe to Play", welcome messages
+- Avatar Chat: "Loading Tom...", "Tom is thinking...", "replies left", input placeholder
+- Subscription: "Processing payment...", "Free Subscription", "Coming Soon"
+- Create Bestie: Name placeholder
+- Settings: Mood history labels, delete account confirmation
+- Auth Callback: Login progress messages
+- Date or Mate: "Previous Discussions", "New Person"
+- Play Screen: Feature titles and descriptions, subscription badge
+
+**Files Updated:**
+- `/app/frontend/src/utils/translations.js` - Added 30+ new translation keys
+- `/app/frontend/src/pages/Dashboard.jsx`
+- `/app/frontend/src/pages/AvatarChatScreen.jsx`
+- `/app/frontend/src/pages/SubscriptionScreen.jsx`
+- `/app/frontend/src/pages/CreateBestie.jsx`
+- `/app/frontend/src/pages/SettingsScreen.jsx`
+- `/app/frontend/src/pages/AuthCallback.jsx`
+- `/app/frontend/src/pages/DateOrMateScreen.jsx`
+- `/app/frontend/src/pages/PlayScreen.jsx`
+
 ### Feb 15, 2026 - UI Translations (COMPLETE)
 - All UI text translated for 6 languages
 - Translation file: `/app/frontend/src/utils/translations.js`
