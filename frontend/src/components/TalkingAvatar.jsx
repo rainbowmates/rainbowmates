@@ -329,7 +329,11 @@ const TalkingAvatar = ({
   // Start animation loop when speaking
   useEffect(() => {
     if (isSpeaking) {
-      animationFrameRef.current = requestAnimationFrame(animateMouth);
+      if (useVisemeLipSync && visemeTimingData?.length > 0) {
+        animationFrameRef.current = requestAnimationFrame(animateWithVisemes);
+      } else {
+        animationFrameRef.current = requestAnimationFrame(animateMouth);
+      }
     }
     
     return () => {
@@ -337,7 +341,7 @@ const TalkingAvatar = ({
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [isSpeaking, animateMouth]);
+  }, [isSpeaking, animateMouth, animateWithVisemes, useVisemeLipSync, visemeTimingData]);
 
   // Handle audio end
   const handleAudioEnd = () => {
