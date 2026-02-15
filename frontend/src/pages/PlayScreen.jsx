@@ -14,6 +14,15 @@ export default function PlayScreen({ user }) {
     }
   }, []);
 
+  // Handle back navigation - go to previous screen
+  const handleBack = () => {
+    if (window.history.length > 1) {
+      navigate(-1);
+    } else {
+      navigate('/dashboard');
+    }
+  };
+
   const features = [
     { icon: MessageCircle, title: 'Chat', description: 'Text or talk with your bestie', path: '/chat', color: 'from-neon-pink to-purple-400' },
     { icon: Music, title: 'Play Music', description: 'Listen & dance together', path: '/dance', color: 'from-purple-400 to-neon-pink' },
