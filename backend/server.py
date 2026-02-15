@@ -1087,14 +1087,8 @@ async def get_conversation_starter(user_id: str, bestie_id: str):
         
         bestie = Bestie(**parse_from_mongo(bestie_doc))
         
-        # Create a starter-specific prompt with 25-word limit
-        starter_prompt = f"""You are {bestie.name}, a warm gay best friend.
-
-Generate a greeting in MAX 15 WORDS. Use "babe/honey/sweetie", one emoji, end with question.
-
-Example: "Hey babe! 💛 How's your day going?"
-
-MAX 15 WORDS. Count them."""
+        # Use shared prompt utility
+        starter_prompt = get_conversation_starter_prompt(bestie.name)
         
         # Generate the starter
         chat = LlmChat(
