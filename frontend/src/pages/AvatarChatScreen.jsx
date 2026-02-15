@@ -14,7 +14,7 @@ const TOM_IMAGE = 'https://customer-assets.emergentagent.com/job_d78d511c-01b3-4
 
 export default function AvatarChatScreen({ user }) {
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   
   // Core state
   const [bestie, setBestie] = useState(null);
