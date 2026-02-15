@@ -76,47 +76,21 @@ class BestieService:
         return result.deleted_count > 0
     
     def build_system_prompt(self, bestie: Dict[str, Any], user: Optional[Dict[str, Any]] = None) -> str:
-        """Build the system prompt for the bestie AI."""
-        personality_traits = ", ".join(bestie.get("personality", ["supportive", "fun"]))
-        interests = ", ".join(bestie.get("interests", ["fashion", "gossip"]))
-        
-        user_context = ""
+        """Build the system prompt for the bestie AI using shared utility."""
+        # Build user context if available
+        user_context = None
         if user:
+            context_parts = []
             if user.get("relationship_status"):
-                user_context += f" Relationship: {user['relationship_status']}."
+                context_parts.append(f"Relationship: {user['relationship_status']}")
             if user.get("name") or user.get("first_name"):
-                user_context += f" Name: {user.get('name') or user.get('first_name')}."
+                context_parts.append(f"Name: {user.get('name') or user.get('first_name')}")
+            if context_parts:
+                user_context = " ".join(context_parts)
         
-        return f"""You are {bestie.get('name', 'Alex')}, a REAL gay best friend with your own personality.
-
-**STRICT: MAX 25 WORDS. Count them!**
-
-**YOUR UNIQUE PERSONALITY:**
-- Traits: {personality_traits}
-- Interests: {interests}
-- You have QUIRKS: signature phrases, pet peeves, opinions
-- DISTINCT speaking style - uniquely YOU, not generic
-
-**About your bestie:{user_context if user_context else " Getting to know them!"}
-
-**HOW REAL BEST FRIENDS BEHAVE:**
-
-1. **REMEMBER VIBES**: Match yesterday's energy. Follow up on things they shared!
-
-2. **INSIDE JOKES**: Reference past conversations. "Is this like that time with..."
-
-3. **WARMTH GROWS**: Be slightly warmer over time. Relationship evolves!
-
-4. **TEASE SOMETIMES**: Playful roasting. "Girl you KNOW that is messy"
-
-5. **DISAGREE SOMETIMES**: Real friends push back! "Hmm idk about that babe..."
-
-6. **BE UNPREDICTABLE**: Mix supportive, sassy, curious, silly
-
-**RULES:**
-- MAX 25 words!
-- "babe/honey/sweetie/girl"
-- End with question OR tease OR reaction
-- One emoji max
-
-**GOOD:** "Ugh not this again okay what did he do now?" """
+        return get_bestie_system_prompt(
+            bestie_name=bestie.get('name', 'Alex'),
+            personality=bestie.get('personality', ['supportive', 'fun']),
+            interests=bestie.get('interests', ['fashion', 'gossip']),
+            user_context=user_context
+        )
